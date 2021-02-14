@@ -2,7 +2,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -1269,7 +1269,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #582fbf;
+  background: #ff2006;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -3235,7 +3235,7 @@ ul.breadcrumb li + li:last-child {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text"> 背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理相同id的过滤"><span class="nav-number">2.</span> <span class="nav-text"> 处理相同id的过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hashmap的方案"><span class="nav-number">2.1.</span> <span class="nav-text"> HashMap的方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bitmap"><span class="nav-number">2.2.</span> <span class="nav-text"> Bitmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点-2"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点-2"><span class="nav-number">2.2.2.</span> <span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bloomfilter"><span class="nav-number">2.3.</span> <span class="nav-text"> BloomFilter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#误判率的计算"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 误判率的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#至于hash-function的数目k"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 至于hash function的数目k</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优点-3"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点-3"><span class="nav-number">2.3.4.</span> <span class="nav-text"> 缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理相似文本的重复"><span class="nav-number">3.</span> <span class="nav-text"> 处理相似文本的重复</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#simhash"><span class="nav-number">3.1.</span> <span class="nav-text"> simhash</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text"> 背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E5%90%8Cid%E7%9A%84%E8%BF%87%E6%BB%A4"><span class="nav-number">2.</span> <span class="nav-text"> 处理相同id的过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hashmap%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">2.1.</span> <span class="nav-text"> HashMap的方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bitmap"><span class="nav-number">2.2.</span> <span class="nav-text"> Bitmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-number">2.2.2.</span> <span class="nav-text"> 缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bloomfilter"><span class="nav-number">2.3.</span> <span class="nav-text"> BloomFilter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E5%88%A4%E7%8E%87%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 误判率的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%B3%E4%BA%8Ehash-function%E7%9A%84%E6%95%B0%E7%9B%AEk"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 至于hash function的数目k</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-3"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-3"><span class="nav-number">2.3.4.</span> <span class="nav-text"> 缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E4%BC%BC%E6%96%87%E6%9C%AC%E7%9A%84%E9%87%8D%E5%A4%8D"><span class="nav-number">3.</span> <span class="nav-text"> 处理相似文本的重复</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#simhash"><span class="nav-number">3.1.</span> <span class="nav-text"> simhash</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -3300,7 +3300,7 @@ ul.breadcrumb li + li:last-child {
 <div class="copyright">
   
   © 2015 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

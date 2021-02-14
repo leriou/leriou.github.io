@@ -2,7 +2,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -1270,7 +1270,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #582fbf;
+  background: #ff2006;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -3158,7 +3158,7 @@ ul.breadcrumb li + li:last-child {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于处理闭包的并发问题"><span class="nav-number">1.</span> <span class="nav-text"> 关于处理闭包的并发问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一"><span class="nav-number">2.</span> <span class="nav-text"> 方法一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用原子操作"><span class="nav-number">2.1.</span> <span class="nav-text"> 使用原子操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原子类的局限"><span class="nav-number">2.2.</span> <span class="nav-text"> 原子类的局限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二"><span class="nav-number">3.</span> <span class="nav-text"> 方法二</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#csp传递值变量"><span class="nav-number">3.1.</span> <span class="nav-text"> csp传递值变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#channel传递函数指针"><span class="nav-number">3.2.</span> <span class="nav-text"> channel传递函数指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rust的channel实现"><span class="nav-number">3.3.</span> <span class="nav-text"> rust的channel实现</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%A4%84%E7%90%86%E9%97%AD%E5%8C%85%E7%9A%84%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text"> 关于处理闭包的并发问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">2.</span> <span class="nav-text"> 方法一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text"> 使用原子操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E7%B1%BB%E7%9A%84%E5%B1%80%E9%99%90"><span class="nav-number">2.2.</span> <span class="nav-text"> 原子类的局限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">3.</span> <span class="nav-text"> 方法二</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#csp%E4%BC%A0%E9%80%92%E5%80%BC%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text"> csp传递值变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#channel%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="nav-number">3.2.</span> <span class="nav-text"> channel传递函数指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rust%E7%9A%84channel%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.3.</span> <span class="nav-text"> rust的channel实现</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -3223,7 +3223,7 @@ ul.breadcrumb li + li:last-child {
 <div class="copyright">
   
   © 2015 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
