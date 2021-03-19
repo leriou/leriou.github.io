@@ -1267,7 +1267,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #bdffff;
+  background: #4e2d0e;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2972,6 +2972,1463 @@ ul.breadcrumb li + li:last-child {
   
   
   <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2017-01-11-redis-object/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017-01-11-redis-object/" class="post-title-link" itemprop="url">redis中的数据对象</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-01-11 18:00:00" itemprop="dateCreated datePublished" datetime="2017-01-11T18:00:00+08:00">2017-01-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">编程工具</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2017-01-11-redis-object/" class="post-meta-item leancloud_visitors" data-flag-title="redis中的数据对象" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2017-01-11-redis-object/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017-01-11-redis-object/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="redis对象"><a class="markdownIt-Anchor" href="#redis对象"></a> redis对象</h1>
+<p>redis中有五种常用对象</p>
+<p>我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的</p>
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2017-01-09-redis-data-structure/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017-01-09-redis-data-structure/" class="post-title-link" itemprop="url">redis的基础数据结构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-01-09 00:00:00" itemprop="dateCreated datePublished" datetime="2017-01-09T00:00:00+08:00">2017-01-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">编程工具</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2017-01-09-redis-data-structure/" class="post-meta-item leancloud_visitors" data-flag-title="redis的基础数据结构" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2017-01-09-redis-data-structure/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017-01-09-redis-data-structure/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="redis基础数据结构"><a class="markdownIt-Anchor" href="#redis基础数据结构"></a> redis基础数据结构</h1>
+<p>redis中的数据对象有5种,但是这并不是redis中真正的数据存放方式, 只是对底层的数据存放结构进行了封装的对象</p>
+<p>redis的几种基础数据结构是redis中的最重要的部分, redis后续的大部分功能的设计和实现都依赖于此</p>
+<h1 id="sds简单动态字符串"><a class="markdownIt-Anchor" href="#sds简单动态字符串"></a> sds简单动态字符串</h1>
+<p><em>对应的上层对象是</em> <code>字符串</code></p>
+<h2 id="数据结构"><a class="markdownIt-Anchor" href="#数据结构"></a> 数据结构</h2>
+<p>具体的数据结构如下:</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">sdstr</span>{</span></span><br><span class="line">	<span class="keyword">int</span>   len     <span class="comment">// 字符串分配的字节</span></span><br><span class="line">	<span class="keyword">int</span>   <span class="built_in">free</span>    <span class="comment">// 未使用的字节数</span></span><br><span class="line">	<span class="keyword">char</span>  buff[]  <span class="comment">// 存储字符串的数组</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>sds是字符串对象的底层实现之一</p>
+<h2 id="sds的特性"><a class="markdownIt-Anchor" href="#sds的特性"></a> sds的特性</h2>
+<p>赋值操作会统计字符串的长度然后将字符串存入buff字符数组里面,同时设定长度和使用的长度</p>
+<p>例如 "hello"这个字符串的存储结构如下</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">	len:<span class="number">5</span>,</span><br><span class="line">	<span class="built_in">free</span>:<span class="number">0</span>,</span><br><span class="line">	buff:[<span class="string">'h'</span>,<span class="string">'e'</span>,<span class="string">'l'</span>,<span class="string">'l'</span>,<span class="string">'o'</span>,<span class="string">'\0'</span>]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>修改的时候会比较麻烦,分为两种情况</p>
+<p>一是由段字符串变长:例如:由"hello"变为"hello，redis"，这个时候系统会检查原本的sds字符串是否有空余空间,剩余空间为0。会分配等同于修改后字符串长度的剩余空间给sds,这个时候字符串的free属性会变为11,然后执行sdscat()，这个时候buff会变为[‘h’,‘e’,‘l’,‘l’,‘o’,’,’,‘r’,‘e’,‘d’,‘i’,‘s’,’\0’]，然后将字符串长度len修改为11。</p>
+<p>最终结构如下</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">	len:<span class="number">11</span>,     </span><br><span class="line">	<span class="built_in">free</span>:<span class="number">11</span>,</span><br><span class="line">	buff:[<span class="string">'h'</span>,<span class="string">'e'</span>,<span class="string">'l'</span>,<span class="string">'l'</span>,<span class="string">'o'</span>,<span class="string">','</span>,<span class="string">'r'</span>,<span class="string">'e'</span>,<span class="string">'d'</span>,<span class="string">'i'</span>,<span class="string">'s'</span>,<span class="string">'\0'</span>]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>ps:当长度小于1M是翻倍扩容,超过1M时是以1M为标准定量扩容</p>
+<p>二是由长字符串变短</p>
+<p>例如:由"hello,redis"变为"redis",这个时候会释放多余空间,同时把free值设为多出来的空间,以便下次使用方便</p>
+<p>修改后的结构大概如下</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">	len:<span class="number">5</span>,      <span class="comment">// 字符串长度</span></span><br><span class="line">	<span class="built_in">free</span>:<span class="number">17</span>,    <span class="comment">// 原本11,加上释放到的6个字节</span></span><br><span class="line">	buff:[<span class="string">'r'</span>,<span class="string">'e'</span>,<span class="string">'d'</span>,<span class="string">'i'</span>,<span class="string">'s'</span>,<span class="string">'\0'</span>]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>需要释放的时候可以手动调用函数来释放空间</p>
+<h2 id="为什么要使用sds"><a class="markdownIt-Anchor" href="#为什么要使用sds"></a> 为什么要使用sds?</h2>
+<ol>
+<li>sds可以杜绝缓冲区溢出的问题,获取字符串长度复杂度为常数</li>
+<li>二进制安全,sds使用len属性来判断字符串的结束</li>
+<li>减少字符串修改时的内存重分配次数</li>
+</ol>
+<h1 id="链表和quicklist"><a class="markdownIt-Anchor" href="#链表和quicklist"></a> 链表和quicklist</h1>
+<h2 id="数据结构-2"><a class="markdownIt-Anchor" href="#数据结构-2"></a> 数据结构</h2>
+<p>抄袭自redis的源代码</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//链表</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span>{</span></span><br><span class="line">	listNode * head;  	<span class="comment">//头节点</span></span><br><span class="line">	listNode * tail;	<span class="comment">//尾节点</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> len; 	<span class="comment">//节点数量</span></span><br><span class="line">	<span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);	<span class="comment">//节点值复制函数</span></span><br><span class="line">	<span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr); 	<span class="comment">//节点值释放函数</span></span><br><span class="line">	<span class="keyword">void</span> (*match)(<span class="keyword">void</span> *ptr,<span class="keyword">void</span> *key);	<span class="comment">//节点值对比函数</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//链表节点</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span>{</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">pre</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">	<span class="keyword">void</span> *value;</span><br><span class="line">}listNode;</span><br></pre></td></tr></tbody></table></figure>
+<p>换成形象点的json的形式就是如下</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">{</span><br><span class="line">    <span class="built_in">list</span>: {</span><br><span class="line">        head: {</span><br><span class="line">            pre: null,</span><br><span class="line">            next: <span class="number">2</span>,</span><br><span class="line">            value: <span class="number">1</span></span><br><span class="line">        },</span><br><span class="line">        tail: {</span><br><span class="line">            pre: <span class="number">99</span>,</span><br><span class="line">            next: null,</span><br><span class="line">            value: <span class="number">100</span></span><br><span class="line">        },</span><br><span class="line">        len: <span class="number">100</span>,</span><br><span class="line">        dup:function () {},</span><br><span class="line">        <span class="built_in">free</span>:function () {},</span><br><span class="line">        match:function () {}</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>链表是列表对象的底层实现之一(version 3.2 之前)</p>
+<p>链表在redis中主要负责的是存储和维护某一类对象,所常用到的操主要有遍历,修改等</p>
+<p>链表在redis中使用极为广泛,redis的事务,发布与订阅,服务器中维护的redisClient信息等都是用链表结构进行的存储</p>
+<h1 id="quicklist"><a class="markdownIt-Anchor" href="#quicklist"></a> quicklist</h1>
+<p>redis在3.2版本新加入了quicklist数据结构作为list的底层实现</p>
+<h2 id="数据结构-3"><a class="markdownIt-Anchor" href="#数据结构-3"></a> 数据结构</h2>
+<p>以下代码来自redis源码</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">quicklistEntry</span> {</span></span><br><span class="line">    <span class="keyword">const</span> quicklist *quicklist;</span><br><span class="line">    quicklistNode *node;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *zi;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *value;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> longval;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> sz;</span><br><span class="line">    <span class="keyword">int</span> offset;</span><br><span class="line">} quicklistEntry;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* quicklist is a 32 byte struct (on 64-bit systems) describing a quicklist.</span></span><br><span class="line"><span class="comment"> * 'count' is the number of total entries.</span></span><br><span class="line"><span class="comment"> * 'len' is the number of quicklist nodes.</span></span><br><span class="line"><span class="comment"> * 'compress' is: -1 if compression disabled, otherwise it's the number</span></span><br><span class="line"><span class="comment"> *                of quicklistNodes to leave uncompressed at ends of quicklist.</span></span><br><span class="line"><span class="comment"> * 'fill' is the user-requested (or default) fill factor. */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">quicklist</span> {</span></span><br><span class="line">    quicklistNode *head;</span><br><span class="line">    quicklistNode *tail;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> count;        <span class="comment">/* total count of all entries in all ziplists */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> len;           <span class="comment">/* number of quicklistNodes */</span></span><br><span class="line">    <span class="keyword">int</span> fill : <span class="number">16</span>;              <span class="comment">/* fill factor for individual nodes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> compress : <span class="number">16</span>; <span class="comment">/* depth of end nodes not to compress;0=off */</span></span><br><span class="line">} quicklist;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* quicklistNode is a 32 byte struct describing a ziplist for a quicklist.</span></span><br><span class="line"><span class="comment"> * We use bit fields keep the quicklistNode at 32 bytes.</span></span><br><span class="line"><span class="comment"> * count: 16 bits, max 65536 (max zl bytes is 65k, so max count actually &lt; 32k).</span></span><br><span class="line"><span class="comment"> * encoding: 2 bits, RAW=1, LZF=2.</span></span><br><span class="line"><span class="comment"> * container: 2 bits, NONE=1, ZIPLIST=2.</span></span><br><span class="line"><span class="comment"> * recompress: 1 bit, bool, true if node is temporarry decompressed for usage.</span></span><br><span class="line"><span class="comment"> * attempted_compress: 1 bit, boolean, used for verifying during testing.</span></span><br><span class="line"><span class="comment"> * extra: 12 bits, free for future use; pads out the remainder of 32 bits */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">quicklistNode</span> {</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">quicklistNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">quicklistNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *zl;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> sz;             <span class="comment">/* ziplist size in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> count : <span class="number">16</span>;     <span class="comment">/* count of items in ziplist */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> encoding : <span class="number">2</span>;   <span class="comment">/* RAW==1 or LZF==2 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> container : <span class="number">2</span>;  <span class="comment">/* NONE==1 or ZIPLIST==2 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> recompress : <span class="number">1</span>; <span class="comment">/* was this node previous compressed? */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> attempted_compress : <span class="number">1</span>; <span class="comment">/* node can't compress; too small */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> extra : <span class="number">10</span>; <span class="comment">/* more bits to steal for future usage */</span></span><br><span class="line">} quicklistNode;</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="quicklist特性"><a class="markdownIt-Anchor" href="#quicklist特性"></a> quicklist特性</h2>
+<p>quicklist本身是一个双向无环链表，它的每一个节点都是一个ziplist。为什么这么设计呢？</p>
+<ul>
+<li>双向链表在插入节点上复杂度很低，但它的内存开销很大，每个节点的地址不连续，容易产生内存碎片。</li>
+<li>ziplist是存储在一段连续的内存上，存储效率高，但是它不利于修改操作，插入和删除数都很麻烦，复杂度高，而且其需要频繁的申请释放内存，特别是ziplist中数据较多的情况下，搬移内存数据太费时！</li>
+</ul>
+<p>可以这么理解</p>
+<p>一个quicklist内部包含有多个ziplist, 每个ziplist里面又可以包含多个数据节点,</p>
+<p>例如: [1,2,3,4,5,6,7,8,9]</p>
+<p>上面这个链表的存储如果用quicklist来存储就可以分为3个ziplist</p>
+<p>每个ziplist又有3个数据节点,[[1,2,3],[4,5,6],[7,8,9]]</p>
+<p>主要目的还是为了在时间和空间上面取得一个平衡,至于每个ziplist分多大可以自定义配置</p>
+<h1 id="字典"><a class="markdownIt-Anchor" href="#字典"></a> 字典</h1>
+<h2 id="数据结构-4"><a class="markdownIt-Anchor" href="#数据结构-4"></a> 数据结构</h2>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span> {</span></span><br><span class="line">    dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">long</span> rehashidx; <span class="comment">/* rehashing not in progress if rehashidx == -1 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> iterators; <span class="comment">/* number of iterators currently running */</span></span><br><span class="line">} dict;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* This is our hash table structure. Every dictionary has two of this as we</span></span><br><span class="line"><span class="comment"> * implement incremental rehashing, for the old to the new table. */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span> {</span></span><br><span class="line">    dictEntry **table;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">} dictht;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> {</span></span><br><span class="line">    <span class="keyword">void</span> *key;</span><br><span class="line">    <span class="keyword">union</span> {</span><br><span class="line">        <span class="keyword">void</span> *val;</span><br><span class="line">        <span class="keyword">uint64_t</span> u64;</span><br><span class="line">        <span class="keyword">int64_t</span> s64;</span><br><span class="line">        <span class="keyword">double</span> d;</span><br><span class="line">    } v;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line">} dictEntry;</span><br></pre></td></tr></tbody></table></figure>
+<p>hash 使用json格式表示大概如下</p>
+<figure class="highlight"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    dict: {</span><br><span class="line">        type: hash,</span><br><span class="line">        privadata: null,</span><br><span class="line">        ht: [{</span><br><span class="line">                size: 100,</span><br><span class="line">                used: 80,</span><br><span class="line">                sizemask: "0xff778",</span><br><span class="line">                hash: {</span><br><span class="line">                    key: "test1",</span><br><span class="line">                    value: 22,</span><br><span class="line">                    next: 34</span><br><span class="line">                }</span><br><span class="line">            },</span><br><span class="line">            {}  // rehash时候使用</span><br><span class="line">        ],</span><br><span class="line">        rehashidx: -1</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>字典是数据库的底层实现</p>
+<p>整体数据结构由dict持有2个dictht，</p>
+<p>其中一个dictht[1]在rehash时候使用，dictht[0]中用来存储数据</p>
+<p>持有一个dictEntry组成的数组，每个dictEntry保存一个键值对</p>
+<h2 id="hash过程"><a class="markdownIt-Anchor" href="#hash过程"></a> hash过程</h2>
+<p>采用hash函数对键进行哈希配合dictht的sizemask计算出来索引值</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = hash(key) &amp; sizemask</span><br></pre></td></tr></tbody></table></figure>
+<p>然后将键值对存入哈希表节点</p>
+<blockquote>
+<p>ps: 这个过程跟redis中计算键所对应的slot的方法相似</p>
+</blockquote>
+<h2 id="解决键冲突"><a class="markdownIt-Anchor" href="#解决键冲突"></a> 解决键冲突</h2>
+<p>redis使用链地址法(separate chaining)</p>
+<p>来解决键冲突,当两个键的index值相同时,会把第二个键放到第一个键的前面,查询时对这个index的哈希节点链表进行遍历</p>
+<h2 id="渐进式的rehash"><a class="markdownIt-Anchor" href="#渐进式的rehash"></a> 渐进式的rehash</h2>
+<p>当哈希表的负载因子(load factor)大于设定值时(平时为1,在BGREWRITEAOF时为5),哈希表会进行rehash操作</p>
+<p>rehash采用渐进式的方式进行执行,具体流程</p>
+<p><strong>把ht[0]里面的数据重新进行哈希计算放到ht[1],此时的哈希查询操作两个表同时提供服务,写入操作则只有ht[1]提供,这样ht[0]处于只减不增的状态,最终当ht[0]里面的所有数据都被转移到ht[1]时,rehashidx被设为-1,表明rehash结束,删除ht[0],并将ht[1]设为ht[0],同时重新分配新的ht[1]</strong></p>
+<blockquote>
+<p>ps:负载因子 = used /size;</p>
+</blockquote>
+<h1 id="跳跃表"><a class="markdownIt-Anchor" href="#跳跃表"></a> 跳跃表</h1>
+<h2 id="数据结构-5"><a class="markdownIt-Anchor" href="#数据结构-5"></a> 数据结构</h2>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//跳跃表</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplist</span>{</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">header</span>,*<span class="title">tail</span>;</span><span class="comment">//头结点和尾节点</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;<span class="comment">//表中节点数量</span></span><br><span class="line">    <span class="keyword">int</span> level;<span class="comment">//表中除头节点外层数最大的节点</span></span><br><span class="line">} zskiplist;</span><br><span class="line"></span><br><span class="line"><span class="comment">//跳跃表节点</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> {</span></span><br><span class="line">    <span class="comment">//层</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplevel</span>{</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span><span class="comment">//前进指针</span></span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> span;<span class="comment">//跨度</span></span><br><span class="line">    } level[];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backword</span>;</span><span class="comment">//后退指针</span></span><br><span class="line">    <span class="keyword">double</span> score;<span class="comment">//分值</span></span><br><span class="line">    robj *obj;</span><br><span class="line">} zskiplistNode;</span><br></pre></td></tr></tbody></table></figure>
+<p>跳跃表json形式:</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">{</span><br><span class="line">    zskiplist: {</span><br><span class="line">        header: {</span><br><span class="line">            obj: <span class="string">"aa"</span>,</span><br><span class="line">            score: <span class="number">45</span>,</span><br><span class="line">            backforward: null,</span><br><span class="line">            zskiplevel: [{</span><br><span class="line">                forward: null,</span><br><span class="line">                span: <span class="number">9</span></span><br><span class="line">            },{</span><br><span class="line">                forward: *p,</span><br><span class="line">                span: <span class="number">8</span></span><br><span class="line">            }]</span><br><span class="line">        },</span><br><span class="line">        tail: {</span><br><span class="line">            obj: <span class="string">"aa"</span>,</span><br><span class="line">            score: <span class="number">45</span>,</span><br><span class="line">            backforward: null,</span><br><span class="line">            zskiplevel: [{</span><br><span class="line">                forward: null,</span><br><span class="line">                span: <span class="number">9</span></span><br><span class="line">            }]</span><br><span class="line">        },</span><br><span class="line">        length: <span class="number">100</span>,</span><br><span class="line">        level: <span class="number">32</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>跳跃表图示:</p>
+<p><img data-src="https://i.loli.net/2020/05/09/K4POMmsa7duy3Nf.jpg" alt="IMG_0256.jpeg"></p>
+<p>跳跃表是有序集合的底层实现之一</p>
+<p>跳跃表中的头结点不计算在length长度之内,跳跃表的节点排序按照分值从小到大排序</p>
+<p>每次创建新节点的时候,redis会根据幂次定律随机生成一个1-32的层数作为level数组的大小</p>
+<p>每个节点都有指向表尾方向的前进指针和之前表头方向的后退指针</p>
+<p>这两个指针可以让程序方便的遍历所有节点,层的跨度用于记录两点之间的距离</p>
+<p>跨度可以用来计算rank值.节点的分值是一个double值</p>
+<p>节点的对象是一个指针,指向一个保存着sds字符串的字符串对象(下一节讲redis对象)</p>
+<p>跳跃表通过每个<code>zskiplistNode</code>来保存每个元素的信息，元素的键就是obj的指针指向的对象，对应的分值就是score字段</p>
+<h1 id="整数集合"><a class="markdownIt-Anchor" href="#整数集合"></a> 整数集合</h1>
+<h2 id="数据结构-6"><a class="markdownIt-Anchor" href="#数据结构-6"></a> 数据结构</h2>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> {</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;</span><br><span class="line">    <span class="keyword">uint32_t</span> length;</span><br><span class="line">    <span class="keyword">int8_t</span> contents[];</span><br><span class="line">} intset;</span><br></pre></td></tr></tbody></table></figure>
+<p>顾名思义整数集合是用来保存整数值的抽象数据结构</p>
+<p>集合中不会出现重复元素</p>
+<p>contents数组中保存的整数值有小到大排列</p>
+<p>length等于contents的长度</p>
+<p>虽然contents的定义是int8_t 但实际上contents的值类型由encoding决定</p>
+<h2 id="升级"><a class="markdownIt-Anchor" href="#升级"></a> 升级</h2>
+<p>当一个新元素超过原来整数集合encoding定义的值的类型时,会进行升级</p>
+<p>升级结果会使集合的encoding变成所有数组中元素的值最大的数据类型,并且不支持降级</p>
+<p>例如:有一个整数集合[1,2,3],本身的编码为<code>int8</code>,现在增加一个300的数字进该集合</p>
+<p>会导致集合的编码升级为<code>int16</code>,这个时候列表的大小由8x3=24 变为 16x4=64</p>
+<p>即便<code>int8</code>可以存储前三个值,但是为了简单起见,仍然会为集合中每一个元素分配同样的空间</p>
+<h1 id="压缩列表ziplist"><a class="markdownIt-Anchor" href="#压缩列表ziplist"></a> 压缩列表(Ziplist)</h1>
+<p>压缩列表被用作列表键和哈希键的底层实现</p>
+<p>压缩列表属于特殊的结构,是一种数据存储的方式,目的是为了节约内存,是一种采用特殊编码的连续内存块组成的顺序型(sequential)数据结构.</p>
+<p>大致结构如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">zlbytes</th>
+<th style="text-align:left">zltail</th>
+<th style="text-align:left">zllen</th>
+<th style="text-align:left">entry1</th>
+<th style="text-align:left">entry2</th>
+<th style="text-align:left">…</th>
+<th style="text-align:left">zlend</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">总长度</td>
+<td style="text-align:left">偏移量</td>
+<td style="text-align:left">节点数量</td>
+<td style="text-align:left">节点1</td>
+<td style="text-align:left">节点2</td>
+<td style="text-align:left">…</td>
+<td style="text-align:left">结束</td>
+</tr>
+</tbody>
+</table>
+<p>每个压缩列表节点由如下三部分组成</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">previous_entry_length</th>
+<th style="text-align:left">encoding</th>
+<th style="text-align:left">content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">前一节点的长度</td>
+<td style="text-align:left">记录content的类型和长度</td>
+<td style="text-align:left">节点的值</td>
+</tr>
+</tbody>
+</table>
+<p>一个ziplist示例:</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    zlbytes:<span class="string">"0x50"</span>,</span><br><span class="line">    zltail:<span class="string">"0x3c"</span>,</span><br><span class="line">    zllen:<span class="string">"0x3"</span>,</span><br><span class="line">    {</span><br><span class="line">        previous_entry_length:<span class="string">"0x05"</span>,</span><br><span class="line">        encoding:<span class="string">"00001011"</span>,</span><br><span class="line">        content:<span class="string">"hello word"</span></span><br><span class="line">    },{</span><br><span class="line">        previous_entry_length:<span class="string">"0xF"</span>,</span><br><span class="line">        encoding:<span class="string">"11000000"</span>,</span><br><span class="line">        content:<span class="string">"10086"</span></span><br><span class="line">    },</span><br><span class="line">    zlend:<span class="string">"0xff"</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>如果前一个节点长度小于254字节,previous_entry_length会使用1字节空间保存这个长度,<br>
+如果大于254字节,将使用5字节长度保存这个值,这个机制会引起"连锁更新"</p>
+<h2 id="ziplist连锁更新的问题"><a class="markdownIt-Anchor" href="#ziplist连锁更新的问题"></a> ziplist连锁更新的问题</h2>
+<p>假设现有连续的三个压缩列表节点l1,l2,l3,长度分别为 253,253,253</p>
+<p>现在往第一个节点前添加一个长度超过254的节点,这个时候l1要给previous_entry_length分配5个字节来存储长度,所以列表本身长度会变为257,这将导致l2也需要5字节存储l1的长度,l3也会产生同样的变化,这样由一个列表操作引起的一系列更新操作成为连锁更新</p>
+<p>连锁更新的发生有可能会严重影响性能，所以要尽量避免</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2017-01-01-comic-book-2017/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017-01-01-comic-book-2017/" class="post-title-link" itemprop="url">2017-追番-看书记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2017-01-01T00:00:00+08:00">2017-01-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">生活记录</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2017-01-01-comic-book-2017/" class="post-meta-item leancloud_visitors" data-flag-title="2017-追番-看书记录" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2017-01-01-comic-book-2017/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017-01-01-comic-book-2017/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="record"><a class="markdownIt-Anchor" href="#record"></a> Record</h1>
+<p>想法来自 <a href="http://blog.sollrei.me" target="_blank" rel="noopener">@Sollrei</a></p>
+<h2 id="2017"><a class="markdownIt-Anchor" href="#2017"></a> 2017</h2>
+<h3 id="2月"><a class="markdownIt-Anchor" href="#2月"></a> 2月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 东皇战影</li>
+</ul>
+<p>图书:</p>
+<ul>
+<li>[x] 三体3:死神永生</li>
+<li>[x] 魔鬼搭讪学</li>
+<li>[x] 魔鬼约会学</li>
+<li>[x] 谁动了我的奶酪</li>
+</ul>
+<p>电影:</p>
+<ul>
+<li>[x] 假如爱有天意</li>
+</ul>
+<h3 id="3月"><a class="markdownIt-Anchor" href="#3月"></a> 3月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 人渣的本愿</li>
+<li>[x] 从前有座灵剑山</li>
+<li>[x] 斗破苍穹</li>
+<li>[x] 小林家的龙女仆</li>
+</ul>
+<p>图书:</p>
+<ul>
+<li>[x] 解忧杂货铺</li>
+<li>[x] 嫌疑人X的献身</li>
+<li>[x] 图解博弈论</li>
+<li>[x] 菊与刀</li>
+<li>[x] 极简生活:简而美的活着</li>
+</ul>
+<h3 id="4月"><a class="markdownIt-Anchor" href="#4月"></a> 4月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 画江湖之不良人</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] 人类简史</li>
+<li>[x] 人民的名义</li>
+<li>[x] 好好说话</li>
+</ul>
+<p>其他:</p>
+<ul>
+<li>[ ] nice chord</li>
+</ul>
+<h3 id="5月"><a class="markdownIt-Anchor" href="#5月"></a> 5月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 龙的牙医</li>
+<li>[x] 少年锦衣卫</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] 走进搜索引擎</li>
+<li>[x] 万历十五年</li>
+<li>[x] 秘密</li>
+<li>[x] 精进:如何做一个厉害的人</li>
+<li>[x] Go Web编程</li>
+</ul>
+<h3 id="6月"><a class="markdownIt-Anchor" href="#6月"></a> 6月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 进击的巨人第二季</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] redis设计与实现</li>
+</ul>
+<h3 id="7月"><a class="markdownIt-Anchor" href="#7月"></a> 7月</h3>
+<p>书:</p>
+<ul>
+<li>[x] 枪炮,病菌与钢铁</li>
+</ul>
+<h3 id="8月"><a class="markdownIt-Anchor" href="#8月"></a> 8月</h3>
+<p>书:</p>
+<ul>
+<li>[x] 时间的形状</li>
+<li>[x] C++面向对象程序设计</li>
+<li>[x] 恶意</li>
+<li>[x] HTTP权威指南</li>
+</ul>
+<h3 id="9月"><a class="markdownIt-Anchor" href="#9月"></a> 9月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] FATE/Apocrypha</li>
+<li>[x] 画江湖之杯莫停</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] 人生的智慧</li>
+</ul>
+<h3 id="10月"><a class="markdownIt-Anchor" href="#10月"></a> 10月</h3>
+<p>书:</p>
+<ul>
+<li>[x] 红楼梦(前80回原版,后四十回不符原意,不看了)</li>
+<li>[x] 请停止无效努力:如何用正确的方法快速进阶</li>
+</ul>
+<h3 id="11月"><a class="markdownIt-Anchor" href="#11月"></a> 11月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 魆妖纪</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] Go语言编程</li>
+<li>[x] 好好说话</li>
+<li>[x] redis实战</li>
+</ul>
+<h3 id="12月"><a class="markdownIt-Anchor" href="#12月"></a> 12月</h3>
+<p>番剧:</p>
+<ul>
+<li>[x] 宝石之国</li>
+</ul>
+<p>书:</p>
+<ul>
+<li>[x] 你要做的,只不过是发现生活的美</li>
+<li>[x] Java从初学到精通</li>
+<li>[x] 数据结构与算法</li>
+<li>[x] 乌合之众:大众心理研究</li>
+<li>[x] 精灵宝钻</li>
+</ul>
+<p>合计:</p>
+<p>图书: 33本<br>
+番剧: 13部</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-07-07-poem-jianyingfogu/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-07-07-poem-jianyingfogu/" class="post-title-link" itemprop="url">谏迎佛骨表--韩愈</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-07-07 00:00:00" itemprop="dateCreated datePublished" datetime="2016-07-07T00:00:00+08:00">2016-07-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E5%8C%96%E8%89%BA%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">文化艺术</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-07-07-poem-jianyingfogu/" class="post-meta-item leancloud_visitors" data-flag-title="谏迎佛骨表--韩愈" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2016-07-07-poem-jianyingfogu/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016-07-07-poem-jianyingfogu/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          唐代的一次佛儒冲突事件,看当今绿化大势有感
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-06-08-idea-programing-language/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-06-08-idea-programing-language/" class="post-title-link" itemprop="url">关于编程语言的一些看法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-06-08 00:00:00" itemprop="dateCreated datePublished" datetime="2016-06-08T00:00:00+08:00">2016-06-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">计算机编程</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-06-08-idea-programing-language/" class="post-meta-item leancloud_visitors" data-flag-title="关于编程语言的一些看法" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2016-06-08-idea-programing-language/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016-06-08-idea-programing-language/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>我希望通过描述我自己对各种编程语言的看法，能帮助到对编程有兴趣的或者是刚工作不久的同学选择适合自己的编程语言。</p>
+<h2 id="我对各种编程语言的看法"><a class="markdownIt-Anchor" href="#我对各种编程语言的看法"></a> 我对各种编程语言的看法</h2>
+<p>很多语言都是在特定时期，在特定领域，为了解决特定问题而出现的。所以如果我们能了解各种编程语言的特性和出现的原因，选择语言就没有那么困难。先看一个Tiobe编程语言的流行趋势（2018年11月）</p>
+<p><img data-src="https://i.loli.net/2020/05/09/NfK3Vc9jqiHy7OE.png" alt="20181108-11394.png"></p>
+<p>我简单列举一下我熟悉的上面出现的几个语言的优缺点</p>
+<ul>
+<li>c/c++</li>
+</ul>
+<p>优点 --&gt; 性能强，资源占用低，足够底层，满足你对代码的精确控制能力</p>
+<p>缺点 --&gt; 开发效率太低了，像c语言本身标准库带有的函数太少，c++的stl倒是工具比较多，但是包管理工具什么的还是没有比较标准的。其实很多时候项目中工程构建方面的成本往往要超过语言本身带来的成本。</p>
+<p>建议 --&gt; 嵌入式，操作系统，数据库等领域的开发者，普通开发者拿来做算法研究还是比较合适的，不建议个人用此类语言来做私人项目。不过还是建议个人能拥有该语言的代码阅读能力， 便于精研技术。</p>
+<ul>
+<li>Rust</li>
+</ul>
+<p>优点 --&gt; rust某种程度上正好补足了c/c++的部分不足，比如标准库比较丰富，内存安全，性能没有太多损失，包管理和工具链还比较现代化。</p>
+<p>缺点 --&gt; 上手门槛高，语言限制太多，不统一，unsafe下面的rust失去了诸多优点</p>
+<p>建议 --&gt; 部分原来的c++的领域很适合用rust重构，包括数据库和存储系统，消息中间件，操作系统等。而且对底层原理有兴趣的其他开发者也可以借助完善的工具链来构建个人项目，如果你想做一个偏低层的项目的话。</p>
+<ul>
+<li>Java</li>
+</ul>
+<p>优点 --&gt; 工程化好，生态强大。适合企业</p>
+<p>缺点 --&gt; 太中庸了，啥都能干，干啥都不够有优势</p>
+<p>建议 --&gt; 企业项目，个人做算法研究。</p>
+<ul>
+<li>Go</li>
+</ul>
+<p>优点 --&gt; 并发处理简单，工程化方便</p>
+<p>缺点 --&gt; 简约到有点简陋， 语言本身缺少太多东西</p>
+<p>建议 --&gt; 原PHP/Java开发者， 企业项目。同样适合个人做项目使用。</p>
+<ul>
+<li>Python</li>
+</ul>
+<p>优点 --&gt; 简单，开发效率高。</p>
+<p>缺点 --&gt; 不适合企业拿来做生产项目</p>
+<p>建议 --&gt; 适合编程初学者。快速搭建项目demo。</p>
+<ul>
+<li>Scala</li>
+</ul>
+<p>优点 --&gt; 表达能力强，函数式 + 面向对象</p>
+<p>缺点 --&gt; 受JVM限制做了很多妥协，想深入太过复杂，成也JVM，败也JVM</p>
+<p>建议 --&gt; 数据分析和处理工作者。也适合作为伪代码想别人描述算法思路</p>
+<ul>
+<li>scheme</li>
+</ul>
+<p>建议 --&gt; 对函数式编程和编程语言设计有兴趣的人，适合用来学习</p>
+<ul>
+<li>PHP</li>
+</ul>
+<p>建议 --&gt; 适合用来做与用户交互的web页面工作</p>
+<ul>
+<li>javascript</li>
+</ul>
+<p>建议 --&gt; 非前端工作者也建议学习一下， 语法简单，用途广泛</p>
+<h3 id="编程语言的江湖和流派"><a class="markdownIt-Anchor" href="#编程语言的江湖和流派"></a> 编程语言的江湖和流派</h3>
+<p>c/c++/Java这种就是传统的武林豪门少林/武当这种，或许这些门派不是最强的，但一定是不会太差，处于平均水准以上。</p>
+<p>虽然《九阴真经》,《北冥神功》这种级别的绝世武功也大多不是出于少林武当，但是,这种绝世武功不是适合所有人的，高收益往往伴随着高风险。所以还是建议大家多看,多学,增广见闻，见的多了,看得多了,了解的多了,最后根据自己的需要去选择,不要一开始就去选择拒绝</p>
+<blockquote>
+<p>当你拒绝一个事物,你就失去了向他学习的机会</p>
+</blockquote>
+<h2 id="一些建议"><a class="markdownIt-Anchor" href="#一些建议"></a> 一些建议</h2>
+<p>首先建议大家初期尽量不要选择小众的冷门的编程语言。等以后有比较丰富的经验和认知以后在根据自己的需求去选择小众的语言。</p>
+<p>同时我自己是建议编程初学者最好学习两个语言， 一个编译型 + 一个脚本型。这样子可以兼具功能性和便捷性。</p>
+<p>初学者建议  go / java（编译型） + python / js（脚本型） 这样的搭配</p>
+<p>我个人大概是这样的学习路线:</p>
+<p>学校时期: C++, Java , PHP, JS, 都是学校时期学的, 当时就懂了个基本概念, 啥都没学会 。</p>
+<p>刚工作时: 深入学习了C, js, PHP 早期工作需要 。</p>
+<p>工作2年以后: 因为工作关系接触到了Python， Go，Java，Scala。再后来自己希望对编程语言有更深入的认识，于是学习了Scheme和Rust。未来的我可能会花更多时间在Rust和Scala上面</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-06-01-threejs-demo/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-06-01-threejs-demo/" class="post-title-link" itemprop="url">The First Three.js Project</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-06-01 18:51:00" itemprop="dateCreated datePublished" datetime="2016-06-01T18:51:00+08:00">2016-06-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">计算机编程</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-06-01-threejs-demo/" class="post-meta-item leancloud_visitors" data-flag-title="The First Three.js Project" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2016-06-01-threejs-demo/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016-06-01-threejs-demo/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          这里是一些简单的three.js原理说明和演示.
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-05-12-The-Chrysanthemum-and-the-Sword/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-05-12-The-Chrysanthemum-and-the-Sword/" class="post-title-link" itemprop="url">菊与刀</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-05-12 00:00:00" itemprop="dateCreated datePublished" datetime="2016-05-12T00:00:00+08:00">2016-05-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">阅读记录</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-05-12-The-Chrysanthemum-and-the-Sword/" class="post-meta-item leancloud_visitors" data-flag-title="菊与刀" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2016-05-12-The-Chrysanthemum-and-the-Sword/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016-05-12-The-Chrysanthemum-and-the-Sword/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="记"><a class="markdownIt-Anchor" href="#记"></a> 记</h1>
+<p>看&lt;&lt;菊与刀&gt;&gt;的时候,我总有一种感觉, 书中所谓的对美国人来说日本人一些不能理解的地方,到底哪里不能理解了,难道不应该是这样的吗?</p>
+<ol>
+<li>崇尚等级与秩序,不同等级享受不同的权利,承担对应的义务</li>
+<li>崇尚统一与纯粹,排斥多元化的世界和文化</li>
+<li>有恩报恩,有仇报仇</li>
+<li>忠,孝为先</li>
+<li>自己怎么样受苦都行,但是不应该给别人添麻烦</li>
+<li>自尊,自立,自强</li>
+<li>相信丛林法则,弱肉强食</li>
+</ol>
+<h2 id="念"><a class="markdownIt-Anchor" href="#念"></a> 念</h2>
+<p>后来,再度回想起来,应该是我被日本文化影响太深了,所以没有发觉其中的不合理之处</p>
+<p>但是,究竟是从什么时候开始的呢,从什么时候开始受到这种影响的呢?</p>
+<h2 id="思"><a class="markdownIt-Anchor" href="#思"></a> 思</h2>
+<p>仔细分析,感觉应该是从小学就开始了</p>
+<p>小学时期,与家里联系还算紧密,但是当时受动漫影响,已经开始受到日本文化影响了,只是当时这种影响还没有显现出来</p>
+<ol>
+<li>
+<p>初中以后,与家里缺少联系和沟通,学习和受教育途径主要通过学校,社会和网络</p>
+</li>
+<li>
+<p>本人比较聪明,接受新东西比较快,小的时候就能敏感的感受到日本动漫和电影电视所传达的价值观</p>
+</li>
+<li>
+<p>受传统思想影响,比较排斥美国那种文化,所以初中以后接触的国外的文化作品,以日本的居多</p>
+</li>
+</ol>
+<p>以上几点可能就是我形成现在这种性格和价值观的原因,但是,现在问题是要怎么改呢?</p>
+<p>多看书?多分析?</p>
+<h2 id="为"><a class="markdownIt-Anchor" href="#为"></a> 为</h2>
+<ol>
+<li>多读书, 尝试接受多元的文化和观念</li>
+<li>多做,多体验,多想,多比较</li>
+</ol>
+<h2 id="の"><a class="markdownIt-Anchor" href="#の"></a> の</h2>
+<p>现在发现这个世界的本质就是<code>混乱</code>,<code>无序</code>. 强行去求得统一和规范很多时候是一种偏执</p>
+<p>偏执太过就入魔了</p>
+<p>世事本就如此,有些人坚持就被认为是偏执,有些人坚持就认为是有毅力,这种两面解释我接受</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-03-03-calculate-pi/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-03-03-calculate-pi/" class="post-title-link" itemprop="url">如何计算圆周率π和自然常数e</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-03-03 00:00:00" itemprop="dateCreated datePublished" datetime="2016-03-03T00:00:00+08:00">2016-03-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">数学</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-03-03-calculate-pi/" class="post-meta-item leancloud_visitors" data-flag-title="如何计算圆周率π和自然常数e" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <script crossorigin="anonymous" integrity="sha384-P75AfVrDnfsoUfx7dDfQM9ivlDhxgE+g4kqO/U7lyXtJwJdpZozbt8L5ywD2PDA0" src="https://lib.baomitu.com/vue/2.5.21/vue.min.js"></script>
+<h1 id="如何计算π和e的值"><a class="markdownIt-Anchor" href="#如何计算π和e的值"></a> 如何计算π和e的值</h1>
+<p>从小学就知道 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>π</mi><mo>=</mo><mn>3.14159265358979</mn><mo>⋯</mo></mrow><annotation encoding="application/x-tex">\pi=3.14159265358979\cdots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">.</span><span class="mord">1</span><span class="mord">4</span><span class="mord">1</span><span class="mord">5</span><span class="mord">9</span><span class="mord">2</span><span class="mord">6</span><span class="mord">5</span><span class="mord">3</span><span class="mord">5</span><span class="mord">8</span><span class="mord">9</span><span class="mord">7</span><span class="mord">9</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">⋯</span></span></span></span></p>
+<p>但是一直不知道如何计算这个值。之前听说过祖冲之使用的是割圆法，但是我不会(T_T，流下了没有技术的泪水)，也就没办法自己亲自体验一下这个计算过程，好在后来我发现了别的方法可以计算出圆周率的数值</p>
+<ul>
+<li>数学法</li>
+</ul>
+<p>后来偶尔看到数学上有一种方法</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>π</mi><mo>=</mo><mn>4</mn><mo>⋅</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>−</mo><mfrac><mn>1</mn><mn>7</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>9</mn></mfrac><mo>…</mo><mo>+</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi=4\cdot(1-\cfrac{1}{3}+\cfrac{1}{5}-\cfrac{1}{7}+\cfrac{1}{9}\ldots+\cfrac{1}{n})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">π</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">7</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">9</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>使用这种方法只要n足够大, 精度就能提高, 所以我就想用程序来尝试计算一下pi的值, 毕竟计算机比人做这种事情合适的多</p>
+<ul>
+<li>蒙特卡洛模拟</li>
+</ul>
+<p>后来又想到可以采用蒙特卡洛采样的方法也可以计算出来 π</p>
+<p>计算方法如下, 我们随机生成 m 个 二维坐标&lt;x, y&gt;, 并且满足  <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>≤</mo><mi>x</mi><mo>&lt;</mo><mn>1</mn><mo separator="true">,</mo><mn>0</mn><mo>≤</mo><mi>y</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0\leq x &lt; 1, 0 \leq y &lt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.78041em;vertical-align:-0.13597em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>。然后使用欧拉距离统计在圆内的坐标的数目 n ， 再除以生成的所有坐标的数目 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mstyle displaystyle="true" scriptlevel="0"><mfrac><mi>n</mi><mi>m</mi></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\cfrac{n}{m}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">m</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span>。由于我们的采样范围只覆盖了<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mstyle displaystyle="true" scriptlevel="0"><mfrac><mn>1</mn><mn>4</mn></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\cfrac{1}{4}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span>的圆， 所以结果需要乘上4 就是圆周率的结果了，我们还可以去除随机出来的重复数字或者通过人为限定随机精度来加快计算</p>
+<h2 id="在线计算π"><a class="markdownIt-Anchor" href="#在线计算π"></a> 在线计算π</h2>
+<div id="cal-pi">
+    <p>精度:<input v-model="input" type="number" value=""></p><button class="btn btn-info" v-on:click="calculate">Calculate</button>
+    <p>结果: <input v-model="result" readonly="true"> </p>
+</div>
+<h1 id="如何计算自然常数"><a class="markdownIt-Anchor" href="#如何计算自然常数"></a> 如何计算自然常数</h1>
+<p>自然常数也一直是我不理解的一个数字</p>
+<p>之前听说过一个类比,讲的挺好的,但当时并没有去仔细考虑过计算的方法<a href="http://www.ruanyifeng.com/blog/2011/07/mathematical_constant_e.html" target="_blank" rel="noopener">数学常数e的含义</a></p>
+<h2 id="自然常数的意义"><a class="markdownIt-Anchor" href="#自然常数的意义"></a> 自然常数的意义</h2>
+<blockquote>
+<p>自然常数代表单位时间内,数量翻倍增长的极限</p>
+</blockquote>
+<p>比如: 你有1万块钱, 假如存到银行, 1年到期的复利是100%, 那你到明年最多可以拿到多少钱 , 答案是: 2.71828万</p>
+<p>这里的关键在于如何计算利息:</p>
+<p>如果按照每半年计息, 1年后等于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mn>100</mn><mi mathvariant="normal">%</mi></mrow><mn>2</mn></mfrac></mstyle><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>⋅</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mn>100</mn><mi mathvariant="normal">%</mi></mrow><mn>2</mn></mfrac></mstyle><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><mn>2.25</mn></mrow><annotation encoding="application/x-tex">(1+(\cfrac{100\%}{2}))\cdot(1+(\cfrac{100\%}{2}))=2.25</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose">)</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose">)</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">.</span><span class="mord">2</span><span class="mord">5</span></span></span></span> 万</p>
+<p>如果按照每3个月计息一次: <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mn>100</mn><mi mathvariant="normal">%</mi></mrow><mn>4</mn></mfrac></mstyle><msup><mo stretchy="false">)</mo><mn>4</mn></msup><mo>=</mo><mn>2.4414</mn></mrow><annotation encoding="application/x-tex">1+(\cfrac{100\%}{4})^4=2.4414</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">.</span><span class="mord">4</span><span class="mord">4</span><span class="mord">1</span><span class="mord">4</span></span></span></span>万</p>
+<p>如果按照每1个月计算一次 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mn>100</mn><mi mathvariant="normal">%</mi></mrow><mn>12</mn></mfrac></mstyle><msup><mo stretchy="false">)</mo><mn>12</mn></msup><mo>=</mo><mn>2.6034</mn></mrow><annotation encoding="application/x-tex">1+(\cfrac{100\%}{12})^{12}=2.6034</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">.</span><span class="mord">6</span><span class="mord">0</span><span class="mord">3</span><span class="mord">4</span></span></span></span>万</p>
+<p>如果再往下, 每天, 每分钟, 每秒, 最终得到的就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>lim</mi><mo>⁡</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mo stretchy="false">(</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mn>100</mn><mi mathvariant="normal">%</mi></mrow><mi>n</mi></mfrac></mstyle><msup><mo stretchy="false">)</mo><mi>n</mi></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\lim(1+(\cfrac{100\%}{n})^n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lim</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>的极限就是 2.71828…</p>
+<h2 id="如何计算e"><a class="markdownIt-Anchor" href="#如何计算e"></a> 如何计算e</h2>
+<p>后来也找到一种数学方法可以计算，计算方法如下</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo stretchy="false">!</mo></mrow></mfrac><mo>+</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mo stretchy="false">!</mo></mrow></mfrac><mo>+</mo><mfrac><mn>1</mn><mrow><mn>3</mn><mo stretchy="false">!</mo></mrow></mfrac><mo>+</mo><mfrac><mn>1</mn><mrow><mn>4</mn><mo stretchy="false">!</mo></mrow></mfrac><mo>…</mo><mo>+</mo><mfrac><mn>1</mn><mrow><mi>n</mi><mo stretchy="false">!</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">e=\cfrac{1}{1!}+\cfrac{1}{2!}+\cfrac{1}{3!}+\cfrac{1}{4!}\ldots+\cfrac{1}{n!}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">n</span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span></span></p>
+<p>于是一时好奇就使用程序实现了一下,如下:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Calculator</span>:</span></span><br><span class="line"></span><br><span class="line">    num = <span class="number">10000000</span></span><br><span class="line">    a = <span class="number">1</span></span><br><span class="line">    res = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getPi</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">1</span>, self.num):</span><br><span class="line">            m = <span class="number">1</span> / (<span class="number">1</span> + <span class="number">2</span> * n)</span><br><span class="line">            <span class="keyword">if</span> n % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">                self.a = self.a + m</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.a = self.a - m</span><br><span class="line">        print(self.a * <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getE</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">0</span>, self.num):</span><br><span class="line">            self.res = self.res + <span class="number">1</span> / math.factorial(n)</span><br><span class="line">        print(self.res)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = Calculator()</span><br><span class="line">c.getPi()</span><br><span class="line">c.getE()</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="在线演示"><a class="markdownIt-Anchor" href="#在线演示"></a> 在线演示</h2>
+<p>计算E</p>
+<div id="cal-e">
+    <p>精度:<input type="number" v-model="input" value=""></p><button class="btn btn-info" v-on:click="calculate">Calculate</button>
+    <p>结果: <input v-model="result" readonly="true"> </p>   
+</div>
+<h2 id="计算年龄"><a class="markdownIt-Anchor" href="#计算年龄"></a> 计算年龄</h2>
+<p>计算你当前的年龄, 精确值, 让你清晰感受时间的流逝</p>
+<div id="cal-age">
+    <p>生日:<input type="text" v-model="input" value="" placeholder="2017-01-01"></p><button class="btn btn-info" v-on:click="calculate">Calculate</button>
+    <p>结果: <input v-model="result" readonly="true"> </p>
+</div>
+<script>
+var arr = [{
+    el:"#cal-e",
+    data:{
+        result:0,
+        input:100,
+        msg:"请输入一个精度值"
+    },
+    methods:{
+        calculate:function(){
+            if (!this.input) {
+                alert(this.msg);
+            }
+            var n = this.input;
+            var s = 0;
+            for (var i = 0; i <= n; i++) {
+                s = s + (1 / this.factorial(i));
+            }
+            this.result = s;
+        },
+        factorial: function(n) {
+            if (n <= 1) return 1;
+            return n * this.factorial(n - 1);
+        }
+    }
+},{
+    el:"#cal-age",
+    data:{
+        result:0,
+        input:'2000-01-01',
+        msg:"请输入一个出生日期",
+        n:0
+    },
+    methods:{
+        calculate:function(){
+            if (!this.input) {
+                alert(this.msg);
+            }
+            this.n = 0;
+            this.interval = setInterval(this.setAge,100);
+        },
+        setAge:function (){
+            this.n += 1;
+            var b = this.input;
+            var now = new Date().valueOf();
+            var born = new Date(b).valueOf();
+            var age = (now - born) / (365 * 24 * 3600 * 1000);
+            this.result = age;
+            this.stop()
+        },
+        stop:function() {
+            if (this.n > 50) clearInterval(this.interval)
+        }
+    }
+},{
+    el:"#cal-pi",
+    data:{
+        result:0,
+        input:100,
+        msg:"请输入一个精度值"
+    },
+    methods:{
+        calculate:function(){
+            if (!this.input) {
+                alert(this.msg);
+            }
+            var n = this.input * 100;
+            var s = 1;
+            for (var i = 1; i <= n; i++) {
+                var m = 1 / (1 + 2 * i);
+                if (i % 2 == 0) {
+                    s += m;
+                } else {
+                    s -= m;
+                }
+            }
+            this.result = s * 4;
+        }
+    }
+}];
+for (e in arr) {
+    new Vue(arr[e]);
+}
+</script>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2016-08-03-camanjs-demo/">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="哎呀是太阳嘛">
+      <meta itemprop="description" content="君子生非异也, 善假于物也">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Leriou's Tavern">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016-08-03-camanjs-demo/" class="post-title-link" itemprop="url">Caman.js的图片处理演示</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2016-01-05 00:00:00" itemprop="dateCreated datePublished" datetime="2016-01-05T00:00:00+08:00">2016-01-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">计算机编程</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2016-08-03-camanjs-demo/" class="post-meta-item leancloud_visitors" data-flag-title="Caman.js的图片处理演示" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2016-08-03-camanjs-demo/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016-08-03-camanjs-demo/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-P75AfVrDnfsoUfx7dDfQM9ivlDhxgE+g4kqO/U7lyXtJwJdpZozbt8L5ywD2PDA0" src="https://lib.baomitu.com/vue/2.5.21/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/camanjs/4.1.2/caman.full.min.js"></script>
+<h1 id="camanjs图形处理库"><a class="markdownIt-Anchor" href="#camanjs图形处理库"></a> CamanJS图形处理库</h1>
+<p>之前我曾想过自己做一个简单的图片处理库自己用,后来做了几个基本效果以后发现了成本太高</p>
+<p>然后就放弃了,去找了个现成的图形库:CamanJS</p>
+<p>发现用起来也不错,也就没有再做下去</p>
+<h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p><a href="http://camanjs.com/" target="_blank" rel="noopener">CamanJS</a>是一个图片处理类库,能十分方便的处理图片，本身已经提供了许多效果和操作，使用起来也十分方便</p>
+<p>项目地址：<a href="https://github.com/meltingice/CamanJS/" target="_blank" rel="noopener">https://github.com/meltingice/CamanJS/</a></p>
+<h2 id="简单使用"><a class="markdownIt-Anchor" href="#简单使用"></a> 简单使用</h2>
+<p>在头文件中引入文件<a href="//cdn.bootcss.com/camanjs/4.1.2/caman.full.min.js" target="_blank" rel="noopener">//cdn.bootcss.com/camanjs/4.1.2/caman.full.min.js</a></p>
+<p>然后就可以直接使用内置的函数和效果了</p>
+<p>例如：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Caman(<span class="string">"#image"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{</span><br><span class="line">    <span class="keyword">this</span>.stackBlur(<span class="number">5</span>).render()  <span class="comment">//模糊处理，模糊半径5像素</span></span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="测试工具"><a class="markdownIt-Anchor" href="#测试工具"></a> 测试工具</h2>
+<p><button class="btn btn-info" id="reset">RESET</button>(尽量使用chrome浏览器,请等待网页加载完毕)</p>
+<div>
+    <div id="stage">
+        <img id="image" data-src="https://i.loli.net/2020/05/09/1LzfsPa7U6D3oWx.png" style="float: auto">
+    </div>
+</div>
+<h1 id="预置效果"><a class="markdownIt-Anchor" href="#预置效果"></a> 预置效果</h1>
+<p><code>Caman</code>内置了一批现成的图片效果，使用起来非常简单<br>
+<code>this.revert()</code>用来重置图片效果,保证各个效果不互相影响<br>
+<code>this.lomo()</code>将lomo效果用到图片上<br>
+<code>this.render()</code>渲染图片</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Caman(<span class="string">"#image"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{</span><br><span class="line">    <span class="keyword">this</span>.revert();</span><br><span class="line">    <span class="keyword">this</span>.lomo();</span><br><span class="line">    <span class="keyword">this</span>.render();</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p>执行<code>love</code>效果: <button class="btn btn-info" onclick="javascript:love_render()">RUN LOVE</button></p>
+<p>其他预置效果还有</p>
+<p><code>lomo</code>,<code>vintage</code>,<code>clarity</code>,<code>sinCity</code>,<code>sunrise</code>,<code>crossProcess</code>,<code>orangePeel</code>,<code>grungy</code>,<code>jarques</code>,<br>
+<code>pinhole</code>,<code>oldBoot</code>,<code>glowingSun</code>,<code>hazyDays</code>,<code>herMajesty</code>,<code>nostalgia</code>,<code>hemingway</code>,<code>concentrate</code><br>
+等</p>
+<p>将以上方法替换文本框中的<code>lomo</code>,例如 <code>this.hazyDays();</code>,然后点 RUN 就行了</p>
+<h2 id="camanjs缺点"><a class="markdownIt-Anchor" href="#camanjs缺点"></a> Camanjs缺点</h2>
+<p>不适合用来做粒度极细的像素级操作,虽然提供了方法</p>
+<script type="text/javascript">
+    function love_render(){
+        Caman("#image",function(){
+        this.revert();
+        this.love();
+        this.render();
+        })
+    }
+    function init() {
+        var list = [{
+            "name": "brightness",
+        }, {
+            "name": "contrast",
+        }, {
+            "name": "vibrance",
+        }, {
+            "name": "saturation",
+        }, {
+            "name": "exposure"
+        }, {
+            "name": "hue",
+            "value": 100
+        }, {
+            "name": "clip",
+            "value": 100
+        }, {
+            "name": "sepia",
+            "value": 100
+        }, {
+            "name": "gamma",
+            "value": 10
+        }, {
+            "name": "noise",
+            "value": 100
+        }, {
+            "name": "sharpen",
+            "value": 100
+        }, {
+            "name": "stackBlur",
+            "value": 30
+        }];
+        var table = document.createElement("table");
+        for (var i = 0; i < list.length; i++) {
+            if (i % 2 == 0) {
+                var tr = document.createElement("tr");
+                $(tr).attr("id", "tr" + i);
+            }
+            var td1 = document.createElement("td");
+            var td2 = document.createElement("td");
+            var td3 = document.createElement("td");
+            $(td1).attr("width","15%");
+            $(td2).attr("width","20%");
+            $(td3).attr("width","5%");
+            $(td1).append(list[i].name);
+            if (list[i].value > 0) {
+                $(td2).append("<input id=" + list[i].name + "_i value=0 type='range' min=0 max=" + list[i].value + " step=1 data-filter=" + list[i].name + ">")
+            } else {
+                $(td2).append("<input id=" + list[i].name + "_i value=0 type='range' min=-100 max=100 step=1 data-filter=" + list[i].name + ">");
+            }
+            $(td3).append(0);
+            $(tr).append(td1).append(td2).append(td3);
+            $(table).append(tr);
+        }
+        $(table).css("border", "1px solid #ccc");
+        $("#stage").append(table);
+    }
+    init();
+    $("input[type=range]").change(function() {
+        var stackBlur_v = $("#stackBlur_i").val();
+        var brightness_v = $("#brightness_i").val();
+        var contrast_v = $("#contrast_i").val();
+        var vibrance_v = $("#vibrance_i").val();
+        var saturation_v = $("#saturation_i").val();
+        var exposure_v = $("#exposure_i").val()
+        var hue_v = $("#hue_i").val()
+        var clip_v = $("#clip_i").val()
+        var sepia_v = $("#sepia_i").val()
+        var gamma_v = $("#gamma_i").val()
+        var sharpen_v = $("#sharpen_i").val()
+        var noise_v = $("#noise_i").val()
+        $(this).parent().next().text($(this).val());
+        Caman("#image", function() {
+            this.revert();
+            if (stackBlur_v > 0) this.stackBlur(stackBlur_v);
+            if (brightness_v > 0) this.brightness(brightness_v);
+            if (contrast_v > 0) this.contrast(contrast_v);
+            if (vibrance_v > 0) this.vibrance(vibrance_v);
+            if (saturation_v > 0) this.saturation(saturation_v);
+            if (exposure_v > 0) this.exposure(exposure_v);
+            if (hue_v > 0) this.hue(hue_v);
+            if (clip_v > 0) this.clip(clip_v);
+            if (sepia_v > 0) this.sepia(sepia_v);
+            if (gamma_v > 0) this.gamma(gamma_v);
+            if (sharpen_v > 0) this.sharpen(sharpen_v);
+            if (noise_v > 0) this.noise(noise_v);
+            this.render();
+        })
+        $("#reset").click(function(){
+            Caman("#image",function(){
+                this.revert();
+                this.render();
+            })
+        })
+    });
+</script>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2015-12-30-design-pattern/">
 
     <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -4430,432 +5887,10 @@ function render_pic(){
   
   
 
-      
-  
-  
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2015-06-01-simple-git-operation/">
-
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="哎呀是太阳嘛">
-      <meta itemprop="description" content="君子生非异也, 善假于物也">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leriou's Tavern">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015-06-01-simple-git-operation/" class="post-title-link" itemprop="url">git简单使用指南</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-06-01 00:00:00" itemprop="dateCreated datePublished" datetime="2015-06-01T00:00:00+08:00">2015-06-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">编程工具</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2015-06-01-simple-git-operation/" class="post-meta-item leancloud_visitors" data-flag-title="git简单使用指南" title="Views">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">Views: </span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2015-06-01-simple-git-operation/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2015-06-01-simple-git-operation/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="git操作基础"><a class="markdownIt-Anchor" href="#git操作基础"></a> git操作基础</h2>
-<p>推荐一个git官方的GUI客户端:<a href="https://desktop.github.com/" target="_blank" rel="noopener">https://desktop.github.com/</a></p>
-<h2 id="基本流程"><a class="markdownIt-Anchor" href="#基本流程"></a> 基本流程</h2>
-<p><img data-src="https://i.loli.net/2020/05/09/QMgToH8ti9CSzVw.png" alt="git-process.png"></p>
-<p>git基本命令格式</p>
-<pre><code>git 命令 参数
-</code></pre>
-<p>部分名词解释:</p>
-<pre><code>origin: 本地代码库  (可以自己设置)
-
-remote: 远端代码库地址
-
-head: 版本指针
-
-branch: 分支
-</code></pre>
-<p>Git的相关配置有两份一份在项目中的<code>.git</code>文件夹中，一份全局的位于用户目录下的<code>.git</code>目录中。项目配置优先于全局配置， 会覆盖掉全局中的配置，所以我们修改配置要注意一下修改的位置</p>
-<h2 id="获取项目"><a class="markdownIt-Anchor" href="#获取项目"></a> 获取项目</h2>
-<ol>
-<li>新建仓库</li>
-</ol>
-<ul>
-<li>对已存在的项目目录使用 <code>git init</code></li>
-</ul>
-<ol start="2">
-<li>克隆仓库</li>
-</ol>
-<ul>
-<li>https方式</li>
-</ul>
-<p>例如: <code>git clone https://git.coding.net/gongchang/gc.buyer.git</code></p>
-<p>该方式推送更新可能需要先设置用户名和密码</p>
-<ul>
-<li>ssh方式(推荐)</li>
-</ul>
-<p>例如:<code>git clone git@git.coding.net:gongchang/gc.buyer.git</code></p>
-<p>该方式获取项目建议先生成ssh-key, 并将ssh-key添加到授权中(github/gitlab等设置中都有添加ssh-key的方法)</p>
-<p>对应svn命令 : <code>svn clone XXXXXX</code></p>
-<h3 id="生成ssh-key"><a class="markdownIt-Anchor" href="#生成ssh-key"></a> 生成ssh-key</h3>
-<p><code>ssh-keygen -t rsa -C "youremail@example.com"</code></p>
-<p>使用ssh生成ssh-key</p>
-<p>生成的ssh-key位于用户目录下的.ssh目录中, 一共有两个一个公钥, 一个私钥</p>
-<p>将<code>xxx.pub</code>中的公钥copy到git服务器中,再检查用户名和密码,就可以用ssh登录git了<br>
-3. 获取更新</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master   //origin代表当前版本库,master是远端分支名,如果要更新dev分支就是 git pull origin dev </span><br><span class="line"></span><br><span class="line">或者简化版</span><br><span class="line"></span><br><span class="line">git pull  //这种方式有时候默认拉下来的不是master分支,需要自己手动切换一下</span><br></pre></td></tr></tbody></table></figure>
-<p>此命令等同<code>git fetch</code>+ <code>git merge</code>, 对应svn命令:<code>svn update</code></p>
-<h2 id="提交代码"><a class="markdownIt-Anchor" href="#提交代码"></a> 提交代码</h2>
-<ol>
-<li>暂存区</li>
-</ol>
-<p>修改完代码以后需要将修改添加到暂存区</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .                 //.代表当前目录</span><br><span class="line">如果要添加当前目录下的 1.txt文件,相应的命令就是</span><br><span class="line">git add 1.txt</span><br></pre></td></tr></tbody></table></figure>
-<p>未添加到暂存区的修改可以用<code>git checkout</code> 撤销,对应svn命令 <code>svn revert -R .</code></p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout .    //.代表当前目录</span><br></pre></td></tr></tbody></table></figure>
-<ol start="2">
-<li>提交</li>
-</ol>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m <span class="string">"测试提交"</span>  //<span class="string">"测试提交"</span>是对本次提交的描述</span><br></pre></td></tr></tbody></table></figure>
-<ol start="3">
-<li>推送</li>
-</ol>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git push origin master   //origin 当前版本库  master远端分支名</span><br><span class="line"> </span><br><span class="line">git push origin dev      //往dev分支上推送代码</span><br></pre></td></tr></tbody></table></figure>
-<p>下面三条命令 相当于 svn的一条命令  <code>svn commit -m "测试"</code></p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"测试"</span></span><br><span class="line">git push origin master</span><br></pre></td></tr></tbody></table></figure>
-<h2 id="分支操作"><a class="markdownIt-Anchor" href="#分支操作"></a> 分支操作</h2>
-<ol>
-<li>查看当前分支, *号所在就是你当前分支</li>
-</ol>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch</span><br></pre></td></tr></tbody></table></figure>
-<ol start="2">
-<li>新建分支</li>
-</ol>
-<p>新建分支dev_test,假设当前在dev分支</p>
-<p>命令:<code>git checkout -b dev_test</code>或<code>git branch dev_test</code></p>
-<p>对应svn命令 :<code>svn copy dev dev_test</code></p>
-<ol start="3">
-<li>切换分支</li>
-</ol>
-<p>命令:</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout dev_test   //切换到dev_test分支</span><br></pre></td></tr></tbody></table></figure>
-<ol start="3">
-<li>合并dev_test到dev</li>
-</ol>
-<p>当前所在分支为dev,命令:</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge origin/dev_test</span><br></pre></td></tr></tbody></table></figure>
-<ol start="4">
-<li>删除分支</li>
-</ol>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d dev_test</span><br></pre></td></tr></tbody></table></figure>
-<h2 id="解决冲突"><a class="markdownIt-Anchor" href="#解决冲突"></a> 解决冲突</h2>
-<ol>
-<li>处理冲突</li>
-</ol>
-<p>下面是冲突代码的显示形式,表明两个代码库此处代码不一致,需要手动解决冲突</p>
-<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br><span class="line">test1</span><br><span class="line">=======</span><br><span class="line">test2</span><br><span class="line">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>将代码手动修改为</p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test2</span><br></pre></td></tr></tbody></table></figure>
-<p>然后执行 1. <code>git add .</code> 2.<code>git commit -m "解决冲突"</code>    3.<code>git push origin master</code></p>
-<h2 id="其他"><a class="markdownIt-Anchor" href="#其他"></a> 其他</h2>
-<ol>
-<li>查看日志   <code>git log</code></li>
-<li>查看状态   <code>git status</code></li>
-<li>查看修改   <code>git diff</code></li>
-<li><code>git log --pretty=oneline 文件名</code> 可以查看某文件的修改记录</li>
-</ol>
-<h2 id="高级操作"><a class="markdownIt-Anchor" href="#高级操作"></a> 高级操作</h2>
-<ul>
-<li>场景1: 如果觉得Git的提交记录太多太乱,想清理git的提交记录,变得整洁</li>
-</ul>
-<p><code>git rebase</code></p>
-<p>重新设定分支,十分少用,把当前提交定位到某次提交之后</p>
-<ul>
-<li>场景2: 有时候部分修改已经提交,但后来发现这个功能不用上线了,你当然可以手动切换一个新分支, 但是也可以使用另一个命令将当前分支设置为之前的某一个版本</li>
-</ul>
-<p><code>git reset</code></p>
-<p>放弃所有未推送的提交</p>
-<ul>
-<li>场景3: 线上某个版本上线之后出了问题,需要紧急会退到上一个正常的版本</li>
-</ul>
-<p><code>git revert</code></p>
-<p>版本回退,可用于撤销已推送的错误提交</p>
-<p><em>ps: <code>git reset HEAD</code> 然后<code>git push -f</code>这样也能达到撤销错误提交的作用,但是如果在你错误提交之后,有同学进行了新提交,这个新提交也会被撤销</em></p>
-<ul>
-<li>场景4: 你正在A分支上面开发新功能,此时有个紧急bug需要你处理</li>
-</ul>
-<p>可以使用<code>git stash</code>暂存起来, 切换到其他分支上去开发功能, 开发完毕切换回来, 用 <code>git stash apply</code>恢复之前的修改</p>
-<p><code>git stash list</code>:列出储藏列表</p>
-<p><code>git stash drop</code>: 删除一个储藏</p>
-<p><code>git stash apply stash@{2}</code>: 应用储藏</p>
-<p><code>git stash pop</code>: 应用最新的一个储藏</p>
-<p><code>git stash clear</code>: 清理所有储藏</p>
-<p><code>git stash branch testchanges</code>: 从储藏中创建分支</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://leriou.github.io/2015-01-23-pili-words/">
-
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="哎呀是太阳嘛">
-      <meta itemprop="description" content="君子生非异也, 善假于物也">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Leriou's Tavern">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015-01-23-pili-words/" class="post-title-link" itemprop="url">霹雳布袋戏分享</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2015-01-23 00:00:00" itemprop="dateCreated datePublished" datetime="2015-01-23T00:00:00+08:00">2015-01-23</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%96%87%E5%8C%96%E8%89%BA%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">文化艺术</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2015-01-23-pili-words/" class="post-meta-item leancloud_visitors" data-flag-title="霹雳布袋戏分享" title="Views">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">Views: </span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2015-01-23-pili-words/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2015-01-23-pili-words/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我看布袋戏很久了，一直以来都很佩服布袋戏的编剧 (编剧号称"十车书"，其实是一个编剧组，很多人一起进行编剧，每个人只负责一部分)。因为我不仅仅看剧情， 同时还会去琢磨剧里面人物怎么处理问题怎么解决矛盾&nbsp;。</p>
-<p>我还曾试图学习素还真的为人处世方式 😂 (然而很明显, 素老奸的境界我是肯定模仿不来的)。一个人的性格和行为习惯哪是那么容易就能改变的啊, 没有那份阅历, 就做不到那样的境界。不过这不妨碍我喜欢里面的一些观点和台词</p>
-<h2 id="下面收集了一些布袋戏里面-我觉得不错的台词"><a class="markdownIt-Anchor" href="#下面收集了一些布袋戏里面-我觉得不错的台词"></a> <strong>下面收集了一些布袋戏里面, 我觉得不错的台词</strong></h2>
-<ol>
-<li>
-<p>不懂幽默的人，总是拿着幽默当成盾牌，为自己的尖锐与伤害言语包装，强迫他人要为自己的流血的伤口大笑。你不能强迫别人接受肤浅的玩笑来当成幽默</p>
-</li>
-<li>
-<p>很多时候，事情不能以对错来论，而是要用更温柔的心来表达自己的坚持与想法，如此一来，才不会伤人伤己。这世上，就是有太多自认为没错的人，将似是而非的道理当成了伤害他人的利器，站在道理高点的人，不代表他就是有依循道理的人</p>
-</li>
-<li>
-<p>得意时谦卑，失意时纵容，向现实低头，是为自己下一次抬头做准备</p>
-</li>
-<li>
-<p>宁可心在江湖言江湖，不可身在江湖厌江湖。</p>
-</li>
-<li>
-<p>非黑即白的想法，有时是苦了自己，更会伤害他人</p>
-</li>
-<li>
-<p>不懂不代表没有，不说不代表不在意。人会为了想保护自己、朋友而选择沉默或是据理力争，甚至是蒙骗，这都是人性之一</p>
-</li>
-<li>
-<p>缄默沉静者大用有余，轻薄浮躁者小用不足；以浮躁为才则必坏事，以沉静为拙则必失人</p>
-</li>
-<li>
-<p>遇横逆之来而不怒，遭变故之起而不惊，当非常之谤而不辩，可以任大事矣。</p>
-</li>
-<li>
-<p>不必言而言，是谓多言，多言招尤；不当言而言，是谓盲言，盲言贾祸。</p>
-</li>
-<li>
-<p>善良是一种美德，因为懦弱的不敢伤害别人，自卑的恐惧被人伤害，所以将施舍称为同情将暴露弱点叫作信任。</p>
-</li>
-<li>
-<p>信用，是将自己利益无条件交给他人掌控，弱者遵守信用，因为他们必须依靠一套名叫道德的规则存活，敢背信的人，是拥有对方不敢报复的自信。</p>
-</li>
-<li>
-<p>人啊，总是节制著自己当下的想法，总是期盼著下一秒、下一天、下一年，或者下辈子，所以才会错过机会。</p>
-</li>
-<li>
-<p>这世上蠢人多，而聪明人少，多数表决其实是让多数蠢辈决定蠢事。</p>
-</li>
-<li>
-<p>礼仪，是上者逼使下者更加屈服的心理枷锁，因为违背礼仪将招致祸害，所以让下者对上者，更加敬畏</p>
-</li>
-<li>
-<p>无知与自信永远是结果论，胜利就是自信，失败就是无知。</p>
-</li>
-<li>
-<p>多虚伪的言语，压抑心中的恐惧，说出自欺欺人的词句，谎言、哪有什么善意与恶意，本身都是因为无法承担后果而欺骗。</p>
-</li>
-<li>
-<p>怜悯是什么?因为期望被人帮助，所以订下了帮助别人的规则。恻隐是什么?是恐惧这样被人对待，所以伸出援手，潜藏在人心深处的美德，真相是这个世间最大最丑陋的利益勾结。</p>
-</li>
-<li>
-<p>理念不同便是魔，作风不同便是外道，这世上的人阿，因为不敢标新立异，所以苟同于别人的价值，这样的活著，何等的卑微。</p>
-</li>
-<li>
-<p>佛修者广布慈悲，渡化魔邪，或者，渡化不成大义捐躯，魔阿，总是成就佛之功德，所有留传万世，可歌可泣的事迹，皆有魔之踪迹。</p>
-</li>
-<li>
-<p>信仰，是一种排除异己的方式，就因为佛渡不了，所以将魔驱逐，这就是你所信奉的教义。</p>
-</li>
-<li>
-<p>错谬啊，是他们被一种名叫道德的东西压抑了本性，因为一但违背了道德，就会被一股更强的群众力量制裁，所以压抑了自身的贪婪、欲望，更可悲是，他们被这股力量压得喘不过气之后却自愿成为这股力量的帮凶，再将仁义道德束缚在其他人的身上。看看这个世间，看看自己，多少东西是自己想要却是不敢去取，只因道德两字。吾，只是比天下间所有的人更透澈明嘹而已。</p>
-</li>
-<li>
-<p>诸像心生，佛心见佛，魔心见魔，你们说我是魔，你们，心魔已生。</p>
-</li>
-<li>
-<p>「忠、孝、节、义」就是作奴才的方式；忠是对君主作奴才；孝是对父母作奴才；节是对婚姻作奴才；义是对同侪作奴才，不是吗？</p>
-</li>
-</ol>
-<h2 id="布袋戏中有很多音乐不错"><a class="markdownIt-Anchor" href="#布袋戏中有很多音乐不错"></a> 布袋戏中有很多音乐不错</h2>
-<p>以下挑选几首比较能表现角色的曲子</p>
-<h2 id="剑者传说"><a class="markdownIt-Anchor" href="#剑者传说"></a> 剑者传说</h2>
-<p>人物:殢(ti)无伤</p>
-<p>QQ音乐链接:</p>
-<p><a href="https://y.qq.com/n/yqq/song/000sKibz2FzuW4.html" target="_blank" rel="noopener">https://y.qq.com/n/yqq/song/000sKibz2FzuW4.html</a></p>
-<blockquote>
-<p>这首音乐是殢无伤的角色配乐,我非常喜欢, 从音乐中感受到一种清静, 自由, 感觉殢无伤的生活很惬意</p>
-</blockquote>
-<h2 id="荒人邪影"><a class="markdownIt-Anchor" href="#荒人邪影"></a> 荒人邪影</h2>
-<p>人物:一剑封禅(shan)</p>
-<p>QQ音乐链接:</p>
-<p><a href="https://y.qq.com/n/yqq/song/001EBctt13gzYk.html" target="_blank" rel="noopener">https://y.qq.com/n/yqq/song/001EBctt13gzYk.html</a></p>
-<p>荒人邪影之封印记忆</p>
-<p>人物:吞佛童子</p>
-<p>QQ音乐链接:</p>
-<p><a href="https://y.qq.com/n/yqq/song/000mG2qu0mEOq9.html" target="_blank" rel="noopener">https://y.qq.com/n/yqq/song/000mG2qu0mEOq9.html</a></p>
-<blockquote>
-<p>两首曲子乐器不同,第一首管乐给人感觉诡异中透漏着一丝丝的正气, 仿佛内心与外表截然不同, 虽然乍听感觉有一股邪气,但是仔细听又会发觉其实内里很正派<br>
-第二首曲子则不同,换成弦乐之后音调就比较真正的诡谲了,传达的气氛也变得更邪恶了,暗示人物已经被邪气蒙蔽,仔细分析虽然依然能察觉一丝正气, 但是已经很微弱了</p>
-</blockquote>
-<h2 id="赮毕钵罗"><a class="markdownIt-Anchor" href="#赮毕钵罗"></a> 赮毕钵罗</h2>
-<p>人物:赮(xia)毕钵(bo)罗</p>
-<p>QQ音乐链接:</p>
-<p><a href="https://y.qq.com/n/yqq/song/000AfNL23UeMmU.html" target="_blank" rel="noopener">https://y.qq.com/n/yqq/song/000AfNL23UeMmU.html</a></p>
-<blockquote>
-<p>开头的马头琴声给人的感觉还是比较空旷,隐隐透漏一股禅意,配合后面的琴声,禅意更浓,不禁让人回想起赮毕钵罗刚出场时候</p>
-</blockquote>
-<h2 id="羽獍弦歌"><a class="markdownIt-Anchor" href="#羽獍弦歌"></a> 羽獍弦歌</h2>
-<p>人物:羽人非獍(jing)</p>
-<p>网易云链接:</p>
-<p><a href="https://music.163.com/#/song?id=375530" target="_blank" rel="noopener">https://music.163.com/#/song?id=375530</a></p>
-<blockquote>
-<p>二胡本就适合悲曲,曲子本身的曲调也偏向悲怆,再回想起羽人非獍的经历真的是让人心中不免悲伤不已</p>
-</blockquote>
-<h2 id="夜雨寄北"><a class="markdownIt-Anchor" href="#夜雨寄北"></a> 夜雨寄北</h2>
-<p>人物:御不凡</p>
-<p>网易云链接:</p>
-<p><a href="https://music.163.com/#/song?id=373525" target="_blank" rel="noopener">https://music.163.com/#/song?id=373525</a></p>
-<blockquote>
-<p>这个曲子本不悲伤,但是回想起御不凡此人的经历,就不免心痛了</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">…</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">…</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -4921,7 +5956,7 @@ branch: 分支
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -4934,7 +5969,7 @@ branch: 分支
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-count">56</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
