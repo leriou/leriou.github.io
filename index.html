@@ -1267,7 +1267,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #34bbb4;
+  background: #a6ff69;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -4214,7 +4214,7 @@ ul.breadcrumb li + li:last-child {
 <li>用户已经推荐过的不再进行推荐</li>
 <li>用户的推荐结果中,结果保持多样性各种来源按照一定比例，个性化：新内容：热门内容比例为  3:4:3， 某种题材比例不足采用其他内容进行填充</li>
 </ol>
-<figure class="highlight scheme"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;用代码描述如下</span></span><br><span class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">recommendation</span> user)</span><br><span class="line">	(<span class="name"><span class="builtin-name">lambda</span></span> (user)</span><br><span class="line">    (<span class="name"><span class="builtin-name">cons</span></span> (<span class="name"><span class="builtin-name">cond</span></span> (<span class="name">personal?</span> user) (<span class="name">get-personal</span> user)</span><br><span class="line">                (<span class="name"><span class="builtin-name">else</span></span> '()))</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> hottest? (<span class="name">get-hottest</span>) '())</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> lattest? (<span class="name">get-lattest</span>) '())</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> hot-spot? (<span class="name">get-hot-spot</span>) '()))))</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight scheme"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;用scheme代码描述如下</span></span><br><span class="line">(<span class="name"><span class="builtin-name">define</span></span> (<span class="name">recommendation</span> user)</span><br><span class="line">	(<span class="name"><span class="builtin-name">lambda</span></span> (user)</span><br><span class="line">    (<span class="name"><span class="builtin-name">cons</span></span> (<span class="name"><span class="builtin-name">cond</span></span> (<span class="name">personal?</span> user) (<span class="name">get-personal</span> user)</span><br><span class="line">                (<span class="name"><span class="builtin-name">else</span></span> '()))</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> hottest? (<span class="name">get-hottest</span>) '())</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> lattest? (<span class="name">get-lattest</span>) '())</span><br><span class="line">          (<span class="name"><span class="builtin-name">if</span></span> hot-spot? (<span class="name">get-hot-spot</span>) '()))))</span><br></pre></td></tr></tbody></table></figure>
 <h1 id="朴素处理"><a class="markdownIt-Anchor" href="#朴素处理"></a> 朴素处理</h1>
 <ol>
 <li>直接从个性化内容里面 取10<em>0.3 个没有推荐过的，从新内容里面取 10 * 0.4 个， 从热门里面取 10</em> 0.3 个放到一个队列返回</li>
@@ -4225,7 +4225,7 @@ ul.breadcrumb li + li:last-child {
 <p>假如其他集合还是不够的话还要继续处理，代码复杂度就直线上升</p>
 <h1 id="基线排序法"><a class="markdownIt-Anchor" href="#基线排序法"></a> 基线排序法</h1>
 <p>先选择一个数量较多的内容集合作为基线：例如 新内容。将基线集合的数据通过排名映射到[0，1]的空间之内</p>
-<p>计分函数</p>
+<p>映射函数： <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> 为在内容在该渠道召回分数， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>a</mi><mi>n</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">rank</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>为内容在该渠道当前排名， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">size</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault">e</span></span></span></span> 为该渠道内容总数</p>
 <p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mi>c</mi><mi>o</mi><mi>r</mi><mi>e</mi><mo>=</mo><mn>1</mn><mo>−</mo><mfrac><mrow><mi>x</mi><mo>⋅</mo><mi>r</mi><mi>a</mi><mi>n</mi><mi>k</mi></mrow><mrow><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">Score =1-\cfrac{x\cdot rank}{size}
 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault">e</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span></span></p>
 <figure class="highlight scheme"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; 新内容：假设我们有2000个新内容，那第400个的得分应该为</span></span><br><span class="line">         第400个</span><br><span class="line">           |</span><br><span class="line">           V</span><br><span class="line">  ｜       ｜       ｜       ｜       ｜      ｜</span><br><span class="line">  <span class="number">1.0</span>     <span class="number">0.8</span>      <span class="number">0.6</span>      <span class="number">0.4</span>      <span class="number">0.2</span>     <span class="number">0</span></span><br></pre></td></tr></tbody></table></figure>
@@ -4233,7 +4233,7 @@ ul.breadcrumb li + li:last-child {
 <p>由于我们要满足 3:4:3的概率所以我们要求在原来的40个新内容的范围里面，均匀混进去30个热门和30个个性化内容，这样比例就满足了</p>
 <p>也就是说我们要满足如下公式， 由于内容密度要满足一定条件（3:4:3）</p>
 <p>计算热门内容的分数范围的公示如下</p>
-<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>=</mo><mn>0.02</mn><mo>∗</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mn>200</mn><mn>30</mn></mfrac></mstyle><mo>=</mo><mn>0.133</mn></mrow><annotation encoding="application/x-tex">x = 0.02*\cfrac{200}{30}=0.133</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span><span class="mord">0</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mord">3</span><span class="mord">3</span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>=</mo><mn>0.02</mn><mo>⋅</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mn>200</mn><mn>30</mn></mfrac></mstyle><mo>=</mo><mn>0.133</mn></mrow><annotation encoding="application/x-tex">x = 0.02\cdot\cfrac{200}{30}=0.133</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.276em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5899999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span><span class="mord">0</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.74em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mord">3</span><span class="mord">3</span></span></span></span></p>
 <p>也就是说热门内容分布的边界范围应该为 [1，0.867]</p>
 <figure class="highlight scheme"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; 热门内容</span></span><br><span class="line">       第30个         第100个         第200个</span><br><span class="line">         |             |               |</span><br><span class="line">         V             V               V</span><br><span class="line">  ｜     ｜            ｜               ｜      </span><br><span class="line">  <span class="number">1.0</span>   <span class="number">0.98</span>         <span class="number">0.935</span>           <span class="number">0.867</span></span><br></pre></td></tr></tbody></table></figure>
 <p>个性化内容也是同理<br>
@@ -4337,38 +4337,65 @@ ul.breadcrumb li + li:last-child {
 </ol>
 <p>如何评价一个内容的质量好坏就成了我们面对的一个重要问题</p>
 <h2 id="如何找到用技术手段评估内容的质量"><a class="markdownIt-Anchor" href="#如何找到用技术手段评估内容的质量"></a> 如何找到用技术手段评估内容的质量</h2>
-<h3 id="通过用户行为来辅助评估"><a class="markdownIt-Anchor" href="#通过用户行为来辅助评估"></a> 通过用户行为来辅助评估</h3>
-<p>我们通过直觉可以很明显的知道用户点击率高的内容大概率会是吸引人的内容。由此我们可以对内容的点击率进行统计，根据点击率给予内容一定的分数，点击率越高，内容分数越高, 我们认为内容越优质。<br>
-例如我们可以开发如下函数</p>
-<figure class="highlight scala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate</span></span>(a:<span class="type">Article</span>):<span class="type">Double</span> = {</span><br><span class="line">	<span class="keyword">if</span> (a.showCount &gt;= <span class="number">200</span>) {</span><br><span class="line">	 	<span class="keyword">return</span> a.clickRate/getMaxClickRate()</span><br><span class="line">	}</span><br><span class="line">	<span class="number">0.0</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>这种情况是最直观的也最简单的, 但是我们会遇到一些问题</p>
-<ul>
-<li>问题1: 如果一个内容刚刚发布，还没有被展示或者被点击，此时没有用户行为数据，该如何评估内容的质量呢, 就像上面我们过滤掉了展示200次以下的内容，这部分内容因为展示次数少，误差较大</li>
-<li>问题2: 如果一个内容A 刚刚发布不久，被展示了10次，点击了5次， 点击率50%， 另一个内容B发布了2天，被展示了20万次，点击了5万次，点击率 25%， 是否能说明A内容比B内容优秀<br>
-相信从上面两个问题也能看出来了，单纯的依靠点击率是肯定不合适的，既会受到一定的限制，又会造成得分结果的不稳定。</li>
-</ul>
-<p>处理问题1，2的方法也比较简单，只需要按照数据分布情况给一个预估的分数默认值作为偏置 总分数 = (偏置数 + 点击率得分)（解决问题1）， 并加上一定的统计门槛就可以了（解决问题1）</p>
-<h3 id="挖掘内容本身的特征属性进行评估"><a class="markdownIt-Anchor" href="#挖掘内容本身的特征属性进行评估"></a> 挖掘内容本身的特征属性进行评估</h3>
+<p>一个内容的质量其实是一个动态变化的评价，与内容本身，所处的环境和面向的对象有很大关系，同一个内容对不同的人价值是不同的，同一个内容对相同的人在不同的时间价值也是不同的</p>
+<p>所以我们可以通过技术手段尽可能的收集相关的信息，采用一些数学方法，找到相对比较合理的内容价值评估的方法</p>
+<h2 id="内容本身"><a class="markdownIt-Anchor" href="#内容本身"></a> 内容本身</h2>
+<h4 id="挖掘内容本身的特征属性进行评估"><a class="markdownIt-Anchor" href="#挖掘内容本身的特征属性进行评估"></a> 挖掘内容本身的特征属性进行评估</h4>
 <p>假如一个内容A点击率比较高，一定是其中含有吸引人的特征，我们可以思考可能的原因是什么？<br>
 有可能是作者文字功底比较好，有可能是作者比较出名， 有可能是里面有一些特征一看大家就想看。比如 标题很有吸引力 。<br>
-总而言之我们可以根据内容的 发布时间， 作者，含有的关键词，视频的清晰度，内容的长度，等各种属性给内容计算一个基础的内容得分。大概函数定义如下</p>
-<figure class="highlight scala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate</span></span>(c: <span class="type">Article</span>) -&gt; <span class="type">Double</span> {</span><br><span class="line">  	f(c.title) </span><br><span class="line">  	+ f(c.author) </span><br><span class="line">  	+ f(c.published) </span><br><span class="line">  	+ f(c.length) </span><br><span class="line">  	+ f( c.keywords))</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>如此一来我们就可以对各种内容做一个基本的价值评估，可以在视频还未获得曝光和点击的时候对视频有一个大概的评价。后续的点击率等行为表现可以辅助纠正各种特征的积分权重</p>
-<h3 id="考虑现在的时间和环境因素进行评估"><a class="markdownIt-Anchor" href="#考虑现在的时间和环境因素进行评估"></a> 考虑现在的时间和环境因素进行评估</h3>
+我们可以根据内容的 发布时间， 作者，含有的关键词，视频的清晰度，内容的长度，等各种属性给内容计算一个基础的内容得分。</p>
+<table>
+<thead>
+<tr>
+<th>内容类型</th>
+<th>关键因素</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>长文本内容</td>
+<td>作者，标题，插图，关键词，主题</td>
+</tr>
+<tr>
+<td>短文本内容</td>
+<td>关键词，主题，作者</td>
+</tr>
+<tr>
+<td>视频内容</td>
+<td>标题，封面，视频大小，清晰度</td>
+</tr>
+</tbody>
+</table>
+<p>如此一来我们就可以对各种内容做一个基本的价值评估，可以在视频刚发布，还未获得曝光和点击的时候对视频有一个大概的评价。这一部分的评估特点是分数只跟内容本身有关，且一旦内容发布就很少会发生变化，对应的分数我们称之为静态内容质量分。</p>
+<h4 id="通过用户行为来辅助评估"><a class="markdownIt-Anchor" href="#通过用户行为来辅助评估"></a> 通过用户行为来辅助评估</h4>
+<p>我们通过直觉可以很明显的知道用户点击率高的内容大概率会是吸引人的内容。由此我们可以对内容的点击率进行统计，根据点击率给予内容一定的分数，点击率越高，内容分数越高, 我们认为内容越优质。</p>
+<p>这种情况是最直观的也最简单的, 但是我们会遇到一些问题</p>
+<ul>
+<li>
+<p>问题1: 如果一个内容刚刚发布，还没有被展示或者被点击，此时没有用户行为数据，该如何评估内容的质量呢, 这部分内容因为展示次数少，误差较大</p>
+</li>
+<li>
+<p>问题2: 如果一个内容A 刚刚发布不久，被展示了10次，点击了5次， 点击率50%， 另一个内容B发布了2天，被展示了20万次，点击了5万次，点击率 25%， 是否能说明A内容比B内容优秀</p>
+</li>
+</ul>
+<p>相信从上面两个问题也能看出来了，单纯的依靠点击率是肯定不合适的，既会受到一定的限制，又会造成得分结果的不稳定。</p>
+<p>处理问题1，2的方法也比较简单，只需要按照数据分布情况给一个预估的分数默认值作为偏置 总分数 = (偏置数 + 点击率得分)（解决问题1）， 并加上一定的统计门槛就可以了（解决问题1）。对于问题2我们采用多种维度而不仅仅是通过点击数量和点击率，同时考虑增加速度，受众人群等就能得到一个比较理想的结果</p>
+<h2 id="环境因素"><a class="markdownIt-Anchor" href="#环境因素"></a> 环境因素</h2>
 <p>内容的质量表现还会随着时间和环境因素而变化。<br>
 比如股市的资讯类消息， 就是在发布的12小时内价值比较高，而且其价值会随着时间逐渐减少，3天以上基本就毫无价值了。<br>
 内容受到环境影响也很明显，这次的新冠疫情导致口罩，病毒等相关的内容受到了极大的关注。可能在平时来说，口罩等关键词并不会有如此大的权重，但是在疫情期间，全民关注，这个时候就应该根据环境适当的给热门词增加权重表现<br>
-环境和内容的匹配主要还是要依据统计数据来预估一个特征在环境中的匹配度，然后根据这个匹配度对内容进行评估，在根据用户对内容后续的行为表现来调整这个匹配度的计算规则</p>
-<h3 id="考虑目标用户特征"><a class="markdownIt-Anchor" href="#考虑目标用户特征"></a> 考虑目标用户特征</h3>
+环境和内容的匹配主要还是要依据统计数据来预估一个特征在环境中的匹配度，然后根据这个匹配度对内容进行评估，在根据用户对内容后续的行为表现来调整这个匹配度的计算规则。</p>
+<p>由于内容热度和环境匹配度这部分的内容分数会随着环境热点，发布时间等发生变化我们称之为动态内容质量分。</p>
+<h2 id="对象信息"><a class="markdownIt-Anchor" href="#对象信息"></a> 对象信息</h2>
+<h4 id="考虑目标用户特征"><a class="markdownIt-Anchor" href="#考虑目标用户特征"></a> 考虑目标用户特征</h4>
 <p>同样的内容对不同的用户也会有不同的价值。同一篇手机评测内容，对魅族手机用户和小米手机用户分别展示1000次收到的点击返回结果可能就有很大不同， 对数码爱好者和小白分开推送效果也会不一样。<br>
-我们如果要对用户和内容匹配一方面要获取到用户的用户画像信息，一方面要对内容做内容特征分析， 然后再进行match。<br>
-定义计分函数如下</p>
-<figure class="highlight scala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calScore</span></span>(user:<span class="type">Set</span>, env:<span class="type">Set</span>&lt;&gt;) -&gt; <span class="type">Double</span> {</span><br><span class="line">  f(user, env, content)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<h3 id="综合多种因素进行评估"><a class="markdownIt-Anchor" href="#综合多种因素进行评估"></a> 综合多种因素进行评估</h3>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">           ｜--- 内容的点击表现(点击率，完播率，贡献播放时长)</span><br><span class="line">           ｜ </span><br><span class="line">内容得分 ---｜--- 内容本身质量(标题， 内容， 作者，清晰度)</span><br><span class="line">           ｜</span><br><span class="line">           ｜--- 环境匹配度(热点事件， 地理位置)</span><br><span class="line">           ｜</span><br><span class="line">           ｜--- 用户特征匹配度(含有用户喜欢的关键词)</span><br></pre></td></tr></tbody></table></figure>
-<p>上面的几种方法都有各自的优点和缺点，多种评估策略一起配合使用可以一定程度上增强价值评估的可信度。综合推荐就是同时考虑 用户， 环境，时间，内容本身等多种因素，根据情况实时的计算<br>
-不同属性的得分之间可以采用加和或者相乘 的方法。</p>
+我们如果要对用户和内容匹配一方面要获取到用户的用户画像信息，一方面要对内容做内容特征分析， 然后再进行match。</p>
+<p>这个时候内容的质量又跟目标用户的匹配度相关，而且这部分往往还是影响用户对内容行为的最大影响因素。</p>
+<p>用户喜好特征的收集涉及到用户画像，用户画像的特征最好和内容特征最好能有一定的对应关系。比如某用户身处上海地区，那很有可能就喜欢看上海地区的新闻，如果内容里面出现了上海的某个区也应该通过一定的处理手段变成跟上海相关的内容，特征维度尽可能跟用户画像一致。</p>
+<h2 id="内容质量相关影响因素总结"><a class="markdownIt-Anchor" href="#内容质量相关影响因素总结"></a> 内容质量相关影响因素总结</h2>
+<p><img data-src="https://i.loli.net/2021/03/28/ltcSf3ep1yVENW8.jpg" alt="内容特征分析"></p>
 <h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>上面的几种方法都有各自的优点和缺点，多种评估策略一起配合使用可以一定程度上增强价值评估的可信度。综合推荐就是同时考虑 用户， 环境，时间，内容本身等多种因素，根据情况实时的计算，不同属性的得分之间可以根据统计设定不同的权重，并根据实际表现进行权重调整。</p>
 <p>内容的价值评估是一个跟场景，用户，内容都相关的事情， 没有办法使用一个统一的，固定的算法或者模型对内容进行价值评估， 但是我们可以根据现有的用户行为， 环境特征， 内容特征等，尽可能的覆盖所有可能的影响因子， 给出一个相对比较可信的价值度量标准</p>
 
       
