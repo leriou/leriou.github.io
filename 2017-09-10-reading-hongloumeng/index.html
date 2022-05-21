@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言说起来惭愧,最近才有幸拜读中国古代小说的巅峰之作&lt;红楼梦&gt; 从很早之前打算好好看一下了, 遗憾的是一直以来都没有时间 最近才抽出一部分时间将曹雪芹所写的前八十回看完 之所以只看前八十回 是因为我个人并不认同后四十回的高鹗&#x2F;程伟元续写的版本 所以只说前八十回的内容 关于全书&lt;红楼梦&gt;原著全本因为各种原因,现在已经寻不见了  现在流传的大多是经过后人补全或者修改的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读红楼">
+<meta property="og:url" content="https://leriou.github.io/2017-09-10-reading-hongloumeng/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="前言说起来惭愧,最近才有幸拜读中国古代小说的巅峰之作&lt;红楼梦&gt; 从很早之前打算好好看一下了, 遗憾的是一直以来都没有时间 最近才抽出一部分时间将曹雪芹所写的前八十回看完 之所以只看前八十回 是因为我个人并不认同后四十回的高鹗&#x2F;程伟元续写的版本 所以只说前八十回的内容 关于全书&lt;红楼梦&gt;原著全本因为各种原因,现在已经寻不见了  现在流传的大多是经过后人补全或者修改的">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-09-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.887Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="红楼梦">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>读红楼</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-10-03-redis-cluster-problem/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-06-01-multi-git-user-config/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-09-10-reading-hongloumeng/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&text=读红楼"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&is_video=false&description=读红楼"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=读红楼&body=Check out this article: https://leriou.github.io/2017-09-10-reading-hongloumeng/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&name=读红楼&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-09-10-reading-hongloumeng/&t=读红楼"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%85%A8%E4%B9%A6"><span class="toc-number">2.</span> <span class="toc-text">关于全书</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E87%E7%89%88%E7%94%B5%E8%A7%86%E5%89%A7"><span class="toc-number">3.</span> <span class="toc-text">关于87版电视剧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B5%E8%A7%86%E5%89%A7%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E9%9D%9E%E5%B8%B8%E5%A5%BD%E7%9A%84%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">电视剧中的一些非常好的点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%9B%B8%E5%85%B3"><span class="toc-number">3.2.</span> <span class="toc-text">其他相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F10%E7%89%88%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.3.</span> <span class="toc-text">跟10版的对比</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E4%BA%BA%E7%89%A9"><span class="toc-number">4.</span> <span class="toc-text">关于人物</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%96%9B%E5%AE%9D%E9%92%97"><span class="toc-number">4.1.</span> <span class="toc-text">薛宝钗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%97%E9%BB%9B%E7%8E%89"><span class="toc-number">4.2.</span> <span class="toc-text">林黛玉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%BE%E6%8E%A2%E6%98%A5"><span class="toc-number">4.3.</span> <span class="toc-text">贾探春</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%B2%E6%B9%98%E4%BA%91"><span class="toc-number">4.4.</span> <span class="toc-text">史湘云</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        读红楼
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-09-09T16:00:00.000Z" itemprop="datePublished">2017-09-10</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/">阅读记录</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E7%BA%A2%E6%A5%BC%E6%A2%A6/" rel="tag">红楼梦</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>说起来惭愧,最近才有幸拜读中国古代小说的巅峰之作&lt;红楼梦&gt;</p>
+<p>从很早之前打算好好看一下了, 遗憾的是一直以来都没有时间</p>
+<p>最近才抽出一部分时间将曹雪芹所写的前八十回看完</p>
+<p>之所以只看前八十回</p>
+<p>是因为我个人并不认同后四十回的高鹗&#x2F;程伟元续写的版本</p>
+<p>所以只说前八十回的内容</p>
+<h1 id="关于全书"><a href="#关于全书" class="headerlink" title="关于全书"></a>关于全书</h1><p>&lt;红楼梦&gt;原著全本因为各种原因,现在已经寻不见了 </p>
+<p>现在流传的大多是经过后人补全或者修改的,不过版本太多了</p>
+<p>但是大多数版本都已被后人篡改太多内容,目前看来脂砚斋重批版本的应该是最符合原书原意的</p>
+<p>脂砚斋在批注中剧透了大量后面的故事情节对于解读红楼原意非常有帮助,也是解读红楼最重要的依据之一</p>
+<p>虽然我也很希望看到全书, 但是又有点犹豫</p>
+<p>毕竟从脂砚斋的批注中我们可以知道大部分人物的结局都是悲剧的</p>
+<p>我不想亲眼看到这种悲剧. 现在的高鹗和程伟元的续书虽然也有悲剧</p>
+<p>但是我还能骗自己说这不是原书,不可作信</p>
+<p>如果真的原本红楼被挖出来了,且不说我能不能接受得了,便是那些依靠红楼吃饭的红学家,可能也会有部分人因此丢掉饭碗</p>
+<blockquote>
+<p>ps: 清朝的富察明义看过全本的红楼梦, 这在他的诗集&lt;绿烟琐窗集&gt;里面有记载</p>
+</blockquote>
+<h1 id="关于87版电视剧"><a href="#关于87版电视剧" class="headerlink" title="关于87版电视剧"></a>关于87版电视剧</h1><p>如果是没看过红楼梦的书的人, 非常不建议直接去看电视剧</p>
+<p>因为电视剧里面其实是演的一个一个的书中的片段,而且后面几集被删减的内容太多,连续性不强</p>
+<p>还是建议先把书读一遍,然后再去看电视剧</p>
+<h2 id="电视剧中的一些非常好的点"><a href="#电视剧中的一些非常好的点" class="headerlink" title="电视剧中的一些非常好的点"></a>电视剧中的一些非常好的点</h2><ol>
+<li>服饰</li>
+</ol>
+<p>剧中的服饰非常讲究,林黛玉的各种服饰造型既符合传统,又完全没有传统汉朝服饰那种笨,糙的感觉</p>
+<p>据说为了拍87版的电视剧剧组设计了2700多套衣服, 按照三年的时间来计算平均每天设计三套…</p>
+<ol start="2">
+<li>建筑</li>
+</ol>
+<p>剧中的荣国府是专门为此建造的影视基地,建筑用料,建制,建筑上面的一砖一瓦都极为讲究,之前看过一部与此相关的纪录片</p>
+<ol start="3">
+<li>音乐</li>
+</ol>
+<p>剧中的词曲甚多, 也有人专门对此进行研究,剧中的&lt;枉凝眉&gt;简直好听到爆</p>
+<h2 id="其他相关"><a href="#其他相关" class="headerlink" title="其他相关"></a>其他相关</h2><p>87版的红楼梦毫无疑问是最经典的版本, 而其中的林黛玉毫无疑问是表演非常非常好的一个角色</p>
+<p>我其实看书的时候并没有那么喜欢林黛玉, 但是后来看了陈晓旭的林黛玉, 越看越喜欢</p>
+<p>其实我个人觉得87版的陈晓旭老师的林黛玉演得好绝非是因为长得好看</p>
+<p>就纯粹的长相而言,剧中的林黛玉绝对算不上顶尖的美女,但是架不住里面各种俏皮的小动作, 实在是太可爱了</p>
+<p>我现在依然记得几个经典的片段</p>
+<blockquote>
+<p>part1: 贾宝玉用老鼠偷香芋的故事编排黛玉的时候<br>part2: 史湘云第一次出场,黛玉笑湘云说话咬字,被湘云反过来调戏的时候,生气追湘云被宝玉拦下来的时候<br>part3: 凤姐调笑黛玉吃了我家的茶怎么还不给我们家做媳妇的时候,黛玉生气的样子<br>part4: 宝玉被魇好了以后,黛玉向菩萨祈愿,被宝钗调笑<br>part5: 探宝钗黛玉半含酸<br>part6: 蘅芜君兰言解疑癖<br>part7: 以及湘云刚出场, 黛玉问宝玉去处<br>part8: 宝玉跟黛玉一块哭, 黛玉把手帕递给他<br>part9: 惊呆雁片段</p>
+</blockquote>
+<p>以上几个片段我也读过书, 分明就有好多小动作是陈晓旭自己加上去的</p>
+<p>而且看之后的而采访时候也听扮演贾宝玉的欧阳奋强说,片场的陈晓旭十分鬼灵</p>
+<p>陈晓旭老师真的是把林黛玉身上那种俏皮可爱,表现的淋漓尽致</p>
+<p>陈晓旭老师自己都说她就是林黛玉,我觉得此言非虚</p>
+<h2 id="跟10版的对比"><a href="#跟10版的对比" class="headerlink" title="跟10版的对比"></a>跟10版的对比</h2><p>我之前老是听人说红楼梦是一部伟大的现实主义作品, 但是我个人其实并不是很同意这个说法</p>
+<p>10版就是认为应该写实, 结果拍出来跟那啥一样</p>
+<p>&lt;红楼梦&gt;中浪漫主义的体现非常之多</p>
+<p>贾宝玉的玉的来历,贾宝玉性格,薛宝钗吃的药,很多地方都说明红楼梦不是完完全全的写实主义, 反而是浪漫主义偏多</p>
+<p>书中人物性格之所以那么明显, 不就是因为各种戏剧化事件的推动吗</p>
+<p>所以我很喜欢87版偏浪漫主义的拍摄</p>
+<h1 id="关于人物"><a href="#关于人物" class="headerlink" title="关于人物"></a>关于人物</h1><h2 id="薛宝钗"><a href="#薛宝钗" class="headerlink" title="薛宝钗"></a>薛宝钗</h2><p>在我还没有看过红楼梦的时候我就听过好多人说喜欢薛宝钗而不喜欢林黛玉, 因为宝钗明显更符合传统的封建礼教的那一套大家闺秀的形象,通古博今,待人友善,同时又很少干涉他人私事,王熙凤说她”不关己事不开口,一问摇头三不知”</p>
+<p>书中的宝钗是个脾气极好的人,好像除了清虚观那一段发过脾气外就再也没有发过脾气了,刘心武说宝钗那一段时间心情不好是因为选秀失败了,结合宝玉把她比作杨妃,宝钗生气说出的话来看,确实有一定的道理</p>
+<p>而且宝钗在元春省亲时候的态度和所说的话,明显看得出宝钗是很崇拜元春的,可能因为她也想当娘娘</p>
+<p>宝钗一出场,气场就与众不同,日常吃的冷香丸的配方看似普通,实则需要极强的机缘与运气.</p>
+<p>宝钗自来到贾府与贾府众人都关系融洽(我个人觉得王熙凤不喜欢薛宝钗,按理说,王熙凤和薛宝钗因为王夫人的关系还算亲人呢,结果前八十回,王熙凤和薛宝钗正面交流的描写极少)</p>
+<p>宝钗在书中几件比较重要的出场无一不是以控制场面的形象出现的,少数几个宝钗受挫的场面大概也只有清虚观生气,宝玉睡梦中说木石前盟,宝琴出现等几个</p>
+<p>宝钗到底才情到什么地步,书中并没有直接描写,不过能跟黛玉并列金陵十二钗之首,才情可想而知</p>
+<p>黛玉跟宝玉一起看过牡丹亭和西厢记, 然而宝钗早就看过, 惜春会画画, 然而宝钗给她列画画需要的物品列表时候如数家珍, 你猜宝钗会不会画画?后来还给湘云出主意办螃蟹宴,细想以上几件事情,件件执行者都不是宝钗,但宝钗却都在以上几件事情上扮演了极为重要的角色</p>
+<p>总体而言,宝钗给人的感觉是比黛玉和宝玉高一个level的,宝钗完全明白宝玉在想什么但是宝玉却猜不透宝钗所想,两人在感情地位上实际上是有点不平等的</p>
+<h2 id="林黛玉"><a href="#林黛玉" class="headerlink" title="林黛玉"></a>林黛玉</h2><p>相比宝钗,黛玉和宝玉才是真正的互为知己,宝玉懂黛玉,理解黛玉</p>
+<blockquote>
+<p>“林妹妹有说过那混账话吗,林妹妹压根就不说那混账话”</p>
+</blockquote>
+<p>一句话就表明了宝玉和黛玉互为知己到什么地步</p>
+<p>两人互相理解互相关心</p>
+<p>宝玉偷偷吊祭金钏儿,黛玉不问而知</p>
+<p>宝玉有什么好东西第一个想到的一定是林妹妹,”西厢记妙词通戏语”基本上已经是明写两人的感情了</p>
+<blockquote>
+<p>“你我既为知己,又何必来一宝钗”</p>
+</blockquote>
+<p>可惜宝玉身在花丛中,为此,林黛玉还吃醋, 开始吃宝钗的醋, 湘云来了吃湘云的醋, 后来宝琴来了倒没见有什么大的反应</p>
+<p>从书中看,黛玉是极为关心宝玉的, 宝玉被魇和挨打那两次,黛玉都十分的担心</p>
+<p>“慧紫鹃情辞试莽玉”一回, 听说宝玉的状况, 说出了”你倒是找个绳子勒死我才是正经”</p>
+<blockquote>
+<p>“仙杖香桃芍药花”</p>
+</blockquote>
+<p>可惜因为寄人篱下,只能把自己的希望寄予贾母身上,仙杖是不是就是指贾母啊</p>
+<h2 id="贾探春"><a href="#贾探春" class="headerlink" title="贾探春"></a>贾探春</h2><p>探春其实是个十分有才气的人, “才自精明志自高”, 从探春兴利除弊就能看出来,她对家族的一些问题早就看在眼里,并早就在思考解决方案. 据说也是曹雪芹寄托自己精神的一个人物, 可惜为家族和身份所累</p>
+<p>书中的探春毫无疑问是三春之冠,在十二钗排名中排第四,据说书中的四春分别对应 琴棋书画, 探春也确实工于书法,屋里陈设也有很明显的体现</p>
+<p>书中<code>抄检大观园</code>一段,探春的表现使的这个人物形象无比的丰满,一个片段就有如此的威力</p>
+<h2 id="史湘云"><a href="#史湘云" class="headerlink" title="史湘云"></a>史湘云</h2><p>湘云是十分可爱的一个角色,说话咬字,天天爱哥哥的, 黛玉打趣她,她也不生气, 书中的史湘云十分可爱, 然而也免不了成为封建制度的牺牲品.</p>
+<p>湘云才情不下于宝黛, 擅长对联, 在书中有一段把黛钗都给比下去了, 也就宝琴能跟她比比,还和黛玉对出了”寒塘渡鹤影,冷月葬花魂”这样的句子.</p>
+<p>黛玉其实是懂世故而不世故, 但是湘云是真的没心机,所以叫”憨湘云”</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%85%A8%E4%B9%A6"><span class="toc-number">2.</span> <span class="toc-text">关于全书</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E87%E7%89%88%E7%94%B5%E8%A7%86%E5%89%A7"><span class="toc-number">3.</span> <span class="toc-text">关于87版电视剧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B5%E8%A7%86%E5%89%A7%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E9%9D%9E%E5%B8%B8%E5%A5%BD%E7%9A%84%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text">电视剧中的一些非常好的点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%9B%B8%E5%85%B3"><span class="toc-number">3.2.</span> <span class="toc-text">其他相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F10%E7%89%88%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.3.</span> <span class="toc-text">跟10版的对比</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E4%BA%BA%E7%89%A9"><span class="toc-number">4.</span> <span class="toc-text">关于人物</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%96%9B%E5%AE%9D%E9%92%97"><span class="toc-number">4.1.</span> <span class="toc-text">薛宝钗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%97%E9%BB%9B%E7%8E%89"><span class="toc-number">4.2.</span> <span class="toc-text">林黛玉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%BE%E6%8E%A2%E6%98%A5"><span class="toc-number">4.3.</span> <span class="toc-text">贾探春</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%B2%E6%B9%98%E4%BA%91"><span class="toc-number">4.4.</span> <span class="toc-text">史湘云</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-09-10-reading-hongloumeng/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&text=读红楼"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&is_video=false&description=读红楼"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=读红楼&body=Check out this article: https://leriou.github.io/2017-09-10-reading-hongloumeng/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&title=读红楼"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-09-10-reading-hongloumeng/&name=读红楼&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-09-10-reading-hongloumeng/&t=读红楼"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

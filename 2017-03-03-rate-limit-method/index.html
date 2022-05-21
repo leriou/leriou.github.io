@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="网站限流随着网站用户规模的增加,业务的扩张, 我们网站所承受的流量规模和并发数也会不断增加 到了一定时候我们就会希望可以对网站的流量进行一定程度的控制,因为我们的业务处理能力是有限的,我们需要优先保证关键业务的正常运转 技术人员一直以来都在致力于可以彻底的解决高并发问题,但是到目前为止也没有一种可以彻底解决的方案 我们只能尽量的提升业务处理的性能,做业务拆分,分布式,进行错峰处理等手段 其实我们可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="两种网站限流方案">
+<meta property="og:url" content="https://leriou.github.io/2017-03-03-rate-limit-method/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="网站限流随着网站用户规模的增加,业务的扩张, 我们网站所承受的流量规模和并发数也会不断增加 到了一定时候我们就会希望可以对网站的流量进行一定程度的控制,因为我们的业务处理能力是有限的,我们需要优先保证关键业务的正常运转 技术人员一直以来都在致力于可以彻底的解决高并发问题,但是到目前为止也没有一种可以彻底解决的方案 我们只能尽量的提升业务处理的性能,做业务拆分,分布式,进行错峰处理等手段 其实我们可">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/EKMs4BrGwvPmN5c.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/EerPIDbnmcM92XB.png">
+<meta property="article:published_time" content="2017-03-03T07:06:47.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.891Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="漏桶算法">
+<meta property="article:tag" content="令牌桶算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/EKMs4BrGwvPmN5c.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>两种网站限流方案</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-03-27-google-bigtable/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-03-01-message-system/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-03-03-rate-limit-method/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-03-03-rate-limit-method/&text=两种网站限流方案"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-03-03-rate-limit-method/&is_video=false&description=两种网站限流方案"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=两种网站限流方案&body=Check out this article: https://leriou.github.io/2017-03-03-rate-limit-method/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-03-03-rate-limit-method/&name=两种网站限流方案&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-03-03-rate-limit-method/&t=两种网站限流方案"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E9%99%90%E6%B5%81"><span class="toc-number">1.</span> <span class="toc-text">网站限流</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E6%B5%81"><span class="toc-number">1.1.</span> <span class="toc-text">限流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">漏桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">令牌桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RateLimiter"><span class="toc-number">1.4.</span> <span class="toc-text">RateLimiter</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        两种网站限流方案
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-03T07:06:47.000Z" itemprop="datePublished">2017-03-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95/" rel="tag">令牌桶算法</a>, <a class="tag-link-link" href="/tags/%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95/" rel="tag">漏桶算法</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="网站限流"><a href="#网站限流" class="headerlink" title="网站限流"></a>网站限流</h1><p>随着网站用户规模的增加,业务的扩张, 我们网站所承受的流量规模和并发数也会不断增加</p>
+<p>到了一定时候我们就会希望可以对网站的流量进行一定程度的控制,因为我们的业务处理能力是有限的,我们需要优先保证关键业务的正常运转</p>
+<p>技术人员一直以来都在致力于可以彻底的解决高并发问题,但是到目前为止也没有一种可以彻底解决的方案</p>
+<p>我们只能尽量的提升业务处理的性能,做业务拆分,分布式,进行错峰处理等手段</p>
+<p>其实我们可以从一整个用户请求的过程中的每个阶段进行分析, 在不同的阶段采用不同的方案</p>
+<p>在用户请求刚刚进入的时候进行限流处理就是一种十分有效的手段</p>
+<h2 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h2><p>限流就是从用户访问出限制用户的请求,常用于秒杀等并发量极高的场景之下</p>
+<p>限流的核心思想就是人为的丢弃一部分用户请求, 不作处理, 这样相当于从最根源处就避免的用户后续的操作,虽然对用户体验来说影响非常大, 但是只要采用合适的丢弃策略,就能在有效保护系统的同时,尽量减少对用户体验的影响</p>
+<h2 id="漏桶算法"><a href="#漏桶算法" class="headerlink" title="漏桶算法"></a>漏桶算法</h2><p>漏桶算法就是一种有效的限流算法,顾名思义,就是像漏桶一样以固定的速率将用户请求控制在一个确定的范围之内</p>
+<p>漏桶有两个关键属性,一个是漏桶的大小(最大存储的请求容量),另一个是漏桶的开口(处理请求的速率)</p>
+<p>用户的请求过来之后可以认为会被放到一个漏桶内,然后桶本身以一定的速率处理请求,当用户的请求速率过快,桶内的请求数量过多就会造成请求溢出,这部分请求就会被视为无效的请求</p>
+<p>特点: 根据时间以固定速率允许请求通过</p>
+<p>缺点: 针对部分由突发场景的效率有点低</p>
+<p>流程图: </p>
+<p><img src="https://i.loli.net/2020/05/09/EKMs4BrGwvPmN5c.png" alt="flow1.png"></p>
+<h2 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h2><p>另一种常用的限流算法叫令牌桶算法,令牌桶的思想跟漏桶有点不大一样,令牌桶是先假设了一个桶, 桶内装有令牌(token),系统以一定的时间往桶里添加令牌.请求过来以后需要使用桶里面的令牌才能执行,也就是说我们可以通过控制桶内令牌的数量来控制最大请求数,也能通过改变添加令牌的速率来调整请求的处理速率</p>
+<p>令牌桶也有关键参数,一个是桶的大小,一个是令牌的发放速率</p>
+<p>特点: 使用请求+令牌来进行请求处理,没有令牌的请求不予处理</p>
+<p>缺点: 实现起来比漏桶算法复杂一点</p>
+<p>流程图:</p>
+<p><img src="https://i.loli.net/2020/05/09/EerPIDbnmcM92XB.png" alt="flow2.png"></p>
+<blockquote>
+<p>ps: 往令牌桶内添加令牌并不需要一个单独的程序来执行,只要在请求过来时候根据时间自动计算可用的令牌就行了</p>
+</blockquote>
+<p>虽然两种算法都能控制请求的处理速率, 但是这两者其实都受到之后请求处理速率的影响, 也就是说就算我们限流部分允许每秒2万的请求,但是后台业务的处理速度只有每秒1千,依然会造成严重的业务阻塞</p>
+<h2 id="RateLimiter"><a href="#RateLimiter" class="headerlink" title="RateLimiter"></a>RateLimiter</h2><p>Google开源工具包Guava提供了限流工具类RateLimiter,该类基于令牌桶算法(Token Bucket)来完成限流</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E9%99%90%E6%B5%81"><span class="toc-number">1.</span> <span class="toc-text">网站限流</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E6%B5%81"><span class="toc-number">1.1.</span> <span class="toc-text">限流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">漏桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">令牌桶算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RateLimiter"><span class="toc-number">1.4.</span> <span class="toc-text">RateLimiter</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-03-03-rate-limit-method/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-03-03-rate-limit-method/&text=两种网站限流方案"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-03-03-rate-limit-method/&is_video=false&description=两种网站限流方案"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=两种网站限流方案&body=Check out this article: https://leriou.github.io/2017-03-03-rate-limit-method/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-03-03-rate-limit-method/&title=两种网站限流方案"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-03-03-rate-limit-method/&name=两种网站限流方案&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-03-03-rate-limit-method/&t=两种网站限流方案"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

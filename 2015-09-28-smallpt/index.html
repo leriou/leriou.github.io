@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="smallpt今天给大家介绍一个全局光照引擎，该程序作者是kevinbeason。代码不长,只要100行左右,采用了Monte Carlo模拟算法 图片效果渲染出来的图片最终效果  代码动态演示展示区域就在下边这个canvas里面吧(注意:这个非常非常非常消耗性能,慎点) 该程序通过像素采样和作者设定好的对象数值进行渲染 采样率越高,绘图质量越好,性能消耗越大 实际采样率达到25000就已经是超级">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习smallpt全局光照引擎">
+<meta property="og:url" content="https://leriou.github.io/2015-09-28-smallpt/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="smallpt今天给大家介绍一个全局光照引擎，该程序作者是kevinbeason。代码不长,只要100行左右,采用了Monte Carlo模拟算法 图片效果渲染出来的图片最终效果  代码动态演示展示区域就在下边这个canvas里面吧(注意:这个非常非常非常消耗性能,慎点) 该程序通过像素采样和作者设定好的对象数值进行渲染 采样率越高,绘图质量越好,性能消耗越大 实际采样率达到25000就已经是超级">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/CSk356LrHV7uJIB.png">
+<meta property="article:published_time" content="2015-09-28T10:51:59.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.895Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="全局光照">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/CSk356LrHV7uJIB.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>学习smallpt全局光照引擎</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2015-09-29-Astar-algorithm/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2015-09-27-simple-raytracing/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-28-smallpt/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-28-smallpt/&text=学习smallpt全局光照引擎"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-28-smallpt/&is_video=false&description=学习smallpt全局光照引擎"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习smallpt全局光照引擎&body=Check out this article: https://leriou.github.io/2015-09-28-smallpt/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-28-smallpt/&name=学习smallpt全局光照引擎&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-28-smallpt/&t=学习smallpt全局光照引擎"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#smallpt"><span class="toc-number">1.</span> <span class="toc-text">smallpt</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E6%95%88%E6%9E%9C"><span class="toc-number">2.</span> <span class="toc-text">图片效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%8A%A8%E6%80%81%E6%BC%94%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">代码动态演示</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        学习smallpt全局光照引擎
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-09-28T10:51:59.000Z" itemprop="datePublished">2015-09-28</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E5%85%A8%E5%B1%80%E5%85%89%E7%85%A7/" rel="tag">全局光照</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="smallpt"><a href="#smallpt" class="headerlink" title="smallpt"></a>smallpt</h1><p>今天给大家介绍一个<strong>全局光照引擎</strong>，该程序作者是<a target="_blank" rel="noopener" href="http://www.kevinbeason.com/smallpt/">kevinbeason</a>。代码不长,只要<code>100</code>行左右,采用了<a target="_blank" rel="noopener" href="http://baike.baidu.com/link?url=RQRnSUL-7NapJO695uvrH7FuHTXTB1tixzbM5tC65PS2gNjFhyTdpsrLCP-sBKSbhWWnwULdK3v3mEEjip7Caq">Monte Carlo</a>模拟算法</p>
+<h1 id="图片效果"><a href="#图片效果" class="headerlink" title="图片效果"></a>图片效果</h1><p>渲染出来的图片最终效果</p>
+<p><img src="https://i.loli.net/2020/05/09/CSk356LrHV7uJIB.png" alt="result_25k.png"></p>
+<h1 id="代码动态演示"><a href="#代码动态演示" class="headerlink" title="代码动态演示"></a>代码动态演示</h1><p>展示区域就在下边这个<code>canvas</code>里面吧(注意:这个非常非常非常消耗性能,慎点)</p>
+<p>该程序通过像素采样和作者设定好的对象数值进行渲染</p>
+<p><strong>采样率越高,绘图质量越好,性能消耗越大</strong></p>
+<p>实际采样率达到25000就已经是超级高的质量了,可惜性能…</p>
+<p>在作者的网站里面还给出了其他集中场景的数值设定<a target="_blank" rel="noopener" href="http://www.kevinbeason.com/smallpt/extraScenes.txt">其他场景数值</a><br>可以通过修改参数渲染出不同的场景</p>
+<div>设置采样率(实际值要*4):&nbsp
+<input type="number" min="0" max="10000000" step="25" value="25" id="samp" style="border:1px solid #ccc;padding:3px;border-radius:2px;">&nbsp;&nbsp;&nbsp;<button onclick="javascript:eval_render();" class="btn btn-info">Run</button>
+</div>
+
+<div style="text-align: center">
+    <canvas id="renderCanvas" width="128" height="128" style="display:none"></canvas>
+    <div id="status"></div>
+</div>
+源代码如下:
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">RandomLCG</span>(<span class="params">seed</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        seed = (<span class="number">214013</span> * seed + <span class="number">2531011</span>) % <span class="number">0x100000000</span>;</span><br><span class="line">        <span class="keyword">return</span> seed * (<span class="number">1.0</span> / <span class="number">4294967296.0</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Vec</span>(<span class="params">x, y, z</span>) &#123; <span class="variable language_">this</span>.<span class="property">x</span> = x; <span class="variable language_">this</span>.<span class="property">y</span> = y; <span class="variable language_">this</span>.<span class="property">z</span> = z; &#125;</span><br><span class="line"><span class="title class_">Vec</span>.<span class="property"><span class="keyword">prototype</span></span> = &#123;</span><br><span class="line">    <span class="attr">add</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="variable language_">this</span>.<span class="property">x</span> + b.<span class="property">x</span>, <span class="variable language_">this</span>.<span class="property">y</span> + b.<span class="property">y</span>, <span class="variable language_">this</span>.<span class="property">z</span> + b.<span class="property">z</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">sub</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="variable language_">this</span>.<span class="property">x</span> - b.<span class="property">x</span>, <span class="variable language_">this</span>.<span class="property">y</span> - b.<span class="property">y</span>, <span class="variable language_">this</span>.<span class="property">z</span> - b.<span class="property">z</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">mul</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="variable language_">this</span>.<span class="property">x</span> * b, <span class="variable language_">this</span>.<span class="property">y</span> * b, <span class="variable language_">this</span>.<span class="property">z</span> * b);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">mult</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="variable language_">this</span>.<span class="property">x</span> * b.<span class="property">x</span>, <span class="variable language_">this</span>.<span class="property">y</span> * b.<span class="property">y</span>, <span class="variable language_">this</span>.<span class="property">z</span> * b.<span class="property">z</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">norm</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">mul</span>(<span class="number">1.0</span> / <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(<span class="variable language_">this</span>.<span class="property">x</span> * <span class="variable language_">this</span>.<span class="property">x</span> + <span class="variable language_">this</span>.<span class="property">y</span> * <span class="variable language_">this</span>.<span class="property">y</span> + <span class="variable language_">this</span>.<span class="property">z</span> * <span class="variable language_">this</span>.<span class="property">z</span>));</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">dot</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">x</span> * b.<span class="property">x</span> + <span class="variable language_">this</span>.<span class="property">y</span> * b.<span class="property">y</span> + <span class="variable language_">this</span>.<span class="property">z</span> * b.<span class="property">z</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">cross</span>: <span class="keyword">function</span>(<span class="params">b</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="variable language_">this</span>.<span class="property">y</span> * b.<span class="property">z</span> - <span class="variable language_">this</span>.<span class="property">z</span> * b.<span class="property">y</span>, <span class="variable language_">this</span>.<span class="property">z</span> * b.<span class="property">x</span> - <span class="variable language_">this</span>.<span class="property">x</span> * b.<span class="property">z</span>, <span class="variable language_">this</span>.<span class="property">x</span> * b.<span class="property">y</span> - <span class="variable language_">this</span>.<span class="property">y</span> * b.<span class="property">x</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="title class_">Vec</span>.<span class="property">Zero</span> = <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"><span class="title class_">Vec</span>.<span class="property">XAxis</span> = <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"><span class="title class_">Vec</span>.<span class="property">YAxis</span> = <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"><span class="title class_">Vec</span>.<span class="property">ZAxis</span> = <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"><span class="title class_">Refl</span> = &#123;<span class="attr">DIFF</span>: <span class="number">0</span>,<span class="attr">SPEC</span>: <span class="number">1</span>,<span class="attr">REFR</span>: <span class="number">2</span>&#125;;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Ray</span>(<span class="params">o, d</span>) &#123; <span class="variable language_">this</span>.<span class="property">o</span> = o; <span class="variable language_">this</span>.<span class="property">d</span> = d &#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Sphere</span>(<span class="params">rad, p, e, c, refl</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">rad</span> = rad;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">p</span> = p;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">e</span> = e;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">c</span> = c;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">refl</span> = refl;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">sqRad</span> = rad * rad;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">maxC</span> = <span class="title class_">Math</span>.<span class="title function_">max</span>(<span class="title class_">Math</span>.<span class="title function_">max</span>(c.<span class="property">x</span>, c.<span class="property">y</span>), c.<span class="property">z</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cc</span> = c.<span class="title function_">mul</span>(<span class="number">1.0</span> / <span class="variable language_">this</span>.<span class="property">maxC</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Sphere</span>.<span class="property"><span class="keyword">prototype</span></span> = &#123;</span><br><span class="line">    <span class="attr">intersect</span>: <span class="keyword">function</span>(<span class="params">r</span>) &#123;</span><br><span class="line">        <span class="comment">// Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0</span></span><br><span class="line">        <span class="keyword">var</span> op = <span class="variable language_">this</span>.<span class="property">p</span>.<span class="title function_">sub</span>(r.<span class="property">o</span>);</span><br><span class="line">        <span class="keyword">var</span> b = op.<span class="title function_">dot</span>(r.<span class="property">d</span>);</span><br><span class="line">        <span class="keyword">var</span> det = b * b - op.<span class="title function_">dot</span>(op) + <span class="variable language_">this</span>.<span class="property">sqRad</span>;</span><br><span class="line">        <span class="keyword">var</span> eps = <span class="number">1e-4</span>;</span><br><span class="line">        <span class="keyword">if</span> (det &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> dets = <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(det)</span><br><span class="line">            <span class="keyword">if</span> (b - dets &gt; eps)</span><br><span class="line">                <span class="keyword">return</span> b - dets;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (b + dets &gt; eps)</span><br><span class="line">                <span class="keyword">return</span> b + dets;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// Scene: radius, position, emission, color, material</span></span><br><span class="line">spheres = [</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">1e5</span> + <span class="number">1</span>, <span class="number">40.8</span>, <span class="number">81.6</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">.75</span>, <span class="number">.25</span>, <span class="number">.25</span>), <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Left</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(-<span class="number">1e5</span> + <span class="number">99</span>, <span class="number">40.8</span>, <span class="number">81.6</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">.25</span>, <span class="number">.25</span>, <span class="number">.75</span>), <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Rght</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, <span class="number">40.8</span>, <span class="number">1e5</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">.75</span>, <span class="number">.75</span>, <span class="number">.75</span>), <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Back</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, <span class="number">40.8</span>, -<span class="number">1e5</span> + <span class="number">170</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Frnt</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, <span class="number">1e5</span>, <span class="number">81.6</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">.75</span>, <span class="number">.75</span>, <span class="number">.75</span>), <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Botm</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">1e5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, -<span class="number">1e5</span> + <span class="number">81.6</span>, <span class="number">81.6</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">.75</span>, <span class="number">.75</span>, <span class="number">.75</span>), <span class="title class_">Refl</span>.<span class="property">DIFF</span>), <span class="comment">//Top</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">16.5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">27</span>, <span class="number">16.5</span>, <span class="number">47</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>).<span class="title function_">mul</span>(<span class="number">.999</span>), <span class="title class_">Refl</span>.<span class="property">SPEC</span>), <span class="comment">//Mirr</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">16.5</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">73</span>, <span class="number">16.5</span>, <span class="number">78</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>).<span class="title function_">mul</span>(<span class="number">.999</span>), <span class="title class_">Refl</span>.<span class="property">REFR</span>), <span class="comment">//Glas</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="number">600</span>, <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, <span class="number">681.6</span> - <span class="number">.27</span>, <span class="number">81.6</span>), <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>), <span class="title class_">Vec</span>.<span class="property">Zero</span>, <span class="title class_">Refl</span>.<span class="property">DIFF</span>)  <span class="comment">//Lite</span></span><br><span class="line">];</span><br><span class="line"><span class="keyword">var</span> rand = <span class="title class_">RandomLCG</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">clamp</span>(<span class="params">x</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (x &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (x &gt; <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">toInt</span>(<span class="params">x</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="title function_">pow</span>(<span class="title function_">clamp</span>(x), <span class="number">1</span> / <span class="number">2.2</span>) * <span class="number">255</span> + <span class="number">.5</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">intersect</span>(<span class="params">r</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> t = <span class="number">1e20</span>;</span><br><span class="line">    <span class="keyword">var</span> obj;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> spheres) &#123;</span><br><span class="line">        <span class="keyword">var</span> s = spheres[i];</span><br><span class="line">        <span class="keyword">var</span> d = s.<span class="title function_">intersect</span>(r);</span><br><span class="line">        <span class="keyword">if</span> (d != <span class="number">0</span> &amp;&amp; d &lt; t) &#123;</span><br><span class="line">            t = d;</span><br><span class="line">            obj = s;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [obj, t];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">radiance</span>(<span class="params">r, depth</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> ires = <span class="title function_">intersect</span>(r);</span><br><span class="line">    <span class="keyword">var</span> obj = ires[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">var</span> t = ires[<span class="number">1</span>];   <span class="comment">// distance to intersection</span></span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title class_">Vec</span>.<span class="property">Zero</span>;       <span class="comment">// if miss, return black</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> newDepth = depth + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">var</span> isMaxDepth = newDepth &gt; <span class="number">100</span>;</span><br><span class="line">        <span class="comment">// Russian roulette for path termination</span></span><br><span class="line">        <span class="keyword">var</span> isUseRR = newDepth &gt; <span class="number">5</span>;</span><br><span class="line">        <span class="keyword">var</span> isRR = isUseRR &amp;&amp; <span class="title function_">rand</span>() &lt; obj.<span class="property">maxC</span>;</span><br><span class="line">        <span class="keyword">if</span> (isMaxDepth || (isUseRR &amp;&amp; !isRR))</span><br><span class="line">            <span class="keyword">return</span> obj.<span class="property">e</span>;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> f = (isUseRR &amp;&amp; isRR) ? obj.<span class="property">cc</span> : obj.<span class="property">c</span>;</span><br><span class="line">            <span class="keyword">var</span> x = r.<span class="property">o</span>.<span class="title function_">add</span>(r.<span class="property">d</span>.<span class="title function_">mul</span>(t));</span><br><span class="line">            <span class="keyword">var</span> n = x.<span class="title function_">sub</span>(obj.<span class="property">p</span>).<span class="title function_">norm</span>();</span><br><span class="line">            <span class="keyword">var</span> nl = n.<span class="title function_">dot</span>(r.<span class="property">d</span>) &lt; <span class="number">0</span> ? n : n.<span class="title function_">mul</span>(-<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (obj.<span class="property">refl</span> == <span class="title class_">Refl</span>.<span class="property">DIFF</span>) <span class="comment">// Ideal DIFFUSE reflection</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> r1 = <span class="number">2</span> * <span class="title class_">Math</span>.<span class="property">PI</span> * <span class="title function_">rand</span>();</span><br><span class="line">                <span class="keyword">var</span> r2 = <span class="title function_">rand</span>();</span><br><span class="line">                <span class="keyword">var</span> r2s = <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(r2);</span><br><span class="line">                <span class="keyword">var</span> w = nl;</span><br><span class="line">                <span class="keyword">var</span> wo = <span class="title class_">Math</span>.<span class="title function_">abs</span>(w.<span class="property">x</span>) &gt; <span class="number">.1</span> ? <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>) : <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">var</span> u = wo.<span class="title function_">cross</span>(w).<span class="title function_">norm</span>();</span><br><span class="line">                <span class="keyword">var</span> v = w.<span class="title function_">cross</span>(u);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">var</span> d = (u.<span class="title function_">mul</span>(<span class="title class_">Math</span>.<span class="title function_">cos</span>(r1) * r2s).<span class="title function_">add</span>(v.<span class="title function_">mul</span>(<span class="title class_">Math</span>.<span class="title function_">sin</span>(r1) * r2s)).<span class="title function_">add</span>(w.<span class="title function_">mul</span>(<span class="title class_">Math</span>.<span class="title function_">sqrt</span>(<span class="number">1</span> - r2)))).<span class="title function_">norm</span>();</span><br><span class="line">                <span class="keyword">return</span> obj.<span class="property">e</span>.<span class="title function_">add</span>(f.<span class="title function_">mult</span>(<span class="title function_">radiance</span>(<span class="keyword">new</span> <span class="title class_">Ray</span>(x, d), newDepth)));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (obj.<span class="property">refl</span> == <span class="title class_">Refl</span>.<span class="property">SPEC</span>) <span class="comment">// Ideal SPECULAR reflection</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> obj.<span class="property">e</span>.<span class="title function_">add</span>(f.<span class="title function_">mult</span>(<span class="title function_">radiance</span>(<span class="keyword">new</span> <span class="title class_">Ray</span>(x, r.<span class="property">d</span>.<span class="title function_">sub</span>(n.<span class="title function_">mul</span>(<span class="number">2</span> * n.<span class="title function_">dot</span>(r.<span class="property">d</span>)))), newDepth)));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="comment">// Ideal dielectric REFRACTION</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> reflRay = <span class="keyword">new</span> <span class="title class_">Ray</span>(x, r.<span class="property">d</span>.<span class="title function_">sub</span>(n.<span class="title function_">mul</span>(<span class="number">2</span> * n.<span class="title function_">dot</span>(r.<span class="property">d</span>))));</span><br><span class="line">                <span class="keyword">var</span> into = n.<span class="title function_">dot</span>(nl) &gt; <span class="number">0</span>; <span class="comment">// var from outside going in?</span></span><br><span class="line">                <span class="keyword">var</span> nc = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">var</span> nt = <span class="number">1.5</span>;</span><br><span class="line">                <span class="keyword">var</span> nnt = into ? nc / nt : nt / nc;</span><br><span class="line">                <span class="keyword">var</span> ddn = r.<span class="property">d</span>.<span class="title function_">dot</span>(nl);</span><br><span class="line">                <span class="keyword">var</span> cos2t = <span class="number">1</span> - nnt * nnt * (<span class="number">1</span> - ddn * ddn);</span><br><span class="line">                <span class="keyword">if</span> (cos2t &lt; <span class="number">0</span>)  <span class="comment">// Total internal reflection</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span> obj.<span class="property">e</span>.<span class="title function_">add</span>(f.<span class="title function_">mult</span>(<span class="title function_">radiance</span>(reflRay, newDepth)));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">var</span> tdir = (r.<span class="property">d</span>.<span class="title function_">mul</span>(nnt).<span class="title function_">sub</span>(n.<span class="title function_">mul</span>((into ? <span class="number">1</span> : -<span class="number">1</span>) * (ddn * nnt + <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(cos2t))))).<span class="title function_">norm</span>();</span><br><span class="line">                    <span class="keyword">var</span> a = nt - nc;</span><br><span class="line">                    <span class="keyword">var</span> b = nt + nc;</span><br><span class="line">                    <span class="keyword">var</span> <span class="variable constant_">R0</span> = a * a / (b * b);</span><br><span class="line">                    <span class="keyword">var</span> c = <span class="number">1</span> - (into ? -ddn : tdir.<span class="title function_">dot</span>(n));</span><br><span class="line">                    <span class="keyword">var</span> <span class="title class_">Re</span> = <span class="variable constant_">R0</span> + (<span class="number">1</span> - <span class="variable constant_">R0</span>) * c * c * c * c * c;</span><br><span class="line">                    <span class="keyword">var</span> <span class="title class_">Tr</span> = <span class="number">1</span> - <span class="title class_">Re</span>;</span><br><span class="line">                    <span class="keyword">var</span> P = <span class="number">.25</span> + <span class="number">.5</span> * <span class="title class_">Re</span>;</span><br><span class="line">                    <span class="keyword">var</span> <span class="variable constant_">RP</span> = <span class="title class_">Re</span> / P;</span><br><span class="line">                    <span class="keyword">var</span> <span class="variable constant_">TP</span> = <span class="title class_">Tr</span> / (<span class="number">1</span> - P);</span><br><span class="line">                    <span class="keyword">var</span> result;</span><br><span class="line">                    <span class="keyword">if</span> (newDepth &gt; <span class="number">2</span>) &#123;</span><br><span class="line">                        <span class="comment">// Russian roulette and splitting for selecting reflection and/or refraction</span></span><br><span class="line">                        <span class="keyword">if</span> (<span class="title function_">rand</span>() &lt; P)</span><br><span class="line">                            result = <span class="title function_">radiance</span>(reflRay, newDepth).<span class="title function_">mul</span>(<span class="variable constant_">RP</span>);</span><br><span class="line">                        <span class="keyword">else</span></span><br><span class="line">                            result = <span class="title function_">radiance</span>(<span class="keyword">new</span> <span class="title class_">Ray</span>(x, tdir), newDepth).<span class="title function_">mul</span>(<span class="variable constant_">TP</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                        result = <span class="title function_">radiance</span>(reflRay, newDepth).<span class="title function_">mul</span>(<span class="title class_">Re</span>).<span class="title function_">add</span>(<span class="title function_">radiance</span>(<span class="keyword">new</span> <span class="title class_">Ray</span>(x, tdir), newDepth).<span class="title function_">mul</span>(<span class="title class_">Tr</span>));</span><br><span class="line">                    <span class="keyword">return</span> obj.<span class="property">e</span>.<span class="title function_">add</span>(f.<span class="title function_">mult</span>(result));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params">canvas, status</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> start = <span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getTime</span>();</span><br><span class="line">    <span class="keyword">var</span> w = canvas.<span class="property">attributes</span>.<span class="property">width</span>.<span class="property">value</span>;</span><br><span class="line">    <span class="keyword">var</span> h = canvas.<span class="property">attributes</span>.<span class="property">height</span>.<span class="property">value</span>;</span><br><span class="line">    <span class="keyword">var</span> samps = <span class="number">25</span>;</span><br><span class="line">    <span class="comment">// cam pos, dir</span></span><br><span class="line">    <span class="keyword">var</span> cam = <span class="keyword">new</span> <span class="title class_">Ray</span>(<span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">50</span>, <span class="number">52</span>, <span class="number">295.6</span>), <span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="number">0</span>, -<span class="number">0.042612</span>, -<span class="number">1</span>).<span class="title function_">norm</span>());</span><br><span class="line">    <span class="keyword">var</span> cx = <span class="keyword">new</span> <span class="title class_">Vec</span>(w * <span class="number">.5135</span> / h, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">var</span> cy = (cx.<span class="title function_">cross</span>(cam.<span class="property">d</span>)).<span class="title function_">norm</span>().<span class="title function_">mul</span>(<span class="number">.5135</span>);</span><br><span class="line">    <span class="comment">// final color buffer</span></span><br><span class="line">    <span class="keyword">var</span> c = <span class="keyword">new</span> <span class="title class_">Array</span>(w * h);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; w * h; i++)</span><br><span class="line">        c[i] = <span class="title class_">Vec</span>.<span class="property">Zero</span>;</span><br><span class="line">    <span class="comment">// Output</span></span><br><span class="line">    <span class="keyword">var</span> ctx = canvas.<span class="title function_">getContext</span>(<span class="string">&quot;2d&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> imgdata = ctx.<span class="title function_">getImageData</span>(<span class="number">0</span>, <span class="number">0</span>, w, h);</span><br><span class="line">    <span class="keyword">var</span> pixels = imgdata.<span class="property">data</span>;</span><br><span class="line">    <span class="comment">// Loop over image rows</span></span><br><span class="line">    <span class="keyword">var</span> y = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">setTimeout</span>(renderLine, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">renderLine</span>(<span class="params"></span>)</span><br><span class="line">    &#123;</span><br><span class="line">        status.<span class="property">innerHTML</span> = <span class="string">&quot;Rendering (&quot;</span> + samps * <span class="number">4</span> + <span class="string">&quot; spp) &quot;</span> + (<span class="number">100.0</span> * y / (h - <span class="number">1</span>)).<span class="title function_">toFixed</span>(<span class="number">2</span>) + <span class="string">&quot;%&quot;</span>;</span><br><span class="line">        <span class="comment">// Loop cols</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; w; x++) &#123;</span><br><span class="line">            <span class="comment">// 2x2 subpixel rows</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> sy = <span class="number">0</span>; sy &lt; <span class="number">2</span>; sy++) &#123;</span><br><span class="line">                <span class="keyword">var</span> i = (h - y - <span class="number">1</span>) * w + x;</span><br><span class="line">                <span class="comment">// 2x2 subpixel cols</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">var</span> sx = <span class="number">0</span>; sx &lt; <span class="number">2</span>; sx++) &#123;</span><br><span class="line">                    <span class="keyword">var</span> r = <span class="title class_">Vec</span>.<span class="property">Zero</span>;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">var</span> s = <span class="number">0</span>; s &lt; samps; s++) &#123;</span><br><span class="line">                        <span class="keyword">var</span> r1 = <span class="number">2</span> * <span class="title function_">rand</span>();</span><br><span class="line">                        <span class="keyword">var</span> r2 = <span class="number">2</span> * <span class="title function_">rand</span>();</span><br><span class="line">                        <span class="keyword">var</span> dx = r1 &lt; <span class="number">1</span> ? <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(r1) - <span class="number">1</span> : <span class="number">1</span> - <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(<span class="number">2</span> - r1);</span><br><span class="line">                        <span class="keyword">var</span> dy = r2 &lt; <span class="number">1</span> ? <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(r2) - <span class="number">1</span> : <span class="number">1</span> - <span class="title class_">Math</span>.<span class="title function_">sqrt</span>(<span class="number">2</span> - r2);</span><br><span class="line">                        <span class="keyword">var</span> d = cx.<span class="title function_">mul</span>(((sx + <span class="number">.5</span> + dx) / <span class="number">2</span> + x) / w - <span class="number">.5</span>).<span class="title function_">add</span>(</span><br><span class="line">                        cy.<span class="title function_">mul</span>(((sy + <span class="number">.5</span> + dy) / <span class="number">2</span> + y) / h - <span class="number">.5</span>)).<span class="title function_">add</span>(cam.<span class="property">d</span>);</span><br><span class="line">                        <span class="comment">// Camera rays are pushed forward to start in interior</span></span><br><span class="line">                        <span class="keyword">var</span> camRay = <span class="keyword">new</span> <span class="title class_">Ray</span>(cam.<span class="property">o</span>.<span class="title function_">add</span>(d.<span class="title function_">mul</span>(<span class="number">140</span>)), d.<span class="title function_">norm</span>());</span><br><span class="line">                        <span class="comment">// Accumuate radiance</span></span><br><span class="line">                        r = r.<span class="title function_">add</span>(<span class="title function_">radiance</span>(camRay, <span class="number">0</span>).<span class="title function_">mul</span>(<span class="number">1.0</span> / samps));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// Convert radiance to color</span></span><br><span class="line">                    c[i] = c[i].<span class="title function_">add</span>((<span class="keyword">new</span> <span class="title class_">Vec</span>(<span class="title function_">clamp</span>(r.<span class="property">x</span>), <span class="title function_">clamp</span>(r.<span class="property">y</span>), <span class="title function_">clamp</span>(r.<span class="property">z</span>))).<span class="title function_">mul</span>(<span class="number">.25</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title function_">renderOutput</span>();</span><br><span class="line">        y++;</span><br><span class="line">        <span class="keyword">if</span> (y &lt; h)</span><br><span class="line">            <span class="built_in">setTimeout</span>(renderLine, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            status.<span class="property">innerHTML</span> = (<span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getTime</span>() - start) / <span class="number">1000</span> + <span class="string">&quot; sec&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">renderOutput</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> i = (h - y - <span class="number">1</span>) * w * <span class="number">4</span>, j = (h - y - <span class="number">1</span>) * w;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; w; x++) &#123;</span><br><span class="line">            pixels[i++] = <span class="title function_">toInt</span>(c[j].<span class="property">x</span>);</span><br><span class="line">            pixels[i++] = <span class="title function_">toInt</span>(c[j].<span class="property">y</span>);</span><br><span class="line">            pixels[i++] = <span class="title function_">toInt</span>(c[j].<span class="property">z</span>);</span><br><span class="line">            pixels[i++] = <span class="number">255</span>;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.<span class="title function_">putImageData</span>(imgdata, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<script>
+function RandomLCG(seed) {
+    return function() {
+        seed = (214013 * seed + 2531011) % 0x100000000;
+        return seed * (1.0 / 4294967296.0);
+    };
+}
+function Vec(x, y, z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+}
+Vec.prototype = {
+    add: function(b) {
+        return new Vec(this.x + b.x, this.y + b.y, this.z + b.z);
+    },
+    sub: function(b) {
+        return new Vec(this.x - b.x, this.y - b.y, this.z - b.z);
+    },
+    mul: function(b) {
+        return new Vec(this.x * b, this.y * b, this.z * b);
+    },
+    mult: function(b) {
+        return new Vec(this.x * b.x, this.y * b.y, this.z * b.z);
+    },
+    norm: function() {
+        return this.mul(1.0 / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z));
+    },
+    dot: function(b) {
+        return this.x * b.x + this.y * b.y + this.z * b.z;
+    },
+    cross: function(b) {
+        return new Vec(this.y * b.z - this.z * b.y, this.z * b.x - this.x * b.z, this.x * b.y - this.y * b.x);
+    }
+};
+Vec.Zero = new Vec(0, 0, 0)
+Vec.XAxis = new Vec(1, 0, 0)
+Vec.YAxis = new Vec(0, 1, 0)
+Vec.ZAxis = new Vec(0, 0, 1)
+Refl = {
+    DIFF: 0,
+    SPEC: 1,
+    REFR: 2
+};
+function Ray(o, d) {
+    this.o = o;
+    this.d = d
+}
+function Sphere(rad, p, e, c, refl) {
+    this.rad = rad;
+    this.p = p;
+    this.e = e;
+    this.c = c;
+    this.refl = refl;
+    this.sqRad = rad * rad;
+    this.maxC = Math.max(Math.max(c.x, c.y), c.z);
+    this.cc = c.mul(1.0 / this.maxC);
+}
+Sphere.prototype = {
+    intersect: function(r) {
+        var op = this.p.sub(r.o);
+        var b = op.dot(r.d);
+        var det = b * b - op.dot(op) + this.sqRad;
+        var eps = 1e-4;
+        if (det < 0) 
+           return 0;
+        else {
+            var dets = Math.sqrt(det)
+            if (b - dets > eps) {
+                return b - dets;
+            } else if (b + dets > eps) {
+                return b + dets;
+            } else {
+                return 0;
+            }
+        }
+    }
+};
+spheres = [
+    new Sphere(1e5, new Vec(1e5 + 1, 40.8, 81.6), Vec.Zero, new Vec(.75, .25, .25), Refl.DIFF),
+    new Sphere(1e5, new Vec(-1e5 + 99, 40.8, 81.6), Vec.Zero, new Vec(.25, .25, .75), Refl.DIFF),
+    new Sphere(1e5, new Vec(50, 40.8, 1e5), Vec.Zero, new Vec(.75, .75, .75), Refl.DIFF),
+    new Sphere(1e5, new Vec(50, 40.8, -1e5 + 170), Vec.Zero, Vec.Zero, Refl.DIFF),
+    new Sphere(1e5, new Vec(50, 1e5, 81.6), Vec.Zero, new Vec(.75, .75, .75), Refl.DIFF),
+    new Sphere(1e5, new Vec(50, -1e5 + 81.6, 81.6), Vec.Zero, new Vec(.75, .75, .75), Refl.DIFF),
+    new Sphere(16.5, new Vec(27, 16.5, 47), Vec.Zero, new Vec(1, 1, 1).mul(.999), Refl.SPEC),
+    new Sphere(16.5, new Vec(73, 16.5, 78), Vec.Zero, new Vec(1, 1, 1).mul(.999), Refl.REFR),
+    new Sphere(600, new Vec(50, 681.6 - .27, 81.6), new Vec(12, 12, 12), Vec.Zero, Refl.DIFF)
+];
+var rand = RandomLCG(0)
+function clamp(x) {
+    if (x < 0) {
+        return 0;
+    } else if (x > 1) {
+        return 1;
+    } else {
+        return x;
+    }
+}
+function toInt(x) {
+    return Math.pow(clamp(x), 1 / 2.2) * 255 + .5
+}
+function intersect(r) {
+    var t = 1e20;
+    var obj;
+    for (var i in spheres) {
+        var s = spheres[i];
+        var d = s.intersect(r);
+        if (d != 0 && d < t) {
+            t = d;
+            obj = s;
+        }
+    }
+    return [obj, t];
+}
+function radiance(r, depth) {
+    var ires = intersect(r);
+    var obj = ires[0];
+    var t = ires[1];
+    if (obj == null) {
+        return Vec.Zero;
+    } else {
+        var newDepth = depth + 1;
+        var isMaxDepth = newDepth > 100;
+
+        var isUseRR = newDepth > 5;
+        var isRR = isUseRR && rand() < obj.maxC;
+    
+        if (isMaxDepth || (isUseRR && !isRR)) {
+            return obj.e;
+        } else {
+            var f = (isUseRR && isRR) ? obj.cc : obj.c;
+            var x = r.o.add(r.d.mul(t));
+            var n = x.sub(obj.p).norm();
+            var nl = n.dot(r.d) < 0 ? n : n.mul(-1);
+            if (obj.refl == Refl.DIFF) {
+                var r1 = 2 * Math.PI * rand();
+                var r2 = rand();
+                var r2s = Math.sqrt(r2);
+                var w = nl;
+                var wo = Math.abs(w.x) > .1 ? new Vec(0, 1, 0) : new Vec(1, 0, 0);
+                var u = wo.cross(w).norm();
+                var v = w.cross(u);
+                var d = (u.mul(Math.cos(r1) * r2s).add(v.mul(Math.sin(r1) * r2s)).add(w.mul(Math.sqrt(1 - r2)))).norm();
+                return obj.e.add(f.mult(radiance(new Ray(x, d), newDepth)));
+            } else if (obj.refl == Refl.SPEC) {
+                return obj.e.add(f.mult(radiance(new Ray(x, r.d.sub(n.mul(2 * n.dot(r.d)))), newDepth)));
+            } else {
+                var reflRay = new Ray(x, r.d.sub(n.mul(2 * n.dot(r.d))));
+                var into = n.dot(nl) > 0;
+                var nc = 1;
+                var nt = 1.5;
+                var nnt = into ? nc / nt : nt / nc;
+                var ddn = r.d.dot(nl);
+                var cos2t = 1 - nnt * nnt * (1 - ddn * ddn);
+                if (cos2t < 0) {
+                    return obj.e.add(f.mult(radiance(reflRay, newDepth)));
+                } else {
+                    var tdir = (r.d.mul(nnt).sub(n.mul((into ? 1 : -1) * (ddn * nnt + Math.sqrt(cos2t))))).norm();
+                    var a = nt - nc;
+                    var b = nt + nc;
+                    var R0 = a * a / (b * b);
+                    var c = 1 - (into ? -ddn : tdir.dot(n));
+                    var Re = R0 + (1 - R0) * c * c * c * c * c;
+                    var Tr = 1 - Re;
+                    var P = .25 + .5 * Re;
+                    var RP = Re / P;
+                    var TP = Tr / (1 - P);
+                    var result;
+                    if (newDepth > 2) {
+                        if (rand() < P) {
+                            result = radiance(reflRay, newDepth).mul(RP);
+                        } else {
+                            result = radiance(new Ray(x, tdir), newDepth).mul(TP);
+                        }
+                    } else {
+                        result = radiance(reflRay, newDepth).mul(Re).add(radiance(new Ray(x, tdir), newDepth).mul(Tr));
+                    }
+                    return obj.e.add(f.mult(result));
+                }
+            }
+        }
+    }
+}
+function render(canvas, status) {
+    var start = new Date().getTime();
+    var w = canvas.attributes.width.value;
+    var h = canvas.attributes.height.value;
+    var samps = 25;
+    var samps = document.getElementById("samp").value;
+    var cam = new Ray(new Vec(50, 52, 295.6), new Vec(0, -0.042612, -1).norm());
+    var cx = new Vec(w * .5135 / h, 0, 0);
+    var cy = (cx.cross(cam.d)).norm().mul(.5135);
+    var c = new Array(w * h);
+    for (var i = 0; i < w * h; i++)
+        c[i] = Vec.Zero;
+    var ctx = canvas.getContext("2d");
+    var imgdata = ctx.getImageData(0, 0, w, h);
+    var pixels = imgdata.data;
+    var y = 0;
+    setTimeout(renderLine, 0);
+    function renderLine() {
+        status.innerHTML = "Rendering (" + samps * 4 + " spp) " + (100.0 * y / (h - 1)).toFixed(2) + "%";
+        for (var x = 0; x < w; x++) {
+            for (var sy = 0; sy < 2; sy++) {
+                var i = (h - y - 1) * w + x;
+                for (var sx = 0; sx < 2; sx++) {
+                    var r = Vec.Zero;
+                    for (var s = 0; s < samps; s++) {
+                        var r1 = 2 * rand();
+                        var r2 = 2 * rand();
+                        var dx = r1 < 1 ? Math.sqrt(r1) - 1 : 1 - Math.sqrt(2 - r1);
+                        var dy = r2 < 1 ? Math.sqrt(r2) - 1 : 1 - Math.sqrt(2 - r2);
+                        var d = cx.mul(((sx + .5 + dx) / 2 + x) / w - .5).add(
+                            cy.mul(((sy + .5 + dy) / 2 + y) / h - .5)).add(cam.d);
+                        var camRay = new Ray(cam.o.add(d.mul(140)), d.norm());
+                        r = r.add(radiance(camRay, 0).mul(1.0 / samps));
+                    }
+                    c[i] = c[i].add((new Vec(clamp(r.x), clamp(r.y), clamp(r.z))).mul(.25));
+                }
+            }
+        }
+        renderOutput();
+        y++;
+        if (y < h) {
+            setTimeout(renderLine, 0);
+        } else {
+            status.innerHTML = (new Date().getTime() - start) / 1000 + " sec";
+        }
+    }
+    function renderOutput() {
+        var i = (h - y - 1) * w * 4,
+            j = (h - y - 1) * w;
+        for (var x = 0; x < w; x++) {
+            pixels[i++] = toInt(c[j].x);
+            pixels[i++] = toInt(c[j].y);
+            pixels[i++] = toInt(c[j].z);
+            pixels[i++] = 255;
+            j++;
+        }
+        ctx.putImageData(imgdata, 0, 0);
+    }
+}
+function eval_render()
+{
+    var canvas = document.getElementById("renderCanvas");
+    var status = document.getElementById("status");
+    canvas.style.display="block";
+    render(canvas,status);
+}
+</script>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#smallpt"><span class="toc-number">1.</span> <span class="toc-text">smallpt</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E6%95%88%E6%9E%9C"><span class="toc-number">2.</span> <span class="toc-text">图片效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%8A%A8%E6%80%81%E6%BC%94%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">代码动态演示</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-28-smallpt/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-28-smallpt/&text=学习smallpt全局光照引擎"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-28-smallpt/&is_video=false&description=学习smallpt全局光照引擎"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习smallpt全局光照引擎&body=Check out this article: https://leriou.github.io/2015-09-28-smallpt/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-28-smallpt/&title=学习smallpt全局光照引擎"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-28-smallpt/&name=学习smallpt全局光照引擎&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-28-smallpt/&t=学习smallpt全局光照引擎"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

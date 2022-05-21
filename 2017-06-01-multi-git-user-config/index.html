@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="多Git账号场景我们有时候可能会遇到这样的情况，公司部署了一个gitlab服务器，我们自己也有在github上面使用仓库。 但是这两个服务器上面的账号是不一样的，我们需要在公司的项目中使用公司的git账号,私人项目使用私人的git账号，这时候就需要在同一台电脑上面同时使用多个git账号 生成两个ssh-key现在大家普遍使用ssh-key来作为授权验证的工具. 大多数的git服务器也使用这样的方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多git账号配置">
+<meta property="og:url" content="https://leriou.github.io/2017-06-01-multi-git-user-config/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="多Git账号场景我们有时候可能会遇到这样的情况，公司部署了一个gitlab服务器，我们自己也有在github上面使用仓库。 但是这两个服务器上面的账号是不一样的，我们需要在公司的项目中使用公司的git账号,私人项目使用私人的git账号，这时候就需要在同一台电脑上面同时使用多个git账号 生成两个ssh-key现在大家普遍使用ssh-key来作为授权验证的工具. 大多数的git服务器也使用这样的方式">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-06-01T11:10:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.897Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>多git账号配置</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-09-10-reading-hongloumeng/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-03-27-google-bigtable/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-06-01-multi-git-user-config/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&text=多git账号配置"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&is_video=false&description=多git账号配置"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多git账号配置&body=Check out this article: https://leriou.github.io/2017-06-01-multi-git-user-config/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&name=多git账号配置&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-06-01-multi-git-user-config/&t=多git账号配置"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9AGit%E8%B4%A6%E5%8F%B7%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">多Git账号场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E4%B8%A4%E4%B8%AAssh-key"><span class="toc-number">2.</span> <span class="toc-text">生成两个ssh-key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90"><span class="toc-number">3.</span> <span class="toc-text">获取服务器项目权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8ssh%E4%B8%AD%E5%A2%9E%E5%8A%A0config%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">在ssh中增加config文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%9B%AE%E6%A0%87%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8git-config%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7"><span class="toc-number">5.</span> <span class="toc-text">在目标项目中使用git config设置用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-T-%E6%B5%8B%E8%AF%95"><span class="toc-number">6.</span> <span class="toc-text">ssh-T 测试</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        多git账号配置
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-06-01T11:10:00.000Z" itemprop="datePublished">2017-06-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/">编程工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/git/" rel="tag">git</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="多Git账号场景"><a href="#多Git账号场景" class="headerlink" title="多Git账号场景"></a>多Git账号场景</h2><p>我们有时候可能会遇到这样的情况，公司部署了一个gitlab服务器，我们自己也有在github上面使用仓库。</p>
+<p>但是这两个服务器上面的账号是不一样的，我们需要在公司的项目中使用公司的git账号,私人项目使用私人的git账号，这时候就需要在同一台电脑上面同时使用多个git账号</p>
+<h2 id="生成两个ssh-key"><a href="#生成两个ssh-key" class="headerlink" title="生成两个ssh-key"></a>生成两个ssh-key</h2><p>现在大家普遍使用ssh-key来作为授权验证的工具.</p>
+<p>大多数的git服务器也使用这样的方式</p>
+<p>那我们就需要生成两个对应的ssh-key, 一个用于私人项目,一个用于公司项目</p>
+<h2 id="获取服务器项目权限"><a href="#获取服务器项目权限" class="headerlink" title="获取服务器项目权限"></a>获取服务器项目权限</h2><p>首先我们要拥有对应服务器(github&#x2F;gitlab&#x2F;coding等)的权限</p>
+<p>一般取得权限的方法是</p>
+<ol>
+<li><p>注册github&#x2F;gitlab&#x2F;coding账号</p>
+</li>
+<li><p>生成ssh-key，<code>ssh-keygen -t rsa -C &quot;youremail@example.com&quot;</code> 生成ssh-key</p>
+</li>
+<li><p>将生成的ssh-key中的xxx.pub公钥添加到github或者gitlab的ssh-key授权中</p>
+</li>
+</ol>
+<p>此时我们的电脑实际上已经获得了往对应的平台中的账户下面的仓库中推送代码的权利, git推送代码是只认机器不认人,但是服务器还无法针对不同的服务使用不同的ssh-key设置</p>
+<h2 id="在ssh中增加config文件"><a href="#在ssh中增加config文件" class="headerlink" title="在ssh中增加config文件"></a>在ssh中增加config文件</h2><p>可以通过配置.ssh文件夹下的config文件,通知ssh对不同的服务器使用不同的ssh-key</p>
+<p>例如,config内容:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># github</span></span><br><span class="line">Host github.com    <span class="comment"># 指定主机地址</span></span><br><span class="line">    HostName github.com   <span class="comment"># 主机名, 选填</span></span><br><span class="line">    User 111@qq.com      <span class="comment"># 用户名</span></span><br><span class="line">    PreferredAuthentications publickey  <span class="comment"># 授权方式</span></span><br><span class="line">    IdentityFile ~/.ssh/id1_rsa     <span class="comment"># 该服务器上使用的ssh-key</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># gitlab</span></span><br><span class="line">Host gitlab.com</span><br><span class="line">    HostName gitlab.com</span><br><span class="line">    User 222@qq.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id2_rsa</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上内容就是 对github.com 使用 id1_rsa这份公钥,对gitlab.com使用 id2_rsa公钥,配置好了以后ssh就可以的对不同的服务器使用不同的公钥了</p>
+<blockquote>
+<p>ps: 没有域名host可以直接设置为服务器ip</p>
+</blockquote>
+<p>但是此时我们可能推送代码的用户标识可能不正确</p>
+<p>例如:  你的私人用户名叫A ,公司账号叫B, 此时你推送代码到公司账户但是却显示推送者是A</p>
+<h2 id="在目标项目中使用git-config设置用户"><a href="#在目标项目中使用git-config设置用户" class="headerlink" title="在目标项目中使用git config设置用户"></a>在目标项目中使用git config设置用户</h2><p>git中的配置分为全局配置和项目配置,默认使用全局配置,如果要在特定项目中使用特定的用户名,需要在项目的git配置中进行指定</p>
+<p>可以在项目目录中执行以下命令,指定需要使用的用户名和邮箱</p>
+<p><code>git config user.email &quot;aaa@qq.com&quot;</code>: 设置项目用户邮箱</p>
+<p><code>git config user.name &quot;aaa&quot;</code>: 设置项目用户名</p>
+<p>也可以手动修改<code>项目名/.git/config</code>文件中的user标签下的内容</p>
+<h2 id="ssh-T-测试"><a href="#ssh-T-测试" class="headerlink" title="ssh-T 测试"></a>ssh-T 测试</h2><p>使用如下命令可以测试配置结果,需要测试@ 后面的服务器地址可以自己修改</p>
+<p><code>ssh -T git@github.com</code></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9AGit%E8%B4%A6%E5%8F%B7%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">多Git账号场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E4%B8%A4%E4%B8%AAssh-key"><span class="toc-number">2.</span> <span class="toc-text">生成两个ssh-key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90"><span class="toc-number">3.</span> <span class="toc-text">获取服务器项目权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8ssh%E4%B8%AD%E5%A2%9E%E5%8A%A0config%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">在ssh中增加config文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%9B%AE%E6%A0%87%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8git-config%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7"><span class="toc-number">5.</span> <span class="toc-text">在目标项目中使用git config设置用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh-T-%E6%B5%8B%E8%AF%95"><span class="toc-number">6.</span> <span class="toc-text">ssh-T 测试</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-06-01-multi-git-user-config/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&text=多git账号配置"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&is_video=false&description=多git账号配置"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多git账号配置&body=Check out this article: https://leriou.github.io/2017-06-01-multi-git-user-config/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&title=多git账号配置"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-06-01-multi-git-user-config/&name=多git账号配置&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-06-01-multi-git-user-config/&t=多git账号配置"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

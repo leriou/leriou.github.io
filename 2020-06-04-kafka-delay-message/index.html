@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="背景我们在业务中经常会有延迟队列或者优先级队列之类的需求。比如用户下单15分钟如果没有付款就自动取消订单。 延迟队列和优先队列本质上是一个需求，延迟队列可以看成一个使用时间作为优先级的队列。Kafka这种基于日志的消息队列并没有自带延迟队列的功能。所以如果想在Kafka的基础上实现此类功能，需要我们自己动手处理。我现在可以想到的实现方法有三种  消息分级 外存排序 针对延迟队列的时间轮  消息分级">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于kafka的延迟队列和优先队列的实现">
+<meta property="og:url" content="https://leriou.github.io/2020-06-04-kafka-delay-message/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="背景我们在业务中经常会有延迟队列或者优先级队列之类的需求。比如用户下单15分钟如果没有付款就自动取消订单。 延迟队列和优先队列本质上是一个需求，延迟队列可以看成一个使用时间作为优先级的队列。Kafka这种基于日志的消息队列并没有自带延迟队列的功能。所以如果想在Kafka的基础上实现此类功能，需要我们自己动手处理。我现在可以想到的实现方法有三种  消息分级 外存排序 针对延迟队列的时间轮  消息分级">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/3BYSoLuPwgiDMaX.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/6e7N84KHazWEZuA.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/EHmgAIRKeZqXOhW.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/lRWYwHpnM4D1vya.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/22/C3SwHUNbcOq9WJF.png">
+<meta property="article:published_time" content="2020-06-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.886Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="延迟队列">
+<meta property="article:tag" content="kafka">
+<meta property="article:tag" content="外存排序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/03/22/3BYSoLuPwgiDMaX.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>基于kafka的延迟队列和优先队列的实现</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020-07-08-neural-network-demo/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-05-26-live-red-packet/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-06-04-kafka-delay-message/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&text=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&is_video=false&description=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于kafka的延迟队列和优先队列的实现&body=Check out this article: https://leriou.github.io/2020-06-04-kafka-delay-message/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&name=基于kafka的延迟队列和优先队列的实现&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-06-04-kafka-delay-message/&t=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E5%88%86%E7%BA%A7"><span class="toc-number">1.1.</span> <span class="toc-text">消息分级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E5%AD%98%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">外存排序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A82G%E5%86%85%E5%AD%98%E7%9A%84%E6%9C%BA%E5%99%A8%E4%B8%8A%E5%AF%B9100G%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text">如何在2G内存的机器上对100G文件进行排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%92%88%E5%AF%B9%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E7%9A%84%E6%97%B6%E9%97%B4%E8%BD%AE%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.</span> <span class="toc-text">针对延迟队列的时间轮机制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        基于kafka的延迟队列和优先队列的实现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">2020-06-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/kafka/" rel="tag">kafka</a>, <a class="tag-link-link" href="/tags/%E5%A4%96%E5%AD%98%E6%8E%92%E5%BA%8F/" rel="tag">外存排序</a>, <a class="tag-link-link" href="/tags/%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97/" rel="tag">延迟队列</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>我们在业务中经常会有<strong>延迟队列</strong>或者<strong>优先级队列</strong>之类的需求。比如用户下单15分钟如果没有付款就自动取消订单。</p>
+<p>延迟队列和优先队列本质上是一个需求，延迟队列可以看成一个使用时间作为优先级的队列。Kafka这种基于日志的消息队列并没有自带延迟队列的功能。所以如果想在Kafka的基础上实现此类功能，需要我们自己动手处理。我现在可以想到的实现方法有三种</p>
+<ol>
+<li>消息分级</li>
+<li>外存排序</li>
+<li>针对延迟队列的时间轮</li>
+</ol>
+<h2 id="消息分级"><a href="#消息分级" class="headerlink" title="消息分级"></a>消息分级</h2><p>先说简单的消息分级机制，假如我们遇到需要根据用户会员等级对不同等级的用户消息按照不同的优先级进行处理的需求。</p>
+<p>最直观的办法就是我们制作多个等级的消息队列，每个队列对应一个用户等级的消息。或者在一个队列中使用多个不同分区，每个分区对应不同等级的消息。</p>
+<p>这种方法本质上就是把不同优先级的消息内容分开存储。在消息被消费的时候按照优先级从高到低的方式进行处理。开源的rocketmq的延迟消息就是这种实现机制，其中的延迟消息队列内置了18个不同延迟时间级别的消息队列，客户端消费消息是从这18个队列中按优先级同时获取的。</p>
+<p>按优先级分区处理图：</p>
+<p><img src="https://i.loli.net/2021/03/22/3BYSoLuPwgiDMaX.png" alt="delay_queue1.png"></p>
+<p>假设我们现在有3种用户优先级，我们需要按照一定的vip优先级顺序(假设vip等级  vip1 &gt; vip2 &gt;  vip3)处理用户消息。具体流程如下</p>
+<ol>
+<li>用户发送具有优先级的消息到vip_topic</li>
+<li>分流程序实时消费vip_topic，将其中的消息按照优先级分别放入vip_1,vip_2,vip_3三个优先级队列， 这样一来，vip_1， vip_2,vip_3每个topic内部的消息都是保持有序的</li>
+<li>另外有一个程序 每次按照 vip_1,vip_2,vip_3的顺序依次取消息进行处理，只有vip_1里面的消息处理完，才会处理vip_2里面的消息，最后处理vip3里面的消息。这样可以保证每一批次的消息都是按照 vip1&gt; vip2&gt; vip3的优先级进行处理</li>
+</ol>
+<p>这种方法的缺点很明显，就是优先级区分受队列个数限制，只适用于优先级层级比较少的情况。如果我们想实现毫秒级的基于时间的延迟队列，那就要每个1ms区间都要构建一个队列出来，这种场景下明显不合理，所以采用类似方案的rocketmq开源版本仅仅实现了18个时间尺度的优先级队列。</p>
+<h2 id="外存排序"><a href="#外存排序" class="headerlink" title="外存排序"></a>外存排序</h2><p>外存排序是真正的按照某种优先级字段对内容进行重新排序，然后再进行消费的手段。</p>
+<p>我们可以先获取队列中的消息内容， 然后按照一定的优先级字段进行排序。最后按照排序后的结果进行消费即可。这种方法的技术难点在于如何利用小内存对大容量的磁盘内容进行排序。因为通常消息队列中的内容都是T级别的，而机器的可用内存空间往往是G级别的。</p>
+<p>基于排序的优先级队列实现流程：</p>
+<p><img src="https://i.loli.net/2021/03/22/6e7N84KHazWEZuA.png" alt="delay_queue2.png"></p>
+<hr>
+<h3 id="如何在2G内存的机器上对100G文件进行排序"><a href="#如何在2G内存的机器上对100G文件进行排序" class="headerlink" title="如何在2G内存的机器上对100G文件进行排序"></a>如何在2G内存的机器上对100G文件进行排序</h3><p><img src="https://i.loli.net/2021/03/22/EHmgAIRKeZqXOhW.png" alt="图1"></p>
+<p>上图1</p>
+<p><img src="https://i.loli.net/2021/03/22/lRWYwHpnM4D1vya.png" alt="图2"></p>
+<p>上图2</p>
+<p>假设我们要对100G的内容在2G内存的机器上进行排序， 我们可以执行如下操作</p>
+<ol>
+<li>使用split命令把100G文件分割成50个2G的小文件，并对每个分割后的文件使用sort排序（此时的问题已经变成对50个有序的2G文件在2G内存的机器上进行排序），(上图1 的有序文件1，2，3)</li>
+<li>使用split取50个小文件的前40M数据，读取到内存进行排序，排序后的数据的前40M就是全局最小的40M内容(上图中的A，B，C三块文件读入内存变为A’,B’,C’, A’B‘C’在内存中排序后一定能得到全局最小的新A’)</li>
+<li>将内存排序后的前40M内容输出到磁盘上，内存中剩余的1960M内容放回到磁盘，此时磁盘有51个1960M的有序文件（此时问题等价于对51个有序的1960M的文件在2G内存的机器上进行排序，途中的B’C‘被从内存中取出放回磁盘）</li>
+<li>仿照上面的方法， 从51个文件每个读取35M内容进行排序，找出全局最小的35M内容</li>
+<li>循环2-4步骤，直至所有内容都被排序成功</li>
+</ol>
+<blockquote>
+<p>ps: sort，split 均为linux自带的命令可以对文件进行排序和分割,这个算法本质上还是多路归并排序， 但是相当于对归并排序做了一些优化：优化1，每段已排序数据一次取一批数据；优化2，没有采用记录文件指针的形式而是直接分割文件，操作更简单</p>
+</blockquote>
+<hr>
+<p>如果我们可以在Kafka中采用实时程序对Topic中的消息进行外存排序，就可以得到我们需要的优先消息队列。但是在这个过程中我们还要<strong>注意使用kafka和Flink的事务机制，提供kafka端到端的事务保证，防止消息丢失</strong></p>
+<p>实现kafka+Flink的端到端的事务的方案在此不多叙述</p>
+<h2 id="针对延迟队列的时间轮机制"><a href="#针对延迟队列的时间轮机制" class="headerlink" title="针对延迟队列的时间轮机制"></a>针对延迟队列的时间轮机制</h2><p>如果是仅仅为了实现延迟队而非通用的优先级队列，我们可以利用Kafka中的时间轮机制，将任务添加到对应的每一个时间分片中， 随着时间轮的驱动， 顺序处理每个时间分片其中的消息</p>
+<p><img src="https://i.loli.net/2021/03/22/C3SwHUNbcOq9WJF.png" alt="delay_queue3.png"></p>
+<p>图3时间轮</p>
+<p>时间轮是一种循环数据结构，时间轮中的每个槽位代表一个时间粒度，时间轮的时间粒度 &#x3D; 槽位数量 * 每个槽位的时间粒度。时间轮由一个独立的循环程序驱动上面的当前时间指针前进。时间轮可以用槽位链表或者数组+消息链表的形式来实现。</p>
+<p>用时间轮实现延迟队列具体方法如下</p>
+<ol>
+<li>假设我们提供20d级别的延迟消息队列，我们需要提供3级时间轮，最低级是100ms粒度的时间轮，最大存储范围1min, 第二种是1min粒度的时间轮，最大存储范围6h,第三种是 6h粒度的时间轮，最大存储范围480小时</li>
+<li>当一个消息进来，我们根据消息的延迟时间选择对应的时间轮分片进行消息插入，比如有一个延迟1500ms的消息，将会被插入到当前的1m时间轮的第15个槽位，如果消息的延迟时间为3h将会被插入更高一级的6h的时间轮的第3个槽位。</li>
+<li>采用一个循环程序驱动时间轮转动并消费当前时间槽内的消息，当1m时间轮的所有消息消费完毕，从6h的时间轮中获取当前槽位的所有消息，并驱动6h时间轮指向下一个槽位，对取出来的消息排序补充入更低级的1min时间轮，继续驱动1min的时间轮继续消息处理。</li>
+<li>采用类似手段可以通过控制时间轮的粒度，来控制延迟队列的粒度，达到一种较好的延迟队列实现方法</li>
+</ol>
+<p>时间轮也有自己的缺点，不过在基于时间的延迟消息机制中已经是最好的解决方案了。但是这种方法不像上一种外存排序那么通用，仅适合于延迟队列这一种场景。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实以上三种方法我们本质上处理过程都是一样的，无非就是过程中我们使用的工具和排序机制不同。</p>
+<p>第一种方法我们按照优先级分类，然后某个分类里面的消息天然有序， 我们取数据时候人为规定的字段优先级就充当了其中的排序机制。</p>
+<p>第二种方法我们相当于按照消息接收的时间分类， 然后对优先级字段进行排序</p>
+<p>第三种方法我们按照 延迟时间分类，然后对每一类里面的消息，让他变的局部有序。最后得到一个全局有序的结果。</p>
+<p>如果把第二种方法里面的文件换成topic，排序方法换成按topicId排序的排序方法，就跟第一种毫无区别了。</p>
+<p>同样，如果我们把第三种里面的时间轮上的槽位当作topic，也跟第一种方法没有什么区别</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>适用范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分区队列</td>
+<td>实现简单，适用于数据量大，排序字段可选值较少的优先级队列和延迟队列场景</td>
+</tr>
+<tr>
+<td>外部排序</td>
+<td>实现复杂，需要端到端的事务保证，适用于排序字段可选值大，数据量较少的优先级队列和延迟队列场景</td>
+</tr>
+<tr>
+<td>时间轮</td>
+<td>实现复杂，仅适用于延迟队列场景</td>
+</tr>
+</tbody></table>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E5%88%86%E7%BA%A7"><span class="toc-number">1.1.</span> <span class="toc-text">消息分级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E5%AD%98%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">外存排序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A82G%E5%86%85%E5%AD%98%E7%9A%84%E6%9C%BA%E5%99%A8%E4%B8%8A%E5%AF%B9100G%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.1.</span> <span class="toc-text">如何在2G内存的机器上对100G文件进行排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%92%88%E5%AF%B9%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E7%9A%84%E6%97%B6%E9%97%B4%E8%BD%AE%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.</span> <span class="toc-text">针对延迟队列的时间轮机制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-06-04-kafka-delay-message/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&text=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&is_video=false&description=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于kafka的延迟队列和优先队列的实现&body=Check out this article: https://leriou.github.io/2020-06-04-kafka-delay-message/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&title=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-06-04-kafka-delay-message/&name=基于kafka的延迟队列和优先队列的实现&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-06-04-kafka-delay-message/&t=基于kafka的延迟队列和优先队列的实现"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

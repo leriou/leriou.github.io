@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="业务背景和需求简介业务中经常有直播期间播主给用户发红包的操作，由于直播场景的高实时，高并发场景。这个简单的业务中还是有不少的问题出现，这里给出一种经过验证的可以横向扩展支持超高并发量的实现手段 业务流程主播在直播过程中向用户发送红包，主播会设定金额，红包个数，红包类型（随机红包，等额红包）。用户可以去抢那些个红包。 关键问题生成红包的算法其实跟发微信红包类似，播主可以发两种不同的红包。一种是等额红">
+<meta property="og:type" content="article">
+<meta property="og:title" content="超高并发场景下的直播红包发放业务的架构设计">
+<meta property="og:url" content="https://leriou.github.io/2020-05-26-live-red-packet/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="业务背景和需求简介业务中经常有直播期间播主给用户发红包的操作，由于直播场景的高实时，高并发场景。这个简单的业务中还是有不少的问题出现，这里给出一种经过验证的可以横向扩展支持超高并发量的实现手段 业务流程主播在直播过程中向用户发送红包，主播会设定金额，红包个数，红包类型（随机红包，等额红包）。用户可以去抢那些个红包。 关键问题生成红包的算法其实跟发微信红包类似，播主可以发两种不同的红包。一种是等额红">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/08/28/9KwRprZeNGuSjiz.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/28/k4traPndz5KCsj3.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/AqbUl86k4RDHKaj.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/FbzM3i4plvj9gSJ.png">
+<meta property="article:published_time" content="2020-05-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.883Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="热点数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/08/28/9KwRprZeNGuSjiz.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>超高并发场景下的直播红包发放业务的架构设计</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020-06-04-kafka-delay-message/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-05-02-rec-flows-pool/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-05-26-live-red-packet/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-05-26-live-red-packet/&text=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-05-26-live-red-packet/&is_video=false&description=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=超高并发场景下的直播红包发放业务的架构设计&body=Check out this article: https://leriou.github.io/2020-05-26-live-red-packet/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-05-26-live-red-packet/&name=超高并发场景下的直播红包发放业务的架构设计&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-05-26-live-red-packet/&t=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E8%83%8C%E6%99%AF%E5%92%8C%E9%9C%80%E6%B1%82%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">业务背景和需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">业务流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">关键问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E7%BA%A2%E5%8C%85%E7%9A%84%E7%AE%97%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">生成红包的算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%BA%A2%E5%8C%85%E9%87%91%E9%A2%9D%E7%9A%84%E6%A6%82%E7%8E%87%E5%85%AC%E5%B9%B3%E6%80%A7%E5%88%86%E6%9E%90"><span class="toc-number">3.2.</span> <span class="toc-text">关于红包金额的概率公平性分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%B6%85%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%BA%A2%E5%8C%85%E7%9A%84%E5%88%86%E5%8F%91"><span class="toc-number">3.3.</span> <span class="toc-text">如何处理超高并发场景下红包的分发</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        超高并发场景下的直播红包发放业务的架构设计
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-05-25T16:00:00.000Z" itemprop="datePublished">2020-05-26</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%9E%B6%E6%9E%84%E6%96%B9%E6%A1%88/">架构方案</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE/" rel="tag">热点数据</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="业务背景和需求简介"><a href="#业务背景和需求简介" class="headerlink" title="业务背景和需求简介"></a>业务背景和需求简介</h2><p>业务中经常有直播期间播主给用户发红包的操作，由于直播场景的高实时，高并发场景。这个简单的业务中还是有不少的问题出现，这里给出一种经过验证的可以横向扩展支持超高并发量的实现手段</p>
+<h2 id="业务流程"><a href="#业务流程" class="headerlink" title="业务流程"></a>业务流程</h2><p>主播在直播过程中向用户发送红包，主播会设定金额，红包个数，红包类型（随机红包，等额红包）。用户可以去抢那些个红包。</p>
+<h2 id="关键问题"><a href="#关键问题" class="headerlink" title="关键问题"></a>关键问题</h2><h3 id="生成红包的算法"><a href="#生成红包的算法" class="headerlink" title="生成红包的算法"></a>生成红包的算法</h3><p>其实跟发微信红包类似，播主可以发两种不同的红包。一种是等额红包，一种是随机红包。等额红包没什么技术难度，随机红包会涉及到红包的分割算法。</p>
+<p>在随机金额的红包中为了保证用户体验，通常会允许给每份红包设定一个区间范围，保证用户得到的红包不至于太小也不至于太大。</p>
+<p>也就是说我们需要实现如下函数, 根据红包总金额，红包个数，红包的最小值和最大值，生成一个具有n个红包具体金额的数组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gen_red_package</span>(<span class="params">amount, num, min_size, max_size</span>) -&gt; <span class="type">List</span>[<span class="built_in">float</span>]</span><br></pre></td></tr></table></figure>
+
+<p>实现简单的红包生成算法并不难，难得是设计一个每个红包生成金额概率均等的足够公平的红包生成算法。这里可以采用一种线性分段的方法来实现均匀的红包分割，思路是这样的</p>
+<ol>
+<li>我们可以先按【0，红包总金额】划定一个线段，然后我们在线段上随机位置生成n-1个点（n是红包总数）</li>
+<li>每个生成的点与其前后的点的间隔要满足我们的金额要求</li>
+<li>最后每两个点之间的距离就是我们要的红包金额</li>
+</ol>
+<p>具体代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gen_red_package</span>(<span class="params">amount, num, min_size, max_size</span>) -&gt; <span class="type">List</span>[<span class="built_in">float</span>]:</span><br><span class="line">    amount *= <span class="number">100</span></span><br><span class="line">    lines = [<span class="number">0</span>, amount]</span><br><span class="line">    <span class="comment"># 生成num-1个符合要求的随机的点</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, num - <span class="number">1</span>):</span><br><span class="line">        loop = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">while</span> loop:</span><br><span class="line">            r = random.Random().randint(<span class="number">0</span>, amount)</span><br><span class="line">            loop = <span class="keyword">not</span> is_valid(lines, r, min_size * <span class="number">100</span>, max_size * <span class="number">100</span>)</span><br><span class="line">    <span class="comment"># 生成红包        </span></span><br><span class="line">    paks = []</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(lines) - <span class="number">1</span>):</span><br><span class="line">        paks.append((lines[j+<span class="number">1</span>] - lines[j])/<span class="number">100</span>)</span><br><span class="line">    <span class="keyword">return</span> paks</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_valid</span>(<span class="params">arr, value, min_size, max_size</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">    <span class="keyword">if</span> arr.__contains__(value):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    arr.append(value)</span><br><span class="line">    arr.sort()</span><br><span class="line">    curr = arr.index(value)</span><br><span class="line">    l = arr[<span class="built_in">max</span>(<span class="number">0</span>, curr - <span class="number">1</span>)]</span><br><span class="line">    r = arr[<span class="built_in">min</span>(curr + <span class="number">1</span>, <span class="built_in">len</span>(arr) - <span class="number">1</span>)]</span><br><span class="line">    dl = value - l</span><br><span class="line">    dr = r - value</span><br><span class="line">    <span class="keyword">if</span> dl &gt;= min_size <span class="keyword">and</span> dr &gt;= min_size <span class="keyword">and</span> dl &lt;= max_size <span class="keyword">and</span> dr &lt;= max_size :</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    arr.remove(value)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(gen_red_package(<span class="number">100</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">90</span>))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> ⚠️注意，这种方法其实是有一定的问题存在的，假设我们想发3个总金额4块的红包，最小1块钱，最大2块钱，此时每个红包最小必须1元，有可能会生成 【1.5, 3】 然后第三个红包永远无法生成的情况，处理这种情况的方法就是调整最小红包和最大红包到一个合适的值</p>
+</blockquote>
+<h3 id="关于红包金额的概率公平性分析"><a href="#关于红包金额的概率公平性分析" class="headerlink" title="关于红包金额的概率公平性分析"></a>关于红包金额的概率公平性分析</h3><p>为了保证验证上面的红包算法对每个金额生成的概率均等，通过对上面的红包生成代码进行10000次测试，我们能得到如下的金额分布。我们可以看到金额在20以上的次数和在20以下的总次数是相当的。这符合我们的预期，因为我们100块钱分成5个红包，均值就是20。<strong>说明金额期望是相等的</strong></p>
+<p><img src="https://i.loli.net/2020/08/28/9KwRprZeNGuSjiz.png" alt="image-20200828203601323.png"></p>
+<p>我们在看下面的各个位置的红包总金额的分布， 也能看到每个位置的总金额是差不多的， 也就是说。每个位置获取金额的大小概率是一样的。这就体现了算法的公平性，<strong>说明红包金额和抢红包的顺序没关系</strong>。</p>
+<p><img src="https://i.loli.net/2020/08/28/k4traPndz5KCsj3.png" alt="image-20200828203613294.png"></p>
+<p>具体的分析金额生成概率的代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">%matplotlib inline</span><br><span class="line">%config InlineBackend.figure_format = <span class="string">&#x27;svg&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">我们将100块钱分成5个红包， 最小5元，最大95元（这个允许的金额区间越大，算法性能越好，范围越小，越消耗性能）</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">amount = <span class="number">100</span></span><br><span class="line">nums = <span class="number">5</span></span><br><span class="line">min_amount = <span class="number">5</span></span><br><span class="line">max_amount = <span class="number">95</span></span><br><span class="line"></span><br><span class="line">step = <span class="number">1</span></span><br><span class="line">stat = &#123;&#125;</span><br><span class="line">pos = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">10000</span>):</span><br><span class="line">    packages = gen_red_package(amount, nums, min_amount, max_amount)</span><br><span class="line">    idx = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> packages:</span><br><span class="line">        t = n // step</span><br><span class="line">        base = <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> stat.__contains__(t):</span><br><span class="line">            base = stat[t] + <span class="number">1</span></span><br><span class="line">        stat[t] = base</span><br><span class="line">        base = n</span><br><span class="line">        <span class="keyword">if</span> pos.__contains__(idx):</span><br><span class="line">            base = pos[idx] + n</span><br><span class="line">        pos[idx] = base</span><br><span class="line">        idx += <span class="number">1</span> </span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots()  </span><br><span class="line">ax.bar(np.array([i*step <span class="keyword">for</span> i <span class="keyword">in</span> stat.keys()]),np.array([i <span class="keyword">for</span> i <span class="keyword">in</span> stat.values()]));</span><br><span class="line"></span><br><span class="line">fig2, bx = plt.subplots()  </span><br><span class="line">bx.bar(np.array([i <span class="keyword">for</span> i <span class="keyword">in</span> pos.keys()]),np.array([i <span class="keyword">for</span> i <span class="keyword">in</span> pos.values()]));</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="如何处理超高并发场景下红包的分发"><a href="#如何处理超高并发场景下红包的分发" class="headerlink" title="如何处理超高并发场景下红包的分发"></a>如何处理超高并发场景下红包的分发</h3><ul>
+<li>方案1：采用消息队列</li>
+</ul>
+<p>我们可以将生成的50个红包放到redis的list中，每个用户到来，就去队列中请求弹出一个红包数据，队列数据消耗完毕， 即待分配的红包消耗完毕</p>
+<p>这种方法实现简单， 但是会遇到并发的问题，用户去获取list的数据的时候， 由于用户的所有红包都在一个redis节点上， 所以用户的所有redis请求都会被动的落到某一个redis节点，哪怕使用集群也无法解决这种热点问题</p>
+<p>所以在用户数据量较大的时候还是建议第二种方案</p>
+<ul>
+<li>方案2: 采用数据分流</li>
+</ul>
+<p>数据分流 + 用户分流：我们生成的50个红包可以分成N份，存储到不同的key上, 使用key_0-key_N存储数据会均匀的分配到redis的各个节点上。</p>
+<p>用户在获取红包时，随机请求其中的一份红包数据，这样用户的请求可以有效打散到各个redis节点上， 同时能处理的请求数据可以随节点数量扩展， 但是这种方法的缺点也很明显， 一个是实现复杂，一个是会对用户造成一定程度上不公平的体验。</p>
+<hr>
+<p><strong>具体的红包发放流程</strong></p>
+<p>播主和服务端</p>
+<p><img src="https://i.loli.net/2020/11/10/AqbUl86k4RDHKaj.png" alt="hongbao1.png"></p>
+<p>用户端</p>
+<p><img src="https://i.loli.net/2020/11/10/FbzM3i4plvj9gSJ.png" alt="hongbao2.png"></p>
+<p>潜在的问题：</p>
+<ol>
+<li><p>用户存在的幻读现象</p>
+<p>可能会出现这种情况，A，B两节点的用户请求分布不均匀，用户1请求被分流到A节点，发现A节点没有红包了，但是重新刷新，这次被分到B节点，又发现B节点还有红包可以领。解决这种问题可以采用按请求顺序轮询分发的方法，最大程度减少不公平。或者采用用户亲和的方法，根据用户的hash进行节点划分</p>
+</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E8%83%8C%E6%99%AF%E5%92%8C%E9%9C%80%E6%B1%82%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">业务背景和需求简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">业务流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">关键问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E7%BA%A2%E5%8C%85%E7%9A%84%E7%AE%97%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">生成红包的算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%BA%A2%E5%8C%85%E9%87%91%E9%A2%9D%E7%9A%84%E6%A6%82%E7%8E%87%E5%85%AC%E5%B9%B3%E6%80%A7%E5%88%86%E6%9E%90"><span class="toc-number">3.2.</span> <span class="toc-text">关于红包金额的概率公平性分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%B6%85%E9%AB%98%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%BA%A2%E5%8C%85%E7%9A%84%E5%88%86%E5%8F%91"><span class="toc-number">3.3.</span> <span class="toc-text">如何处理超高并发场景下红包的分发</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-05-26-live-red-packet/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-05-26-live-red-packet/&text=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-05-26-live-red-packet/&is_video=false&description=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=超高并发场景下的直播红包发放业务的架构设计&body=Check out this article: https://leriou.github.io/2020-05-26-live-red-packet/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-05-26-live-red-packet/&title=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-05-26-live-red-packet/&name=超高并发场景下的直播红包发放业务的架构设计&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-05-26-live-red-packet/&t=超高并发场景下的直播红包发放业务的架构设计"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="A&#x2F;B实验平台的目的提供一个实验平台，可以方便的使用控制变量的手段同时进行多种功能改进的效果对比实验 对比一个功能上线后的效果如何需要做用户对比实验， 在此过程中需要严格的控制变量。但是有时候我们可能希望同时实验多种不同维度的功能改进的效果，以此快速验证功能效果，提高产品迭代效率，这个时候就需要一个能提供多功能对比实验的AB实验平台。 ab实验实际场景举例假设我们现在有一个支付服务， 我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推荐系统AB实验平台">
+<meta property="og:url" content="https://leriou.github.io/2020-04-19-rec-abtest/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="A&#x2F;B实验平台的目的提供一个实验平台，可以方便的使用控制变量的手段同时进行多种功能改进的效果对比实验 对比一个功能上线后的效果如何需要做用户对比实验， 在此过程中需要严格的控制变量。但是有时候我们可能希望同时实验多种不同维度的功能改进的效果，以此快速验证功能效果，提高产品迭代效率，这个时候就需要一个能提供多功能对比实验的AB实验平台。 ab实验实际场景举例假设我们现在有一个支付服务， 我">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/Eh862JtjNPmkVCS.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/10/7VcMkZzsUoO6uan.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/10/CAybXrgzDJnqI9E.png">
+<meta property="article:published_time" content="2020-04-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.885Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="推荐系统">
+<meta property="article:tag" content="A&#x2F;B实验平台">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/Eh862JtjNPmkVCS.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>推荐系统AB实验平台</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020-05-02-rec-flows-pool/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-04-11-analyze-user-feture/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-04-19-rec-abtest/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-04-19-rec-abtest/&text=推荐系统AB实验平台"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-04-19-rec-abtest/&is_video=false&description=推荐系统AB实验平台"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=推荐系统AB实验平台&body=Check out this article: https://leriou.github.io/2020-04-19-rec-abtest/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-04-19-rec-abtest/&name=推荐系统AB实验平台&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-04-19-rec-abtest/&t=推荐系统AB实验平台"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#A-x2F-B%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">A&#x2F;B实验平台的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E5%AE%9E%E9%99%85%E5%9C%BA%E6%99%AF%E4%B8%BE%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">ab实验实际场景举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E7%9A%84%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text">实验平台的接口设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B1%82%E5%AE%9E%E9%AA%8C%E6%B5%81%E9%87%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">分层实验流量模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E6%8E%A5%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">ab实验平台接入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">5.1.</span> <span class="toc-text">相关概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E5%92%8C%E4%BB%A3%E7%A0%81"><span class="toc-number">5.2.</span> <span class="toc-text">接口设计和代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%AE%9E%E9%AA%8C"><span class="toc-number">5.3.</span> <span class="toc-text">用户实验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%AE%9E%E9%AA%8C%E9%83%A8%E7%BD%B2"><span class="toc-number">5.4.</span> <span class="toc-text">多实验部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%AE%9E%E9%AA%8C%E6%95%88%E6%9E%9C%E5%9B%9E%E6%94%B6%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="toc-number">5.5.</span> <span class="toc-text">多实验效果回收和评估</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E5%88%86%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">嵌套分层模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%B5%81%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">6.1.</span> <span class="toc-text">分流模型设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E8%A6%81%E6%B1%82"><span class="toc-number">6.2.</span> <span class="toc-text">模型设计要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">7.</span> <span class="toc-text">ab实验架构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        推荐系统AB实验平台
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-04-18T16:00:00.000Z" itemprop="datePublished">2020-04-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/A-B%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0/" rel="tag">A/B实验平台</a>, <a class="tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" rel="tag">推荐系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="A-x2F-B实验平台的目的"><a href="#A-x2F-B实验平台的目的" class="headerlink" title="A&#x2F;B实验平台的目的"></a>A&#x2F;B实验平台的目的</h2><p><strong>提供一个实验平台，可以方便的使用控制变量的手段同时进行多种功能改进的效果对比实验</strong></p>
+<p>对比一个功能上线后的效果如何需要做用户对比实验， 在此过程中需要严格的控制变量。但是有时候我们可能希望同时实验多种不同维度的功能改进的效果，以此快速验证功能效果，提高产品迭代效率，这个时候就需要一个能提供多功能对比实验的AB实验平台。</p>
+<h2 id="ab实验实际场景举例"><a href="#ab实验实际场景举例" class="headerlink" title="ab实验实际场景举例"></a>ab实验实际场景举例</h2><p>假设我们现在有一个支付服务， 我们设计了红&#x2F;蓝两种付款按钮，并且支持信用卡和支付宝两种支付方式。我们想通过实验看看哪种颜色的付款按钮付款率更高，还想看看哪种付款方式的付款率更高。</p>
+<p>此时我们就构成了2个实验，实验1: 针对付款按钮颜色的实验。实验2:针对付款方式的实验。</p>
+<p>其中的红按钮，蓝按钮就是实验策略。针对颜色的实验和针对付款方式的实验就是实验层。最终所有用户会分不到四个实验结果中。分别是【红按钮信用卡，红按钮支付宝，蓝按钮信用卡，蓝按钮支付宝】。其中的 “红按钮信用卡”就是某一种实验号。</p>
+<p>将来我们验证不同版本实验的效果， 就需要通过实验号流量进行统计。</p>
+<h2 id="实验平台的接口设计"><a href="#实验平台的接口设计" class="headerlink" title="实验平台的接口设计"></a>实验平台的接口设计</h2><h2 id="分层实验流量模型"><a href="#分层实验流量模型" class="headerlink" title="分层实验流量模型"></a>分层实验流量模型</h2><p><img src="https://i.loli.net/2020/05/09/Eh862JtjNPmkVCS.png" alt="abtest.png"></p>
+<h2 id="ab实验平台接入"><a href="#ab实验平台接入" class="headerlink" title="ab实验平台接入"></a>ab实验平台接入</h2><h3 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h3><p>实验：实验是指对某一个具体功能的一整套对比方案。对于一般的功能只有两个可选项，就是开启功能，关闭功能。部分功能可能具有多种不同的状态。</p>
+<p>实验策略：用于表示实验中的某一个具体的选择。同一层实验策略之间互斥。</p>
+<p>实验层：这个用于实现不同层的实验叠加，目的是充分利用用户流量来进行功能实验。 </p>
+<p>实验号：用户最终拿到的最终的实验策略的集合</p>
+<h3 id="接口设计和代码"><a href="#接口设计和代码" class="headerlink" title="接口设计和代码"></a>接口设计和代码</h3><p>ab实验本质上是需要实现一个接口</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_user_abtest</span>(<span class="params">userid: User</span>) -&gt; HitPath</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户实验"><a href="#用户实验" class="headerlink" title="用户实验"></a>用户实验</h3><p>我们会根据当前需要进行的实验进行实验分层和隔离，层数和每层的正在执行的实验组会为每个用户分配一个实验号。实验需要有版本设计，每个版本的实验，同一个用户只能获得一个实验号，实验版本更新，用户的实验号随之重新分配。</p>
+<p><strong>实验号的本质是获取一个多维的当前实验配置集合</strong></p>
+<p>例如图中的 A1-B3-C2 就代表一个同时参与了A1，B3，C2三个实验的用户</p>
+<h3 id="多实验部署"><a href="#多实验部署" class="headerlink" title="多实验部署"></a>多实验部署</h3><p>当我们想进行一个新的实验时，只需在对应的实验层增加一种配置。同时发布更新实验版本即可。系统会自动对所有用户进行重新的实验号分配，分配完成后，用户的下次请求即可应用新的实验配置。</p>
+<p>ps: 用户的实验号分配原则可以采用根据用户请求实时计算的方法也可以提前分配好实验流量，两者各有好处</p>
+<h3 id="多实验效果回收和评估"><a href="#多实验效果回收和评估" class="headerlink" title="多实验效果回收和评估"></a>多实验效果回收和评估</h3><p>用户使用的实验号和版本信息会随着请求返回客户端，由客户端进行收集埋点。</p>
+<p>如果需要对比某实验的结果，我们只需要根据用户的实验号，做控制变量的反馈效果对比即可。<br>比如上图中我们对比策略层的实验效果，就需要对比所有xx-xx-C1和xx-xx-C2两类实验号中的数据效果。 为了防止其他变量的影响我们可以更详细的对比A2-B1-C1和 A2-B2-C2这两个实验号中的用户的实验结果</p>
+<p>再如例子中，我们想对比不同颜色按钮的效果就可以拿 所有红色按钮的实验号结果集 和所有的蓝色实验号结果集进行对比</p>
+<h2 id="嵌套分层模型"><a href="#嵌套分层模型" class="headerlink" title="嵌套分层模型"></a>嵌套分层模型</h2><p>其实从ab系统本身来说，还有一种更通用更强大但是也更复杂的实验流量分流模型，可以满足几乎所有的分流实验需求。就是具有嵌套结构的分流模型</p>
+<p>不过这种形式的ab系统往往因为配置复杂，流量太过分散，实际生产中使用较少。读者可以仅作了解</p>
+<p>ps:虽然看上去复杂但是实际上嵌套的分流模型在工程和代码实现上反而更为简单</p>
+<h3 id="分流模型设计"><a href="#分流模型设计" class="headerlink" title="分流模型设计"></a>分流模型设计</h3><p><img src="https://i.loli.net/2021/03/10/7VcMkZzsUoO6uan.png" alt="qiantao.png"></p>
+<h3 id="模型设计要求"><a href="#模型设计要求" class="headerlink" title="模型设计要求"></a>模型设计要求</h3><ul>
+<li><p>嵌套模型中只有层和桶两种流量块形式，桶用来做用户流量的隔离(垂直切割)，层用来做业务逻辑隔离(水平隔离)。 需要对比的，流量互斥的具体实验应该放到同一层下不同的桶中</p>
+</li>
+<li><p>组织流量模型的时候，层与桶要合理设计并且交替出现，不能出现层里面有层，或者桶里面有桶的情况</p>
+</li>
+<li><p>不允许跨层进行实验，跨层实验需求可以变相的通过增加分桶来满足</p>
+</li>
+</ul>
+<h2 id="ab实验架构设计"><a href="#ab实验架构设计" class="headerlink" title="ab实验架构设计"></a>ab实验架构设计</h2><p><img src="https://i.loli.net/2021/03/10/CAybXrgzDJnqI9E.png" alt="WX20210310-000534@2x.png"></p>
+<ol>
+<li>整套ab实验的最终目的是使用量化的手段来分析不同策略的效果，所以实验的最终效果分析十分重要</li>
+<li>ab系统本身应该包含完整的实验发放，实验执行，实验效果回收等一些列流程</li>
+<li>整套ab实验系统涉及到服务端，前端，数据仓库，后台等多个系统</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>用户的ab实验本质上是一个分层的动态配置平台， 用户根据不同的配置执行不同的策略。然后对数据进行收集分析。比较值得注意的是，ab实验平台应作为一个纯粹的实验配置分发平台，不应该耦合任何的业务逻辑，所有业务逻辑应该能通过实验配置进行自定义控制</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#A-x2F-B%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">A&#x2F;B实验平台的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E5%AE%9E%E9%99%85%E5%9C%BA%E6%99%AF%E4%B8%BE%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">ab实验实际场景举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E7%9A%84%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text">实验平台的接口设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B1%82%E5%AE%9E%E9%AA%8C%E6%B5%81%E9%87%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">分层实验流量模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E5%B9%B3%E5%8F%B0%E6%8E%A5%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">ab实验平台接入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">5.1.</span> <span class="toc-text">相关概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E5%92%8C%E4%BB%A3%E7%A0%81"><span class="toc-number">5.2.</span> <span class="toc-text">接口设计和代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%AE%9E%E9%AA%8C"><span class="toc-number">5.3.</span> <span class="toc-text">用户实验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%AE%9E%E9%AA%8C%E9%83%A8%E7%BD%B2"><span class="toc-number">5.4.</span> <span class="toc-text">多实验部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%AE%9E%E9%AA%8C%E6%95%88%E6%9E%9C%E5%9B%9E%E6%94%B6%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="toc-number">5.5.</span> <span class="toc-text">多实验效果回收和评估</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E5%88%86%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">嵌套分层模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%B5%81%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">6.1.</span> <span class="toc-text">分流模型设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E8%A6%81%E6%B1%82"><span class="toc-number">6.2.</span> <span class="toc-text">模型设计要求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ab%E5%AE%9E%E9%AA%8C%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">7.</span> <span class="toc-text">ab实验架构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-04-19-rec-abtest/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-04-19-rec-abtest/&text=推荐系统AB实验平台"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-04-19-rec-abtest/&is_video=false&description=推荐系统AB实验平台"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=推荐系统AB实验平台&body=Check out this article: https://leriou.github.io/2020-04-19-rec-abtest/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-04-19-rec-abtest/&title=推荐系统AB实验平台"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-04-19-rec-abtest/&name=推荐系统AB实验平台&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-04-19-rec-abtest/&t=推荐系统AB实验平台"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

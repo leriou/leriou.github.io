@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="背景因为业务需要, 公司现在需要一个实时的计算平台来支撑上层的各种业务 借这个机会, 对我们用到的相关技术部分进行了整理 业务场景分析下面拿我自己经历的两个项目来探讨一下实时计算平台的构建，以及其中遇到的一些坑 业务1. 统一的产品池服务需求统一产品数据池由于公司部门比较分散,公司的不同品类的产品(在线旅游公司)分属不同的BU(Business Unit),不同部门之间不仅数据不互通, 而且使用的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初步探索实时数据处理系统">
+<meta property="og:url" content="https://leriou.github.io/2018-09-30-real-time-proccess/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="背景因为业务需要, 公司现在需要一个实时的计算平台来支撑上层的各种业务 借这个机会, 对我们用到的相关技术部分进行了整理 业务场景分析下面拿我自己经历的两个项目来探讨一下实时计算平台的构建，以及其中遇到的一些坑 业务1. 统一的产品池服务需求统一产品数据池由于公司部门比较分散,公司的不同品类的产品(在线旅游公司)分属不同的BU(Business Unit),不同部门之间不仅数据不互通, 而且使用的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/DOkCVIlZ7BKz16r.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/YlEnJMbQuqDXBNh.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/iVF5gAlwafOmSXv.png">
+<meta property="article:published_time" content="2018-10-19T07:31:44.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.890Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="数据处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/DOkCVIlZ7BKz16r.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>初步探索实时数据处理系统</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019-01-01-summary-md/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018-06-06-balance/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2018-09-30-real-time-proccess/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2018-09-30-real-time-proccess/&text=初步探索实时数据处理系统"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2018-09-30-real-time-proccess/&is_video=false&description=初步探索实时数据处理系统"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初步探索实时数据处理系统&body=Check out this article: https://leriou.github.io/2018-09-30-real-time-proccess/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2018-09-30-real-time-proccess/&name=初步探索实时数据处理系统&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2018-09-30-real-time-proccess/&t=初步探索实时数据处理系统"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">业务场景分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A11-%E7%BB%9F%E4%B8%80%E7%9A%84%E4%BA%A7%E5%93%81%E6%B1%A0%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">业务1. 统一的产品池服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82"><span class="toc-number">3.1.</span> <span class="toc-text">需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E4%B8%80%E4%BA%A7%E5%93%81%E6%95%B0%E6%8D%AE%E6%B1%A0"><span class="toc-number">3.1.1.</span> <span class="toc-text">统一产品数据池</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6"><span class="toc-number">3.2.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85"><span class="toc-number">3.3.</span> <span class="toc-text">项目详情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">3.4.</span> <span class="toc-text">整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">3.5.</span> <span class="toc-text">流程图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%8F%B0api%E8%8E%B7%E5%8F%96%E4%BA%A7%E5%93%81%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">3.5.1.</span> <span class="toc-text">前台api获取产品的流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%8F%B0%E6%9E%84%E5%BB%BA%E4%BA%A7%E5%93%81%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">3.5.2.</span> <span class="toc-text">后台构建产品的流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4%E6%8F%8F%E8%BF%B0"><span class="toc-number">3.6.</span> <span class="toc-text">详细步骤描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A7%E5%93%81%E6%95%B0%E6%8D%AE%E6%9B%B4%E6%96%B0"><span class="toc-number">3.7.</span> <span class="toc-text">产品数据更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%8F%E9%AA%8C%E5%92%8C%E6%80%BB%E7%BB%93"><span class="toc-number">3.8.</span> <span class="toc-text">经验和总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A12-%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%B9%8B%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%AE%8C%E5%96%84%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">业务2. 用户画像之用户信息完善系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82-1"><span class="toc-number">4.1.</span> <span class="toc-text">需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6-1"><span class="toc-number">4.2.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85-1"><span class="toc-number">4.3.</span> <span class="toc-text">项目详情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">4.4.</span> <span class="toc-text">流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        初步探索实时数据处理系统
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Leriou</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-10-19T07:31:44.000Z" itemprop="datePublished">2018-10-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" rel="tag">数据处理</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>因为业务需要, 公司现在需要一个实时的计算平台来支撑上层的各种业务</p>
+<p>借这个机会, 对我们用到的相关技术部分进行了整理</p>
+<h1 id="业务场景分析"><a href="#业务场景分析" class="headerlink" title="业务场景分析"></a>业务场景分析</h1><p>下面拿我自己经历的两个项目来探讨一下实时计算平台的构建，以及其中遇到的一些坑</p>
+<h1 id="业务1-统一的产品池服务"><a href="#业务1-统一的产品池服务" class="headerlink" title="业务1. 统一的产品池服务"></a>业务1. 统一的产品池服务</h1><h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><h3 id="统一产品数据池"><a href="#统一产品数据池" class="headerlink" title="统一产品数据池"></a>统一产品数据池</h3><p>由于公司部门比较分散,公司的不同品类的产品(在线旅游公司)分属不同的BU(Business Unit),不同部门之间不仅数据不互通, 而且使用的数据库,产品数据结构和使用的存储技术也都不相同, 数据库存储主要使用Oracle和MySQL</p>
+<p>我们组的业务由于含有统一的列表页和内容服务, 所有分类产品的相关信息都需要进行聚合展示, 所以原来我们使用产品都需要根据产品品类调用不同部门提供的接口进行数据查询</p>
+<p>考虑到接口性能和未来业务的增长，我们需要一个统一的产品池功能来帮助汇总所有的产品信息，向上层业务提供一个统一的最基本的产品信息查询, 之后所有组内的产品信息统统通过产品池进行获取, 这样把数据和业务进行充分解耦  </p>
+<p>上层业务不需要了解各种分类的产品信息的存储位置和处理逻辑,只需要从统一的产品池获取产品信息即可，同时作为基础的数据服务还需要保证服务的性能和高可用性，于是有了产品池这个项目   </p>
+<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><p>主要涉及的中间件和服务<code>redis</code>,<code>kafka</code>,<code>storm</code>,<code>elasticsearch</code>,<code>mysql</code></p>
+<h2 id="项目详情"><a href="#项目详情" class="headerlink" title="项目详情"></a>项目详情</h2><ol>
+<li>对接各BU, 整合各BU的产品信息到统一的产品容器内(选择redis&#x2F;es作为主要的对外存储容器)</li>
+<li>提供统一的产品信息获取接口</li>
+</ol>
+<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p><img src="https://i.loli.net/2020/05/09/DOkCVIlZ7BKz16r.png" alt="productpool.jpg"></p>
+<p>其中各组件的主要功能:</p>
+<p><code>Redis</code>: 存储k-v结构的产品信息, 提供前台api接口的产品基础信息查询数据</p>
+<p><code>Elasticsearch</code>: 提供后台和部分前台对产品的搜索功能</p>
+<p><code>kafka</code>: 数据总线, 后台数据流转的核心</p>
+<p><code>mysql/oracle</code>: 提供最初始的数据源</p>
+<p><code>storm</code>: 产品信息计算平台</p>
+<h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><h3 id="前台api获取产品的流程"><a href="#前台api获取产品的流程" class="headerlink" title="前台api获取产品的流程"></a>前台api获取产品的流程</h3><p><img src="https://i.loli.net/2020/05/09/YlEnJMbQuqDXBNh.png" alt="flow1.png"></p>
+<h3 id="后台构建产品的流程"><a href="#后台构建产品的流程" class="headerlink" title="后台构建产品的流程"></a>后台构建产品的流程</h3><p><img src="https://i.loli.net/2020/05/09/iVF5gAlwafOmSXv.png" alt="flow2.png"></p>
+<h2 id="详细步骤描述"><a href="#详细步骤描述" class="headerlink" title="详细步骤描述"></a>详细步骤描述</h2><ul>
+<li><p>定时的产品id添加: 定期进行全量的产品数据重建, 为了方便控制重建过程, 将要处理的产品id分批存入kafka中的<code>全量重建topic</code>, 也就是把批处理转化为流处理  </p>
+</li>
+<li><p>失效的产品id: 当某个产品不存在于redis中时, 也会重新放入kafka的另外的<code>miss产品topic</code>中进行重建  </p>
+</li>
+<li><p>当产品信息变更时候也会有对应的变更产品id入kafka的<code>变更产品topic</code>中进行重建  </p>
+</li>
+<li><p>处理产品时会从以上三个产品源topic中读取需要重建的产品, 根据分类发放到<code>不同的分类topic</code>, 然后交给storm进行产品信息计算, 这部分信息只有简单的产品ID和更新类型标识  </p>
+</li>
+<li><p>storm中构建失败的产品(数据库中不存在等原因), 会在redis中进行标记暂时不可用(有效期1天), 不可用的产品不会继续进行重建  </p>
+</li>
+<li><p>kafka多个topic中的消息含有需要构建的 产品id和产品需要构建的内容, 也就是说可以通过消息内容格式控制构建产品的某个部分的信息(例如: 只更新产品的基本信息, 只更新价格信息, 只更新评论数,好评数等信息)</p>
+</li>
+<li><p>storm从kafka中获取消息, 进行产品的信息计算, 计算完成的信息会重新返回kafka, 同样根据产品分类发放到不同的<code>分类topic</code>, 这部分信息含有全量的产品信息数据</p>
+</li>
+<li><p>整合各个分类topic的产品计算结果, 写入redis 和 es, 并回写部分mysql表</p>
+</li>
+</ul>
+<h2 id="产品数据更新"><a href="#产品数据更新" class="headerlink" title="产品数据更新"></a>产品数据更新</h2><p>通过<code>canal</code>监听mysql数据库的产品表数据变更, 将变更数据发给kafka中的<code>产品表日志topic</code>, 后续从kafka的<code>产品日志topic</code> ,根据数据内容解析出来产品更新事件, 封装对应的事件消息, 存入<code>产品事件topic</code>  </p>
+<p>通过读取<code>产品事件topic</code>中的数据, 根据品类和变更内容, 向产品池<code>变更产品topic中发送</code>发送产品池信息重构需求</p>
+<h2 id="经验和总结"><a href="#经验和总结" class="headerlink" title="经验和总结"></a>经验和总结</h2><ul>
+<li>为什么要分多个产品数据源topic</li>
+</ul>
+<ol>
+<li><p>为了优先级考虑, 不同来源的产品对时效性要求是不同的, 但是kafka本身又做不了带有优先级的消息处理</p>
+</li>
+<li><p>不同的分类的产品的处理逻辑不同, 更新频率和数据量也不同, 提前进行分流</p>
+</li>
+</ol>
+<ul>
+<li>为什么不同分类的产品要用不同的写入topic</li>
+</ul>
+<ol>
+<li>如果有其他业务需要使用其中某个分类的产品数据只需订阅对应的产品topic流就可以了, 免去了从全量产品流中过滤的步骤</li>
+</ol>
+<ul>
+<li>为什么最后还要把产品信息吐会回kafka</li>
+</ul>
+<ol>
+<li><p>为了统一控制写入源并做优化, 使用统一的topic存储数据可以让整个程序只有一个数据写入的源, 所有写入操作统统使用写总线来处理, 解耦了功能, 提高了可靠性, 扩展性和可维护性</p>
+</li>
+<li><p>可以对数据写入做优化, 比如:幂等处理, 批压缩写入处理, ABA问题的重写</p>
+</li>
+<li><p>为了数据重用, 因为其他部分业务组也可能需要使用产品信息, 到时候直接订阅最终的产品信息表就可以了</p>
+</li>
+<li><p>为了方便扩展, 如果将来数据量大, 出现了写入瓶颈, 只要对这一部分承担写总线功能的写入程序进行扩展就可以了</p>
+</li>
+</ol>
+<h1 id="业务2-用户画像之用户信息完善系统"><a href="#业务2-用户画像之用户信息完善系统" class="headerlink" title="业务2. 用户画像之用户信息完善系统"></a>业务2. 用户画像之用户信息完善系统</h1><h2 id="需求-1"><a href="#需求-1" class="headerlink" title="需求"></a>需求</h2><p>这个项目是用户画像的子项目, 目的是将用户分布在不同BU的信息进行整合, 提供一份统一最完整的用户信息出来</p>
+<p>同时进行一些数据清洗和数据统计</p>
+<ul>
+<li>对分散在各个表中的会员信息进行梳理, 整合一份相对比较完善的用户信息</li>
+</ul>
+<p>例如: 用户1在基本信息中填写了一份信息 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    &quot;username&quot;:&quot;zhang&quot;,</span><br><span class="line">    &quot;birthday&quot;:&quot;1990-01-01&quot;,</span><br><span class="line">    &quot;gender&quot;:&quot;M&quot;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure>
+
+<p>同时用户上传了一张个人身份证, 通过解析, 身份证含有的信息是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;birthday&quot;:&quot;1990-12-07&quot;,</span><br><span class="line">    &quot;gender&quot;:&quot;F&quot;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>也就是说用户自己填写的信息和身份证中的信息不一致, 相同的情况可能出现在多个业务部门, 因为业务拆分各部门相互独立, 同一个用户在多个业务部门可能拥有多份不太一致的用户信息  </p>
+<ul>
+<li>对进行过清洗的用户数据进行完善度的计算</li>
+</ul>
+<p>根据不同用户信息字段占有的不同分值权重, 使用完善后的用户信息, 对用户的完善度进行实时统计</p>
+<ul>
+<li>定期统计用户的完善度报表</li>
+</ul>
+<p>根据用户会员等级&#x2F;地区&#x2F;性别 等基本属性和 对应的销售vip客服人员进行用户信息的报表统计</p>
+<h2 id="组件-1"><a href="#组件-1" class="headerlink" title="组件"></a>组件</h2><p>主要相关的组件有 <code>mysql</code>,<code>kafka</code>,<code>storm</code>,<code>hbase</code>, <code>es</code></p>
+<h2 id="项目详情-1"><a href="#项目详情-1" class="headerlink" title="项目详情"></a>项目详情</h2><ol>
+<li>对接各数据源, 根据用户身份表示整合统一的用户信息</li>
+<li>统一存储用户信息</li>
+</ol>
+<blockquote>
+<p>ps:由于部分原因, 项目的实际开发时间很短, 只有200左右的工时, 也就是一个人工作一个月, 而且大部分时间都花在内部数据问题的处理上面, 所以项目未能做到最终非常完善的程度</p>
+</blockquote>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ol>
+<li>定期的全量用户信息补全</li>
+<li>用户信息变更以后触发的补全</li>
+<li>用户资料补全以后进行完善度的计算</li>
+<li>定期根据用户属性对用户完善度进行报表统计</li>
+</ol>
+<p>具体的细节跟上面产品池相似, 都是利用<code>kafka</code>的数据流转, 将需要计算的消息流到<code>storm</code>, 经过计算以后再通过<code>kafka</code> 回馈给数据库和存储 </p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实回顾这两个项目</p>
+<p>在其中主要起作用的中间件主要是<code>kafka</code>和<code>storm</code></p>
+<p><code>kafka</code> 承担了系统几乎所有的数据流转需求, 做了一个数据总线的角色, 提供了<code>事件驱动</code>,<code>ETL</code>,<code>解耦</code>等功能   </p>
+<p><code>storm</code> 则承担了主要的计算任务和部分数据转发功能  </p>
+<p>其他 <code>mysql</code>, <code>redis</code>,<code>elasticsearch</code>则一直充当数据提供方和数据使用方(业务)之间的数据桥接作用   </p>
+<p>这一套消息处理流程目前来看还没遇到太大的问题, 但是因为我们部门业务相对比较单一, 尚不能完全发挥这套架构的潜力  </p>
+<p>希望以后可以多尝试, 并进行改进</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">业务场景分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A11-%E7%BB%9F%E4%B8%80%E7%9A%84%E4%BA%A7%E5%93%81%E6%B1%A0%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">业务1. 统一的产品池服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82"><span class="toc-number">3.1.</span> <span class="toc-text">需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E4%B8%80%E4%BA%A7%E5%93%81%E6%95%B0%E6%8D%AE%E6%B1%A0"><span class="toc-number">3.1.1.</span> <span class="toc-text">统一产品数据池</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6"><span class="toc-number">3.2.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85"><span class="toc-number">3.3.</span> <span class="toc-text">项目详情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">3.4.</span> <span class="toc-text">整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">3.5.</span> <span class="toc-text">流程图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%8F%B0api%E8%8E%B7%E5%8F%96%E4%BA%A7%E5%93%81%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">3.5.1.</span> <span class="toc-text">前台api获取产品的流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E5%8F%B0%E6%9E%84%E5%BB%BA%E4%BA%A7%E5%93%81%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">3.5.2.</span> <span class="toc-text">后台构建产品的流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4%E6%8F%8F%E8%BF%B0"><span class="toc-number">3.6.</span> <span class="toc-text">详细步骤描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A7%E5%93%81%E6%95%B0%E6%8D%AE%E6%9B%B4%E6%96%B0"><span class="toc-number">3.7.</span> <span class="toc-text">产品数据更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%8F%E9%AA%8C%E5%92%8C%E6%80%BB%E7%BB%93"><span class="toc-number">3.8.</span> <span class="toc-text">经验和总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A12-%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%B9%8B%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%AE%8C%E5%96%84%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">业务2. 用户画像之用户信息完善系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82-1"><span class="toc-number">4.1.</span> <span class="toc-text">需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6-1"><span class="toc-number">4.2.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85-1"><span class="toc-number">4.3.</span> <span class="toc-text">项目详情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-number">4.4.</span> <span class="toc-text">流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2018-09-30-real-time-proccess/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2018-09-30-real-time-proccess/&text=初步探索实时数据处理系统"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2018-09-30-real-time-proccess/&is_video=false&description=初步探索实时数据处理系统"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=初步探索实时数据处理系统&body=Check out this article: https://leriou.github.io/2018-09-30-real-time-proccess/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2018-09-30-real-time-proccess/&title=初步探索实时数据处理系统"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2018-09-30-real-time-proccess/&name=初步探索实时数据处理系统&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2018-09-30-real-time-proccess/&t=初步探索实时数据处理系统"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

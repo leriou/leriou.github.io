@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="机器学习和深度学习入门神经网络这个名词已经被人广为知道了，但是由于机器学习还是有一定的门槛。所以好多人想学而不得入其门，大部分的入门文章会给你解释一大堆专有名词的含义 我自己17年接触机器学习，后面几年没有太过深入研究。直到19年做推荐系统的需求才重新开始关注这方面的学习。目前人工智能已经是公认的未来10-20年的重点发展方向，所以我认为大部分人都可以了解一下什么是机器学习，以及机器学习到底能做什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用神经网络帮妹子找对象">
+<meta property="og:url" content="https://leriou.github.io/2020-07-08-neural-network-demo/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="机器学习和深度学习入门神经网络这个名词已经被人广为知道了，但是由于机器学习还是有一定的门槛。所以好多人想学而不得入其门，大部分的入门文章会给你解释一大堆专有名词的含义 我自己17年接触机器学习，后面几年没有太过深入研究。直到19年做推荐系统的需求才重新开始关注这方面的学习。目前人工智能已经是公认的未来10-20年的重点发展方向，所以我认为大部分人都可以了解一下什么是机器学习，以及机器学习到底能做什">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/08/08/dJeXBcqKVHiFYLN.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/08/sa7G4PHb5VpCk6X.png">
+<meta property="og:image" content="https://i.loli.net/2020/08/08/aP7Yq4klzGdpCUs.png">
+<meta property="article:published_time" content="2020-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.893Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="神经网络">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/08/08/dJeXBcqKVHiFYLN.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>用神经网络帮妹子找对象</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2021-01-01-records/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-06-04-kafka-delay-message/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-07-08-neural-network-demo/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-07-08-neural-network-demo/&text=用神经网络帮妹子找对象"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-07-08-neural-network-demo/&is_video=false&description=用神经网络帮妹子找对象"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=用神经网络帮妹子找对象&body=Check out this article: https://leriou.github.io/2020-07-08-neural-network-demo/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-07-08-neural-network-demo/&name=用神经网络帮妹子找对象&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-07-08-neural-network-demo/&t=用神经网络帮妹子找对象"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">机器学习和深度学习入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.1.</span> <span class="toc-text">机器学习和深度学习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.2.</span> <span class="toc-text">从一个例子说起</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%9D%A5%E6%A8%A1%E6%8B%9F%E5%A6%B9%E5%AD%90%E7%9A%84%E6%95%B4%E4%B8%AA%E8%AF%84%E4%BC%B0%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">用程序来模拟妹子的整个评估过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA%EF%BC%88MLP%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">多层感知机（MLP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%B1%82%E5%AF%BC"><span class="toc-number">1.2.3.</span> <span class="toc-text">为什么要求导</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BF%81%E7%A7%BB%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">神经网络的迁移应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">1.4.</span> <span class="toc-text">多分类的神经网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E4%BE%BF%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">1.5.</span> <span class="toc-text">方便的工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sklearn"><span class="toc-number">1.5.1.</span> <span class="toc-text">sklearn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pytorch-Tensosflow-keras"><span class="toc-number">1.5.2.</span> <span class="toc-text">pytorch,Tensosflow,keras</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        用神经网络帮妹子找对象
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-07-07T16:00:00.000Z" itemprop="datePublished">2020-07-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a>, <a class="tag-link-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a>, <a class="tag-link-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="机器学习和深度学习入门"><a href="#机器学习和深度学习入门" class="headerlink" title="机器学习和深度学习入门"></a>机器学习和深度学习入门</h1><p>神经网络这个名词已经被人广为知道了，但是由于机器学习还是有一定的门槛。所以好多人想学而不得入其门，大部分的入门文章会给你解释一大堆专有名词的含义</p>
+<p>我自己17年接触机器学习，后面几年没有太过深入研究。直到19年做推荐系统的需求才重新开始关注这方面的学习。目前人工智能已经是公认的未来10-20年的重点发展方向，所以我认为大部分人都可以了解一下什么是机器学习，以及机器学习到底能做什么。</p>
+<p>我写这篇文章的目的其实就是希望能通过一个简单的例子来解答比较玄学的神经网络是怎么工作的</p>
+<p>为什么我要选神经网络来做例子而不用其他的支持向量机或者卷积神经网络呢</p>
+<p>因为<strong>神经网络算是传统机器学习和深度学习等更高级机器学习算法的一个交叉点</strong></p>
+<h2 id="机器学习和深度学习"><a href="#机器学习和深度学习" class="headerlink" title="机器学习和深度学习"></a>机器学习和深度学习</h2><p>机器学习是一种对机器从数据中获得能力的算法的统称，深度学习是机器学习的一个子类。深度学习一定是机器学习，机器学习不一定是深度学习。</p>
+<p>一般把基于决策树，支持向量机，近邻算法等这种传统数学的算法的叫做传统机器学习</p>
+<p>而像卷积神经网络，循环神经网络等这种叫做深度学习。但是传统的神经网络则普遍被归类于机器学习的范畴，神经网络就成了从机器学习走向深度学习的一个很好的拐点，所以我认为学习神经网络具有比较高的性价比</p>
+<h2 id="从一个例子说起"><a href="#从一个例子说起" class="headerlink" title="从一个例子说起"></a>从一个例子说起</h2><p>假设现在有一个妹子去相亲，遇到了四个候选人，四个候选人分别在高，富，帅三个维度上的指标如下， 妹子对四人是否愿意交往的态度我们也做了调研， 现在想问的是如果有一个新的候选人小李， 我们想预测妹子对小李会是什么态度？ 这个问题很有价值吧，我们现在就试图用神经网络解决这个问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">       高     富     帅     是否愿意交往</span><br><span class="line">-------------------------------------------     </span><br><span class="line">小明    否     是       是        是</span><br><span class="line">小张    是     是       是        是 </span><br><span class="line">小刘    是     否       是        否</span><br><span class="line">小赵    否     否       是        否</span><br><span class="line">-------------------------------------------</span><br><span class="line">小李    是     是       否         ？ </span><br></pre></td></tr></table></figure>
+
+<p>我们先假设妹子一定是喜欢男孩拥有的某些特征， 所以才愿意交往的，我们有男孩子的3个属性的特征（高，富，帅）。我们先做几个基本假设</p>
+<ol>
+<li>假设妹子对这三个特征的喜欢程度分别是 x, y, z, 而且喜欢程度跟名字无关</li>
+<li>妹子是否同意跟男孩子交往是根据整体印象决定的，整体印象跟高富帅三个方面都有关系，妹子有自己的一套方法根据三个人的高富帅特征来评估整体印象</li>
+</ol>
+<p>我们可以用如下伪代码来描述整个妹子评价男孩子的方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">妹子的评估方法（ [高， 富， 帅], 妹子对不同特征的喜好程度） =&gt; 整体印象</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>妹子如果觉得整体印象合格就会同意试试交往</li>
+</ol>
+<p>根据我们上面的假设我们可以得到如下流程</p>
+<p><code>妹子观察一个人的特征 --&gt; 在心里进行整体印象评估 --&gt;根据评估结果决定是否同意交往</code></p>
+<p>我们如果用程序描述以上流程就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 获取男孩子的特征 比如小明的特征可以转换为 </span><br><span class="line">a = [0, 1, 1] </span><br><span class="line"># 根据个人特征给出整体印象评估分</span><br><span class="line">score = sig(a, 妹子对不同特征的喜好程度)</span><br><span class="line"># 根据分数决定是否同意交往</span><br><span class="line">befriend(res) ? 愿意 : 不愿意 </span><br><span class="line">由于我们已经知道妹子对小明，小张，小刘，小赵，的印象如何，我们可以得出如下结论</span><br><span class="line">小明   befriend(sig([0,1,1])) -&gt; 是(1)</span><br><span class="line">小张   befriend(sig([1,1,1])) -&gt; 是(1)</span><br><span class="line">小刘   befriend(sig([1,0,1])) -&gt; 否(0)</span><br><span class="line">小赵   befriend(sig([0,0,1])) -&gt; 否(0)</span><br></pre></td></tr></table></figure>
+
+<h3 id="用程序来模拟妹子的整个评估过程"><a href="#用程序来模拟妹子的整个评估过程" class="headerlink" title="用程序来模拟妹子的整个评估过程"></a>用程序来模拟妹子的整个评估过程</h3><p>我们假设妹子对不同特征的偏好程序分别为 [x,y, z]， 我们使用程序随机生成这个值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 给个随机种子，随机数生成顺序就固定了，方便调试</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)  </span><br><span class="line"><span class="comment"># 因为妹子喜欢的特征有三个所以是个(3，1)的向量</span></span><br><span class="line">w = np.random.random((<span class="number">3</span>,<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(w)</span><br></pre></td></tr></table></figure>
+
+<p>以上w的结果是我们猜测的妹子对不同特征的喜好程度，这个喜欢程度肯定是不准的，但是不要紧，我们先看看根据我们猜的权重进行流程会是什么结果。我们要模拟妹子的评估过程还需要知道妹子怎么根据最终得分来判断是否愿意交往。</p>
+<p>我们假设： 妹子是根据综合得分，综合得分超过一个阈值就同意交往。 但是我们也能猜到肯定是得分越高交往概率越大，得分越低交往概率越小，所以我们可以使用如下函数来作为妹子的整体印象评估函数:  $y&#x3D;\cfrac{1}{1+e^{-x}}$</p>
+<p>妹子的评估函数形状大概如下图</p>
+<p><img src="https://i.loli.net/2020/08/08/dJeXBcqKVHiFYLN.png" alt="1-image-20200808134204732.png"></p>
+<p>如此我们就可以写代码模拟过程了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 小刘的特征</span></span><br><span class="line">liu = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>]])</span><br><span class="line"><span class="comment"># 妹子的评估方法</span></span><br><span class="line">sig = <span class="keyword">lambda</span> x: <span class="number">1</span>/ (<span class="number">1</span>+ np.exp(-x))</span><br><span class="line"><span class="comment"># 使用特征w来评估小明 [0,1,1]的特征</span></span><br><span class="line">sig(np.dot(liu, w)) <span class="comment"># 0.6727</span></span><br><span class="line"><span class="comment"># 评估其他三个人，使用矩阵可以同时计算多组数据，这就是为啥机器学习要用矩阵的原因</span></span><br><span class="line">others = np.array([[<span class="number">1</span>，<span class="number">1</span>，<span class="number">1</span>],[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]])</span><br><span class="line">sig(np.dot(others, w)) <span class="comment"># [[0.75721315][0.60279781][0.50002859]]</span></span><br></pre></td></tr></table></figure>
+
+<p>根据上面的结果我们发现跟我们的预期不太相符合， 小明和小张也就算了，妹子对他们有好感，所以得分比较接近1。妹子明明不喜欢小刘，小赵，但是我们的程序给出了一个和小刘，小张差不多的结果。就是说我们预估的权重值不准确，也是嘛，毕竟权重是瞎猜的。</p>
+<p>所以我们要根据我们已知的结果改进一下我们预估的权重</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 所有男孩特征</span></span><br><span class="line">all_user = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]])</span><br><span class="line">all_res = np.array([[<span class="number">1</span>],[<span class="number">1</span>],[<span class="number">0</span>],[<span class="number">0</span>]])</span><br><span class="line"><span class="comment"># 女孩对他们的印象</span></span><br><span class="line">r1 = sig(np.dot(all_user, w))</span><br><span class="line"><span class="comment"># 因为我们预估的不对，看看差多少</span></span><br><span class="line">error = all_res - r1</span><br><span class="line"><span class="comment"># 这一步是重点。将差的值反向分配回各个权重上</span></span><br><span class="line">w += np.dot(all_user.T,error)</span><br><span class="line"><span class="comment"># 重新计算</span></span><br><span class="line">r1 = sig(np.dot(all_user, w))</span><br><span class="line"><span class="built_in">print</span>(r1)</span><br><span class="line">---新的结果---</span><br><span class="line">[[<span class="number">0.71182252</span>]</span><br><span class="line"> [<span class="number">0.71819966</span>]</span><br><span class="line"> [<span class="number">0.36734682</span>]</span><br><span class="line"> [<span class="number">0.36010402</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>我们发现结果变好了，为啥呢，小刘和小赵分数变低了，小明和小张分数变高了，他们之间差距变大，说明我们更容易区分妹子的喜好了。好的，我们循环纠正10000次然后试试预测小李</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>):</span><br><span class="line">    r1 = sig(np.dot(all_user, w))</span><br><span class="line">    error = all_res - r1</span><br><span class="line">    w += np.dot(all_user.T,error)</span><br><span class="line">r1 = sig(np.dot(np.array([[<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>]]), w))</span><br><span class="line"><span class="built_in">print</span>(r1)</span><br><span class="line">------</span><br><span class="line">[[<span class="number">1.0</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>哈哈，看我们的预测，妹子是会愿意跟小李交往的，这其实是符合我们预期的。因为我们发现这个妹子其实只看你是不是富， 你有钱我就跟你交往。 这说明我们的预测还是很准的，至少跟我们的直觉是一致的。</p>
+<h3 id="多层感知机（MLP）"><a href="#多层感知机（MLP）" class="headerlink" title="多层感知机（MLP）"></a>多层感知机（MLP）</h3><p>前面这个妹子比较肤浅，只看富不富，假设有个妹子要求的条件比较多(比如又要富又要高)，我们应该怎么处理呢</p>
+<p>这种情况我们可以假设妹子看的条件变多了，妹子同时看多种条件，不只是高富帅三种基本条件还有 高富，富帅，高帅等组合起来的条件。那我们可不可以在造一个神经网络专门根据 高富，富帅和高帅这三个特征来处理呢？ 当然是可以的。</p>
+<p>但是我们不想自己制造高帅，富帅，高富这种特征数据了，我们已经可以根据高富帅其中的一个特征判断是否能赢得妹子芳心。我们思考一下，其实高帅，高富这种特征可以通过我们前面的神经网络求出来的。刚才妹子的判断其实就是一个判断是否富有的神经网络</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">高富 = 是否富(高富帅) x 是否高(高富帅) </span><br><span class="line">高富神经网络 等于 一个喜欢高的妹子 和 一个喜欢富的妹子 一起判断。</span><br></pre></td></tr></table></figure>
+
+<p>那我们预估一下，如果要生成高富，高帅，富帅我们需要几个简单的神经网络呢？</p>
+<p>答案是2个基本的神经网络, 如下图</p>
+<p><img src="https://i.loli.net/2020/08/08/sa7G4PHb5VpCk6X.png" alt="2-image-20200808152700276.png"></p>
+<p>我们假设我们还有一组权重用于判断是否高富</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">all_user = np.array([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>]</span><br><span class="line">                   ,[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]])</span><br><span class="line"><span class="comment"># 因为又来了一个喜欢高富的妹子，所以四位候选人的结果不同了</span></span><br><span class="line">all_res = np.array([[<span class="number">0</span>],[<span class="number">1</span>],[<span class="number">0</span>],[<span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们假设二层也有三个特征，一层的权重就要调整成根据3个特征判断3个结果</span></span><br><span class="line">w = np.random.random((<span class="number">3</span>,<span class="number">3</span>))</span><br><span class="line"><span class="comment"># 二层根据3个判断过的结果在进行判断</span></span><br><span class="line">w1 = np.random.random((<span class="number">3</span>,<span class="number">1</span>))</span><br><span class="line"><span class="comment"># 根据斜率来更快的进行更新</span></span><br><span class="line">deriv = <span class="keyword">lambda</span> x: x * (<span class="number">1</span> - x)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>):</span><br><span class="line">    <span class="comment"># 根据预估权重计算</span></span><br><span class="line">    r1 = sig(np.dot(all_user, w))</span><br><span class="line">    r2 = sig(np.dot(r1,w1))</span><br><span class="line">    <span class="comment"># 根据误差重新调整权重应该调整的值</span></span><br><span class="line">    error_1 = all_res - r2</span><br><span class="line">    delta_1 = error_1 * deriv(r2)</span><br><span class="line">    error_0 = error_1.dot(w1.T)</span><br><span class="line">    delta_0 = error_0 * deriv(r1)</span><br><span class="line">    <span class="comment"># 更新权重</span></span><br><span class="line">    w += np.dot(all_user.T,delta_0)</span><br><span class="line">    w1 += np.dot(r1.T, delta_1)</span><br><span class="line"><span class="comment"># 重新预估</span></span><br><span class="line">r1 = sig(np.dot(np.array([[<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>]]), w))</span><br><span class="line">r2 = sig(np.dot(r1,w1))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(r2)</span><br><span class="line">---结果---</span><br><span class="line">[[<span class="number">0.9942417</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>结果符合我们预期，因为小李又高又富，符合我们假设的妹子的择偶需求，所以我们预估妹子给出了0.99的高分。</p>
+<p>我们如果把权重的变化画出来，会发现权重的均值越来越稳定，这也正是我们要的效果</p>
+<p><img src="https://i.loli.net/2020/08/08/aP7Yq4klzGdpCUs.png" alt="3-image-20200808154754303.png"></p>
+<h3 id="为什么要求导"><a href="#为什么要求导" class="headerlink" title="为什么要求导"></a>为什么要求导</h3><p>上面的代码里面我们加入了一个 <code>deriv</code>函数, 这个函数其实是求sigmod上面的导数也就是斜率</p>
+<p>我们之所以要求斜率，就是因为我们希望最终得分尽可能的往sigmod两端走，因为越往两端走，说明权重越稳定，预测结果越可靠。那我们就可以根据斜率来判断当前权重所处的位置。（通常机器学习会寻找一个函数用来衡量误差，这个函数叫做损失函数）</p>
+<h2 id="神经网络的迁移应用"><a href="#神经网络的迁移应用" class="headerlink" title="神经网络的迁移应用"></a>神经网络的迁移应用</h2><p>很棒，我们已经学会了使用神经网络帮妹子择偶，哪怕妹子要求的特征很多，我们只要多加几个神经网络就可以了</p>
+<p>其实使用神经网络预测很多其他的事情也是一样的道理，我们只要能提供够多的特征数据，神经网络就可以自动学习出来那些特征有用</p>
+<p>但是我们上面的代码有一些地方其实是我们猜测的，比如： 我们猜测的权重，我们猜测的妹子评估的函数，我们猜测的评估误差的方法等，这些东西其实都是可以调整的，大家要记住这一点，只有整个流程是不变的，流程中的每一步都是有不同方法达成的</p>
+<h2 id="多分类的神经网络"><a href="#多分类的神经网络" class="headerlink" title="多分类的神经网络"></a>多分类的神经网络</h2><p>上面我们已经设计了一个神经网络可以根据一个或者多个属性对特征进行分类。但是上面的分类结果只有2种，愿意或者不愿意，我们日常生活中经常会遇到多分类问题，比如判断一个图片是[0,1,2]中的哪一个数字</p>
+<p>其实多分类问题可以转化为多个单分类的问题，转化过程如下</p>
+<p>将上面的神经网络转换为三个神经网络分别用来判断 是否0，是否1，是否2， 结果为0就可以用 非1&amp;非2 这个逻辑关系表示， 也就是说，多分类就是对单分类在进行一次带有逻辑关系的分类即可</p>
+<h2 id="方便的工具"><a href="#方便的工具" class="headerlink" title="方便的工具"></a>方便的工具</h2><h3 id="sklearn"><a href="#sklearn" class="headerlink" title="sklearn"></a>sklearn</h3><p>官网：<a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/">https://scikit-learn.org/stable/</a></p>
+<p>sklearn是一个机器学习的大集合，我们上面吭哧吭哧弄的神经网络别人已经帮我们搭建好了，我们直接使用就只需要几行代码，我这里拿sklearn里面的神经网络举例子。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> neural_network </span><br><span class="line"></span><br><span class="line">X = [[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">     [<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">     [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">     [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]]</span><br><span class="line">y = [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">clf = neural_network.MLPClassifier(activation=<span class="string">&quot;relu&quot;</span>,max_iter=<span class="number">10000</span>)</span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line">clf.fit(X,y)</span><br><span class="line"><span class="comment"># 预测</span></span><br><span class="line">clf.predict([[<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>]])</span><br></pre></td></tr></table></figure>
+
+<h3 id="pytorch-Tensosflow-keras"><a href="#pytorch-Tensosflow-keras" class="headerlink" title="pytorch,Tensosflow,keras"></a>pytorch,Tensosflow,keras</h3><p>这几个工具是偏向深度学习的工具，与前面的sklearn可以配合使用</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">机器学习和深度学习入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.1.</span> <span class="toc-text">机器学习和深度学习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.2.</span> <span class="toc-text">从一个例子说起</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%9D%A5%E6%A8%A1%E6%8B%9F%E5%A6%B9%E5%AD%90%E7%9A%84%E6%95%B4%E4%B8%AA%E8%AF%84%E4%BC%B0%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">用程序来模拟妹子的整个评估过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA%EF%BC%88MLP%EF%BC%89"><span class="toc-number">1.2.2.</span> <span class="toc-text">多层感知机（MLP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%B1%82%E5%AF%BC"><span class="toc-number">1.2.3.</span> <span class="toc-text">为什么要求导</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BF%81%E7%A7%BB%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">神经网络的迁移应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">1.4.</span> <span class="toc-text">多分类的神经网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E4%BE%BF%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="toc-number">1.5.</span> <span class="toc-text">方便的工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sklearn"><span class="toc-number">1.5.1.</span> <span class="toc-text">sklearn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pytorch-Tensosflow-keras"><span class="toc-number">1.5.2.</span> <span class="toc-text">pytorch,Tensosflow,keras</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-07-08-neural-network-demo/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-07-08-neural-network-demo/&text=用神经网络帮妹子找对象"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-07-08-neural-network-demo/&is_video=false&description=用神经网络帮妹子找对象"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=用神经网络帮妹子找对象&body=Check out this article: https://leriou.github.io/2020-07-08-neural-network-demo/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-07-08-neural-network-demo/&title=用神经网络帮妹子找对象"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-07-08-neural-network-demo/&name=用神经网络帮妹子找对象&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-07-08-neural-network-demo/&t=用神经网络帮妹子找对象"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

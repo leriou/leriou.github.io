@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="一个简单的光线追踪的例子点击下方的按钮就可以渲染出一张图片哦,纯渲染出的哦(渲染很消耗性能可能会有少许的等待时间) 在线测试1234x: x轴坐标y: y轴坐标z: z轴坐标反射次数： 反射效果  通过修改下面输入框中的数值，可以得到不同的画面效果   X:&amp;nbsp;&amp;nbsp; Y:&amp;nbsp;&amp;nbsp; Z:&amp;nbsp;&amp;nbsp; 反射次数:&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个简单的用JS实现的光线追踪效果">
+<meta property="og:url" content="https://leriou.github.io/2015-09-27-simple-raytracing/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="一个简单的光线追踪的例子点击下方的按钮就可以渲染出一张图片哦,纯渲染出的哦(渲染很消耗性能可能会有少许的等待时间) 在线测试1234x: x轴坐标y: y轴坐标z: z轴坐标反射次数： 反射效果  通过修改下面输入框中的数值，可以得到不同的画面效果   X:&amp;nbsp;&amp;nbsp; Y:&amp;nbsp;&amp;nbsp; Z:&amp;nbsp;&amp;nbsp; 反射次数:&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/s9Q1ET82SHAuDgW.png">
+<meta property="article:published_time" content="2015-09-27T10:51:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.885Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="raytracing">
+<meta property="article:tag" content="计算机图形学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/s9Q1ET82SHAuDgW.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>一个简单的用JS实现的光线追踪效果</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2015-09-28-smallpt/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2015-09-18-do-not-afraid/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-27-simple-raytracing/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-27-simple-raytracing/&text=一个简单的用JS实现的光线追踪效果"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-27-simple-raytracing/&is_video=false&description=一个简单的用JS实现的光线追踪效果"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一个简单的用JS实现的光线追踪效果&body=Check out this article: https://leriou.github.io/2015-09-27-simple-raytracing/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-27-simple-raytracing/&name=一个简单的用JS实现的光线追踪效果&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-27-simple-raytracing/&t=一个简单的用JS实现的光线追踪效果"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">一个简单的光线追踪的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E6%B5%8B%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">在线测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA"><span class="toc-number">3.</span> <span class="toc-text">光线追踪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E6%B7%B1%E5%BA%A6"><span class="toc-number">5.</span> <span class="toc-text">渲染深度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%90%E8%B4%A8"><span class="toc-number">6.</span> <span class="toc-text">材质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%89%B2%E5%BD%A9"><span class="toc-number">7.</span> <span class="toc-text">色彩</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        一个简单的用JS实现的光线追踪效果
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-09-27T10:51:00.000Z" itemprop="datePublished">2015-09-27</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/raytracing/" rel="tag">raytracing</a>, <a class="tag-link-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">计算机图形学</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="一个简单的光线追踪的例子"><a href="#一个简单的光线追踪的例子" class="headerlink" title="一个简单的光线追踪的例子"></a>一个简单的光线追踪的例子</h2><p>点击下方的按钮就可以渲染出一张图片哦,纯渲染出的哦(渲染很消耗性能可能会有少许的等待时间)</p>
+<h2 id="在线测试"><a href="#在线测试" class="headerlink" title="在线测试"></a>在线测试</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x: x轴坐标</span><br><span class="line">y: y轴坐标</span><br><span class="line">z: z轴坐标</span><br><span class="line">反射次数： 反射效果</span><br></pre></td></tr></table></figure>
+
+<p>通过修改下面输入框中的数值，可以得到不同的画面效果</p>
+<div>
+<div>
+X:<input type="number" min="-100" max="100" step="5" value="0" id="pos_x" >&nbsp;&nbsp;
+Y:<input type="number" min="-100" max="100" step="5" value="5" id="pos_y" >&nbsp;&nbsp;
+Z:<input type="number" min="-100" max="100" step="5" value="15" id="pos_z" >&nbsp;&nbsp;
+反射次数:&nbsp;&nbsp;<input type="number" min="0" max="30" step="1" value="5" id="reflect_times">&nbsp;&nbsp;
+<button onclick="javascript:render_pic();" class="btn btn-info">RENDER</button>
+</div>
+<div style="text-align: center;">
+    <canvas id="renderCanvas" width="512" height="512" style="display:none"></canvas>
+</div>
+</div>
+## 代码
+
+<p>查看本页的源代码可以查找到源代码，核心的代码就是如下几行</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> canvas = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;renderCanvas&#x27;</span>); <span class="comment">// 获取画布对象</span></span><br><span class="line">canvas.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;block&quot;</span>;</span><br><span class="line"><span class="keyword">var</span> plane = <span class="keyword">new</span> <span class="title class_">Plane</span>(<span class="keyword">new</span> <span class="title class_">Vector3</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>), <span class="number">0</span>);   <span class="comment">// 基本平面 该平面的法向量为(0,1,0)</span></span><br><span class="line"><span class="keyword">var</span> sphere1 = <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="keyword">new</span> <span class="title class_">Vector3</span>(-<span class="number">10</span>, <span class="number">10</span>, -<span class="number">10</span>), <span class="number">10</span>); <span class="comment">//球1 位置(-10,10,-10),半径 10</span></span><br><span class="line"><span class="keyword">var</span> sphere2 = <span class="keyword">new</span> <span class="title class_">Sphere</span>(<span class="keyword">new</span> <span class="title class_">Vector3</span>(<span class="number">10</span>, <span class="number">10</span>, -<span class="number">10</span>), <span class="number">10</span>);  <span class="comment">//球2 位置(10,10,-10),半径 10</span></span><br><span class="line">plane.<span class="property">material</span> = <span class="keyword">new</span> <span class="title class_">CheckerMaterial</span>(<span class="number">0.1</span>, <span class="number">0.5</span>);  <span class="comment">// 国际象棋棋盘材质</span></span><br><span class="line">sphere1.<span class="property">material</span> = <span class="keyword">new</span> <span class="title class_">PhongMaterial</span>(<span class="title class_">Color</span>.<span class="property">red</span>, <span class="title class_">Color</span>.<span class="property">white</span>, <span class="number">20</span>, <span class="number">0.25</span>); <span class="comment">//球1 Phong材质</span></span><br><span class="line">sphere2.<span class="property">material</span> = <span class="keyword">new</span> <span class="title class_">PhongMaterial</span>(<span class="title class_">Color</span>.<span class="property">blue</span>, <span class="title class_">Color</span>.<span class="property">white</span>, <span class="number">20</span>, <span class="number">0.25</span>);<span class="comment">//球2 Phong材质</span></span><br><span class="line"><span class="title function_">rayTraceReflection</span>(</span><br><span class="line">    canvas,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Union</span>([plane, sphere1, sphere2]),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">PerspectiveCamera</span>(<span class="keyword">new</span> <span class="title class_">Vector3</span>(<span class="number">0</span>, <span class="number">5</span>, <span class="number">15</span>), <span class="keyword">new</span> <span class="title class_">Vector3</span>(<span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>), <span class="keyword">new</span> <span class="title class_">Vector3</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>), <span class="number">90</span>),</span><br><span class="line">    <span class="number">5</span>);<span class="comment">// 渲染参数,视角位置(0,5,15),视角90度,反射5次</span></span><br></pre></td></tr></table></figure>
+<h2 id="光线追踪"><a href="#光线追踪" class="headerlink" title="光线追踪"></a>光线追踪</h2><p>本文的例子实际上是一种光线追踪(ray tracing)的实现.<br>光线追踪是全局光照(Global Illumination)的其中一中实现方式,该方法原理和实现方法都很简单但需要的计算量比较大,普通游戏无法使用,多用于学习研究性质或离线渲染(offline rendering),游戏中大多用其他技术手段实现类似效果</p>
+<p>优点:</p>
+<ol>
+<li>效果逼真，实现简单，可以适应各种复杂场景</li>
+<li>自带消隐(消除隐藏面)功能</li>
+<li>有阴影效果</li>
+<li>可以并行</li>
+<li>隐含透视性质</li>
+</ol>
+<p>缺点:</p>
+<ol>
+<li>光线追踪只能模拟光线的镜面反射(specular)行为,无法很好地模拟漫反射(diffuse)</li>
+<li>容易出现图形走样现象,因为透过两个相邻像素的光线到物体表面的距离会被放大,两像素之间的细节无法表现</li>
+</ol>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>光线追踪的基本原理比较简单,如下图</p>
+<p><img src="https://i.loli.net/2020/05/09/s9Q1ET82SHAuDgW.png" alt="2010032819542028.png"></p>
+<blockquote>
+<p>假设相机就是人眼，从人眼的位置往屏幕上的每个像素发射光线,如果遇到具有反射性质的表面,继续追踪反射光线,最终根据光线返回的颜色去给像素进行着色</p>
+</blockquote>
+<p>因而可以比较简单的表现,反射,阴影折射等效果,但缺点是计算量较大<br>现在也有很多其他方式可以实现全局光照的效果(例如:辐射度算法,光子映射,甚至采用光照贴图模拟)</p>
+<p>这里的光线返回的颜色是该像素点计算得到的颜色,具体计算方法是根据光线在多个物体表面的反射得到</p>
+<h2 id="渲染深度"><a href="#渲染深度" class="headerlink" title="渲染深度"></a>渲染深度</h2><p>渲染深度通俗的讲就是根据某一点距离摄像机的距离渲染出不同的颜色,越远的点颜色越暗,近的点略亮,通过计算模拟眼睛与第一个看到的画面上的点的距离,映射到0-255的区间,进行色彩数值的处理。</p>
+<h2 id="材质"><a href="#材质" class="headerlink" title="材质"></a>材质</h2><p>材质是渲染物体所必不可少的一项要素,材质根据自身的光学特性和物理特性决定了光线照射到物体表面某一点所呈现的颜色</p>
+<p>Phong光照模型是一种基本的光照模型,可以较为真实的模拟物体表面的某些特性</p>
+<p>**环境光 + 漫反射 + 镜面反射  &#x3D; Phong **</p>
+<p>实现材质效果需要一定的特征函数配合</p>
+<p>材质往往和纹理一起配合出现</p>
+<h2 id="色彩"><a href="#色彩" class="headerlink" title="色彩"></a>色彩</h2><p>色彩本身是个极其庞大的学科,本文用到的色彩只是比较简单</p>
+<p>仅仅使用增色系统的三原色(RGB)来做一些基本的颜色模拟</p>
+<p>使用简单的三元数(R,G,B)来表示颜色的基本信息</p>
+<script>
+Vector3 = function(x, y, z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+};
+Vector3.prototype = {
+    copy: function() {
+        return new Vector3(this.x, this.y, this.z);
+    },
+    length: function() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    },
+    sqrLength: function() {
+        return this.x * this.x + this.y * this.y + this.z * this.z;
+    },
+    normalize: function() {
+        var inv = 1 / this.length();
+        return new Vector3(this.x * inv, this.y * inv, this.z * inv);
+    },
+    negate: function() {
+        return new Vector3(-this.x, -this.y, -this.z);
+    },
+    add: function(v) {
+        return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
+    },
+    subtract: function(v) {
+        return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
+    },
+    multiply: function(f) {
+        return new Vector3(this.x * f, this.y * f, this.z * f);
+    },
+    divide: function(f) {
+        var invf = 1 / f;
+        return new Vector3(this.x * invf, this.y * invf, this.z * invf);
+    },
+    dot: function(v) {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
+    },
+    cross: function(v) {
+        return new Vector3(-this.z * v.y + this.y * v.z, this.z * v.x - this.x * v.z, -this.y * v.x + this.x * v.y);
+    }
+};
+Vector3.zero = new Vector3(0, 0, 0);
+Color = function(r, g, b) {
+    this.r = r;
+    this.g = g;
+    this.b = b
+};
+Color.prototype = {
+    copy: function() {
+        return new Color(this.r, this.g, this.b);
+    },
+    add: function(c) {
+        return new Color(this.r + c.r, this.g + c.g, this.b + c.b);
+    },
+    multiply: function(s) {
+        return new Color(this.r * s, this.g * s, this.b * s);
+    },
+    modulate: function(c) {
+        return new Color(this.r * c.r, this.g * c.g, this.b * c.b);
+    },
+    saturate: function() {
+        this.r = Math.min(this.r, 1);
+        this.g = Math.min(this.g, 1);
+        this.b = Math.min(this.b, 1);
+    }
+};
+Color.black = new Color(0, 0, 0);
+Color.white = new Color(1, 1, 1);
+Color.red = new Color(1, 0, 0);
+Color.green = new Color(0, 1, 0);
+Color.blue = new Color(0, 0, 1);
+PhongMaterial = function(diffuse, specular, shininess, reflectiveness) {
+    this.diffuse = diffuse;
+    this.specular = specular;
+    this.shininess = shininess;
+    this.reflectiveness = reflectiveness;
+};
+PhongMaterial.prototype = {
+    sample: function(ray, position, normal) {
+        var NdotL = normal.dot(lightDir);
+        var H = (lightDir.subtract(ray.direction)).normalize();
+        var NdotH = normal.dot(H);
+        var diffuseTerm = this.diffuse.multiply(Math.max(NdotL, 0));
+        var specularTerm = this.specular.multiply(Math.pow(Math.max(NdotH, 0), this.shininess));
+        return lightColor.modulate(diffuseTerm.add(specularTerm));
+    }
+};
+PerspectiveCamera = function(eye, front, up, fov) {
+    this.eye = eye;
+    this.front = front;
+    this.refUp = up;
+    this.fov = fov;
+};
+PerspectiveCamera.prototype = {
+    initialize: function() {
+        this.right = this.front.cross(this.refUp);
+        this.up = this.right.cross(this.front);
+        this.fovScale = Math.tan(this.fov * 0.5 * Math.PI / 180) * 2;
+    },
+    generateRay: function(x, y) {
+        var r = this.right.multiply((x - 0.5) * this.fovScale);
+        var u = this.up.multiply((y - 0.5) * this.fovScale);
+        return new Ray3(this.eye, this.front.add(r).add(u).normalize());
+    }
+};
+Plane = function(normal, d) {
+    this.normal = normal;
+    this.d = d;
+};
+Plane.prototype = {
+    copy: function() {
+        return new plane(this.normal.copy(), this.d);
+    },
+    initialize: function() {
+        this.position = this.normal.multiply(this.d);
+    },
+    intersect: function(ray) {
+        var a = ray.direction.dot(this.normal);
+        if (a >= 0) {
+            return IntersectResult.noHit;
+        }
+        var b = this.normal.dot(ray.origin.subtract(this.position));
+        var result = new IntersectResult();
+        result.geometry = this;
+        result.distance = -b / a;
+        result.position = ray.getPoint(result.distance);
+        result.normal = this.normal;
+        return result;
+    }
+};
+Sphere = function(center, radius) {
+    this.center = center;
+    this.radius = radius;
+};
+Sphere.prototype = {
+    copy: function() {
+        return new Sphere(this.center.copy(), this.radius.copy());
+    },
+    initialize: function() { this.sqrRadius = this.radius * this.radius; },
+    intersect: function(ray) {
+        var v = ray.origin.subtract(this.center);
+        var a0 = v.sqrLength() - this.sqrRadius;
+        var DdotV = ray.direction.dot(v);
+        if (DdotV <= 0) {
+            var discr = DdotV * DdotV - a0;
+            if (discr >= 0) {
+                var result = new IntersectResult();
+                result.geometry = this;
+                result.distance = -DdotV - Math.sqrt(discr);
+                result.position = ray.getPoint(result.distance);
+                result.normal = result.position.subtract(this.center).normalize();
+                return result;
+            }
+        }
+        return IntersectResult.noHit;
+    }
+};
+IntersectResult = function() {
+    this.geometry = null;
+    this.distance = 0;
+    this.position = Vector3.zero;
+    this.normal = Vector3.zero;
+};
+IntersectResult.noHit = new IntersectResult();Union = function(geometries) { this.geometries = geometries; };
+Union.prototype = {
+    initialize: function() {
+        for (var i in this.geometries)
+            this.geometries[i].initialize();
+    },
+    intersect: function(ray) {
+        var minDistance = Infinity;
+        var minResult = IntersectResult.noHit;
+        for (var i in this.geometries) {
+            var result = this.geometries[i].intersect(ray);
+            if (result.geometry && result.distance < minDistance) {
+                minDistance = result.distance;
+                minResult = result;
+            }
+        }
+        return minResult;
+    }
+};
+Ray3 = function(origin, direction) {
+    this.origin = origin;
+    this.direction = direction;
+}
+Ray3.prototype = {
+    getPoint: function(t) {
+        return this.origin.add(this.direction.multiply(t));
+    }
+};
+var lightDir = new Vector3(1, 1, 1).normalize();
+var lightColor = Color.white;
+CheckerMaterial = function(scale, reflectiveness) {
+    this.scale = scale;
+    this.reflectiveness = reflectiveness;
+};
+CheckerMaterial.prototype = {
+    sample: function(ray, position, normal) {
+        return Math.abs((Math.floor(position.x * 0.1) + Math.floor(position.z * this.scale)) % 2) < 1 ? Color.black : Color.white;
+    }
+};
+function rayTraceRecursive(scene, ray, maxReflect) {
+    var result = scene.intersect(ray);
+    if (result.geometry) {
+        var reflectiveness = result.geometry.material.reflectiveness;
+        var color = result.geometry.material.sample(ray, result.position, result.normal);
+        color = color.multiply(1 - reflectiveness);
+        if (reflectiveness > 0 && maxReflect > 0) {
+            var r = result.normal.multiply(-2 * result.normal.dot(ray.direction)).add(ray.direction);
+            ray = new Ray3(result.position, r);
+            var reflectedColor = rayTraceRecursive(scene, ray, maxReflect - 1);
+            color = color.add(reflectedColor.multiply(reflectiveness));
+        }
+        return color;
+    } else
+        return Color.black;
+}
+function rayTraceReflection(canvas, scene, camera, maxReflect) {
+    if (!canvas || !canvas.getContext)
+        return;
+    var ctx = canvas.getContext("2d");
+    if (!ctx.getImageData)
+        return;
+    var w = canvas.attributes.width.value;
+    var h = canvas.attributes.height.value;
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, w, h);
+    var imgdata = ctx.getImageData(0, 0, w, h);
+    var pixels = imgdata.data;
+    scene.initialize();
+    camera.initialize();
+    var i = 0;
+    for (var y = 0; y < h; y++) {
+        var sy = 1 - y / h;
+        for (var x = 0; x < w; x++) {
+            var sx = x / w;
+            var ray = camera.generateRay(sx, sy);
+            var color = rayTraceRecursive(scene, ray, maxReflect);
+            pixels[i++] = color.r * 255;
+            pixels[i++] = color.g * 255;
+            pixels[i++] = color.b * 255;
+            pixels[i++] = 255;
+        }
+    }
+    ctx.putImageData(imgdata, 0, 0);
+}
+function render_pic(){
+    var canvas = document.getElementById('renderCanvas');
+    canvas.style.display = "block";
+    var plane = new Plane(new Vector3(0, 1, 0), 0);
+    var sphere1 = new Sphere(new Vector3(-10, 10, -10), 10);
+    var sphere2 = new Sphere(new Vector3(10, 10, -10), 10);
+    plane.material = new CheckerMaterial(0.1, 0.5);
+    sphere1.material = new PhongMaterial(Color.red, Color.white, 20, 0.25);
+    sphere2.material = new PhongMaterial(Color.blue, Color.white, 20, 0.25);
+    var zx,zy,zz,reflect_times,camera;
+    zx = parseInt(document.getElementById('pos_x').value,10);
+    zy = parseInt(document.getElementById('pos_y').value,10);
+    zz = parseInt(document.getElementById('pos_z').value,10);
+    reflect_times = parseInt(document.getElementById('reflect_times').value,10);
+    camera =  new PerspectiveCamera(new Vector3(zx, zy, zz), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 90);
+    rayTraceReflection(
+    canvas,
+    new Union([plane, sphere1, sphere2]),
+    camera,
+    reflect_times);
+}
+</script>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">一个简单的光线追踪的例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E6%B5%8B%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">在线测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA"><span class="toc-number">3.</span> <span class="toc-text">光线追踪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E6%B7%B1%E5%BA%A6"><span class="toc-number">5.</span> <span class="toc-text">渲染深度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%90%E8%B4%A8"><span class="toc-number">6.</span> <span class="toc-text">材质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%89%B2%E5%BD%A9"><span class="toc-number">7.</span> <span class="toc-text">色彩</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-27-simple-raytracing/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-27-simple-raytracing/&text=一个简单的用JS实现的光线追踪效果"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-27-simple-raytracing/&is_video=false&description=一个简单的用JS实现的光线追踪效果"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=一个简单的用JS实现的光线追踪效果&body=Check out this article: https://leriou.github.io/2015-09-27-simple-raytracing/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-27-simple-raytracing/&title=一个简单的用JS实现的光线追踪效果"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-27-simple-raytracing/&name=一个简单的用JS实现的光线追踪效果&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-27-simple-raytracing/&t=一个简单的用JS实现的光线追踪效果"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

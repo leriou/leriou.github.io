@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="为啥需要排行榜推荐系统有一个避不开的问题就是冷启动问题。也就是新用户第一次进入应用的推荐，此时我们没有任何的用户行为信息，无法根据用户行为进行推荐， 根据用户基础信息的推荐也极有可能没有构建完成或者因为基础数据不完善导致效果不够好。 此时就需要一种针对所有用户通用的推荐策略，防止推荐系统出现“开天窗” 。我们一般使用以下策略来处理冷启动问题  最新内容：平台的最近发布的比较新鲜的资源 热门内容：平">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排行榜系统设计">
+<meta property="og:url" content="https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="为啥需要排行榜推荐系统有一个避不开的问题就是冷启动问题。也就是新用户第一次进入应用的推荐，此时我们没有任何的用户行为信息，无法根据用户行为进行推荐， 根据用户基础信息的推荐也极有可能没有构建完成或者因为基础数据不完善导致效果不够好。 此时就需要一种针对所有用户通用的推荐策略，防止推荐系统出现“开天窗” 。我们一般使用以下策略来处理冷启动问题  最新内容：平台的最近发布的比较新鲜的资源 热门内容：平">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-05-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.887Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="推荐系统">
+<meta property="article:tag" content="HyperLogLog">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>排行榜系统设计</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019-07-07-closure-concurrent/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019-04-01-recommended-system-filter-module-md/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&text=排行榜系统设计"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&is_video=false&description=排行榜系统设计"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=排行榜系统设计&body=Check out this article: https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&name=排行榜系统设计&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&t=排行榜系统设计"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5%E9%9C%80%E8%A6%81%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">1.</span> <span class="toc-text">为啥需要排行榜</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">排行榜系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4%E7%9A%84%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.1.</span> <span class="toc-text">固定时间范围的排行榜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BB%9A%E5%8A%A8%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.2.</span> <span class="toc-text">滚动排行榜</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%97%B6%E7%9A%84%E6%BB%9A%E5%8A%A8%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.2.1.</span> <span class="toc-text">实时的滚动排行榜</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8flink%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9D%A5%E7%BB%9F%E8%AE%A1"><span class="toc-number">2.2.2.</span> <span class="toc-text">使用flink的滑动窗口来统计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E7%8E%87%E6%A8%A1%E5%9E%8BHyperLogLog"><span class="toc-number">2.3.</span> <span class="toc-text">概率模型HyperLogLog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">2.3.1.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.2.</span> <span class="toc-text">基本原理</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        排行榜系统设计
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-31T16:00:00.000Z" itemprop="datePublished">2019-06-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/HyperLogLog/" rel="tag">HyperLogLog</a>, <a class="tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" rel="tag">推荐系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="为啥需要排行榜"><a href="#为啥需要排行榜" class="headerlink" title="为啥需要排行榜"></a>为啥需要排行榜</h1><p>推荐系统有一个避不开的问题就是冷启动问题。也就是新用户第一次进入应用的推荐，此时我们没有任何的用户行为信息，无法根据用户行为进行推荐， 根据用户基础信息的推荐也极有可能没有构建完成或者因为基础数据不完善导致效果不够好。</p>
+<p>此时就需要一种针对所有用户通用的推荐策略，防止推荐系统出现“开天窗” 。我们一般使用以下策略来处理冷启动问题</p>
+<ol>
+<li>最新内容：平台的最近发布的比较新鲜的资源</li>
+<li>热门内容：平台上最近一段时间发布的比较热门的资源</li>
+<li>实时基于用户属性进行分群，基于用户群进行推荐（比如，上海地区用户，女性用户，30-40岁用户）</li>
+</ol>
+<p>其中的热门内容就需要排行榜系统的支持</p>
+<h1 id="排行榜系统"><a href="#排行榜系统" class="headerlink" title="排行榜系统"></a>排行榜系统</h1><p>排行榜系统一般有两种， 一种是类似于“本月最火歌曲排行”或者“第N期XXX排行”之类的以自然月为统计维度的，另一种是“最近30天最火歌曲排行”之类的动态时间范围的排行榜</p>
+<h2 id="固定时间范围的排行榜"><a href="#固定时间范围的排行榜" class="headerlink" title="固定时间范围的排行榜"></a>固定时间范围的排行榜</h2><p><strong>需求：统计本月播放次数最多的歌曲</strong></p>
+<p>针对“本月最火歌曲”这种需求的排行榜，处理起来相对简单</p>
+<p>只要统计从本月从1号到现在的所有歌曲的播放数据就可以了，如果数据量不大且要求不高，可以定时每一段时间计算一次， 计算方法如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(id) <span class="keyword">from</span> play_record <span class="keyword">where</span> play_time <span class="operator">&gt;</span> &quot;2019-05-01&quot; <span class="keyword">group</span> <span class="keyword">by</span> itemid;</span><br></pre></td></tr></table></figure>
+
+<p>如果实时性要求较高， 也可以使用基于事件的实时增量统计的方式，同时每天处理一次批量统计，做数据矫正。</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">add-score</span> video_10086_play_times <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>具体就是每天计算一个排行榜之后， 使用流处理系统，当有新的播放事件，在榜单现有基础上做incr操作即可</p>
+<p>这种排行榜相对来说实现比较简单， 缺点也很明显</p>
+<p>比如今天如果是本月的1号， 那你的排行榜数据就由于样本数据有限，误差较大，无法起到排行榜真正的作用</p>
+<p>处理这种问题就需要“最近30天最火的歌曲”这种滚动排行榜</p>
+<h2 id="滚动排行榜"><a href="#滚动排行榜" class="headerlink" title="滚动排行榜"></a>滚动排行榜</h2><p>滚动排行榜是指基于最近一段时间范围的数据获得的排行榜统计结果  </p>
+<p>拿最近3天排行榜为例， 假设现在是是10号的10点钟， 那滚动排行榜覆盖的区间就是前推3天的数据  </p>
+<p><code>7号从10点以后的数据 + 8，9号全天数据 + 10号截至目前的数据 的统计结果</code></p>
+<p>滚动排行榜相对来说难度增加了很多</p>
+<p>如果数据量不大，对实时性要求不高的话， 也可以采用每一段时间计算一次最近3天的播放量的批量的方式</p>
+<p>但是如果数据量较大或者对实时性有要求较高，那就需要设计一个更好的实时方案</p>
+<h3 id="实时的滚动排行榜"><a href="#实时的滚动排行榜" class="headerlink" title="实时的滚动排行榜"></a>实时的滚动排行榜</h3><p>假如我要做3天的滚动歌曲榜单， 我就需要获取最近72小时的播放记录进行统计，拿数据举例来说</p>
+<p>假设有如下的播放记录, 当前日期是 2019-04-04 13:00， 排行榜统计区间应该是 <code>04-01 13:00 ～ 04-04 13:00</code>  </p>
+<table>
+<thead>
+<tr>
+<th>歌曲id</th>
+<th>播放时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1009</td>
+<td>2019-04-01  9:00</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>2019-04-01 14:00</td>
+</tr>
+<tr>
+<td>1020</td>
+<td>2019-04-02  8:00</td>
+</tr>
+<tr>
+<td>1089</td>
+<td>2019-04-03 10:00</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>2019-04-04  9:00</td>
+</tr>
+<tr>
+<td>1023</td>
+<td>2019-04-04 12:00</td>
+</tr>
+</tbody></table>
+<p>那我们获取到的3天榜单应该是这样(1009的播放记录已经过期)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//  歌曲id:播放次数</span><br><span class="line">&#123;</span><br><span class="line">     1023:1,</span><br><span class="line">     1010:2，</span><br><span class="line">     1089:1，</span><br><span class="line">     1020:1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们设计的这套方案需要存储2类信息</p>
+<ol>
+<li>第一类按固定周期维度的用户点击数据，我们称之为周期榜，其中记录每个歌曲在当前周期的播放次数，比如20190401周期榜就记录当天的所有歌曲播放次数，这个数据的生成十分简单，只要用redis的zset结构实时&#96;&#96;i ncr&#96;即可</li>
+<li>另一类是我们业务要用的滚动榜单，也就是我们的目标数据</li>
+</ol>
+<p>排行榜处理过程最关键的有两点</p>
+<ol>
+<li><p>对一个元素加分时，加当日周期榜、滚动榜；<br>还需根据其在今日滚动榜中的分数s、及n-1天日榜中的分数r，计算出其在明日滚动榜中的初始分数s-r写入明日滚动榜中，即3个写操作。</p>
+</li>
+<li><p>如果一个元素在当日没有任何加分操作，那么不会触发写入初始分数操作，所以还需要一个离线工具补齐。<br>该离线工具可提前一天运行，即当日运行离线工具补齐次日的滚动榜数据即可。</p>
+</li>
+</ol>
+<p>R：每日的周期榜统计数据  S： 每日的滚动排行榜数据</p>
+<p>如果S(i)-R(i) &gt; 0 ，说明该歌曲在指定周期内有播放行为，有播放行为才进行写入操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">以3天滚动榜为例，次日滚动榜初始态为当日滚动榜减去n-2天的日榜数据。</span><br><span class="line">     +-------------------------------------------+</span><br><span class="line">     |                                           |</span><br><span class="line">+----+---+   +--------+   +--------+             |</span><br><span class="line">| R(i-2) |   | R(i-1) |   |  R(i)  |             |</span><br><span class="line">+----+---+   +----+---+   +---+----+             |</span><br><span class="line">     |            |           |                  |</span><br><span class="line">     |            |           v+                 v-</span><br><span class="line">     |            |</span><br><span class="line">     |            |    +  +--------+        +--------+</span><br><span class="line">     |            +-----&gt; |        |     +  |        |</span><br><span class="line">     |                 +  |  S(i)  | +---+&gt; | S(i+1) |</span><br><span class="line">     +-----------------+&gt; |        |        |        |</span><br><span class="line">                          +--------+        +--------+</span><br><span class="line"></span><br><span class="line">分数变化</span><br><span class="line">                                +--------------+</span><br><span class="line">                                |   AddScore   |</span><br><span class="line">                                +-+----+-----+-+</span><br><span class="line">                                  |+   |     |</span><br><span class="line">                                  v    |     |</span><br><span class="line">+--------+   +--------+   +--------+   |     |+</span><br><span class="line">| R(i-2) |   | R(i-1) |   |  R(i)  |   |     |</span><br><span class="line">+--------+   +--------+   +--------+   |     |</span><br><span class="line">                                       |     v</span><br><span class="line">                          +--------+   |    +--------+</span><br><span class="line">                          |  S(i)  |&lt;--+    | S(i+1) |</span><br><span class="line">                          +--------+        +--------+</span><br><span class="line">                                                 ^</span><br><span class="line">                                                 |+</span><br><span class="line">                                          +------------+</span><br><span class="line">                                          |    Tool    |</span><br><span class="line">                                          +------------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用flink的滑动窗口来统计"><a href="#使用flink的滑动窗口来统计" class="headerlink" title="使用flink的滑动窗口来统计"></a>使用flink的滑动窗口来统计</h3><p>我们可以使用kafka这种消息队列来存储最近一段时间的数据，然后使用flink的窗口进行计算<br>为了能处理较大的数据量，我们可以先开一个tumbling窗口对1分钟维度的数据进行计算，然后在基于1分钟的维度开sliding窗口进行数据统计，如果要统计1年之类的较长周期，那可以在1分钟的基础上再做1天的聚合数据，在1天的数据基础上进行1年的聚合分析。</p>
+<p>这种分层聚合的方式能有效降低数据量并能支持较大的数据长度</p>
+<h2 id="概率模型HyperLogLog"><a href="#概率模型HyperLogLog" class="headerlink" title="概率模型HyperLogLog"></a>概率模型HyperLogLog</h2><p>上面我们提到基于自然时间的统计也可以通过给时间分区间对数据进行统计， 但是在某些情况下，比如统计本月的月活，小公司还好，像阿里这种公司都是数亿的日活， 这种级别的数据统计，如果采用redis的hash或者 bitmap也是一种超级大的开销。</p>
+<p>如果在极大的数据量下可以允许一定的误差， 就可以采用HyperLogLog这种概率模型来进行日活用户这种统计</p>
+<p>HyperLogLog能达到在极大的用户登陆记录中快速做到类似<code>distinct</code>的效果,比如我们有100多亿的用户登陆记录，我们想统计其中一共有多少用户，传统的方案就需要<code>select distinct(userid) from A </code></p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>由于redis已经实现了HyperLogLog,所以我们可以直接使用redis来进行操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">pfadd 2020:06:active:<span class="built_in">users</span>  user1 user2 user3 user1</span></span><br><span class="line">1</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">pfcount 2020:06:active:<span class="built_in">users</span></span></span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+
+<p>也可以合并两个HyperLogLog的结果</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">; 将6月和5月的日活合并统计</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">pfmerge 2020:06:active:<span class="built_in">users</span> 2020:05:active:<span class="built_in">users</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>HyperLogLog是一种基于概率模型</p>
+<p>基本原理大概是如下流程</p>
+<ol>
+<li>先对要计数的值进行hash，得到一个64bit的hash结果</li>
+<li>hash结果的后14位转为10进制数字m，前50位从低到高第一个1出现的位置记为n，可知$0\leq m &lt; 16384,1\leq n &lt;50$</li>
+<li>然后创造一个拥有16384个桶，每个桶有6位，一共长度为 16384 * 6的12kb的数组</li>
+<li>将第m个桶的值置为n</li>
+<li>查询总量时，对所有桶求调和平均值</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5%E9%9C%80%E8%A6%81%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">1.</span> <span class="toc-text">为啥需要排行榜</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">排行榜系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4%E7%9A%84%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.1.</span> <span class="toc-text">固定时间范围的排行榜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BB%9A%E5%8A%A8%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.2.</span> <span class="toc-text">滚动排行榜</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E6%97%B6%E7%9A%84%E6%BB%9A%E5%8A%A8%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">2.2.1.</span> <span class="toc-text">实时的滚动排行榜</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8flink%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9D%A5%E7%BB%9F%E8%AE%A1"><span class="toc-number">2.2.2.</span> <span class="toc-text">使用flink的滑动窗口来统计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E7%8E%87%E6%A8%A1%E5%9E%8BHyperLogLog"><span class="toc-number">2.3.</span> <span class="toc-text">概率模型HyperLogLog</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">2.3.1.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.2.</span> <span class="toc-text">基本原理</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&text=排行榜系统设计"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&is_video=false&description=排行榜系统设计"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=排行榜系统设计&body=Check out this article: https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&title=排行榜系统设计"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&name=排行榜系统设计&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-06-01-recommended-system-ranking-system-md/&t=排行榜系统设计"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

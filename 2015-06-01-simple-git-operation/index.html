@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="git操作基础推荐一个git官方的GUI客户端:https:&#x2F;&#x2F;desktop.github.com&#x2F; 基本流程 git基本命令格式 git 命令 参数  部分名词解释: origin: 本地代码库  (可以自己设置)  remote: 远端代码库地址  head: 版本指针  branch: 分支  Git的相关配置有两份一份在项目中的.git文件夹中，一份全局的位于用户目录下的.git目录中。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git简单使用指南">
+<meta property="og:url" content="https://leriou.github.io/2015-06-01-simple-git-operation/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="git操作基础推荐一个git官方的GUI客户端:https:&#x2F;&#x2F;desktop.github.com&#x2F; 基本流程 git基本命令格式 git 命令 参数  部分名词解释: origin: 本地代码库  (可以自己设置)  remote: 远端代码库地址  head: 版本指针  branch: 分支  Git的相关配置有两份一份在项目中的.git文件夹中，一份全局的位于用户目录下的.git目录中。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/QMgToH8ti9CSzVw.png">
+<meta property="article:published_time" content="2015-05-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.892Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/QMgToH8ti9CSzVw.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>git简单使用指南</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2015-09-18-do-not-afraid/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2015-05-05-game-design/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-06-01-simple-git-operation/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-06-01-simple-git-operation/&text=git简单使用指南"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-06-01-simple-git-operation/&is_video=false&description=git简单使用指南"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=git简单使用指南&body=Check out this article: https://leriou.github.io/2015-06-01-simple-git-operation/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-06-01-simple-git-operation/&name=git简单使用指南&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-06-01-simple-git-operation/&t=git简单使用指南"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#git%E6%93%8D%E4%BD%9C%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">git操作基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text">获取项目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90ssh-key"><span class="toc-number">3.1.</span> <span class="toc-text">生成ssh-key</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">提交代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">分支操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="toc-number">6.</span> <span class="toc-text">解决冲突</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">7.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E6%93%8D%E4%BD%9C"><span class="toc-number">8.</span> <span class="toc-text">高级操作</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        git简单使用指南
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-05-31T16:00:00.000Z" itemprop="datePublished">2015-06-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/">编程工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/git/" rel="tag">git</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="git操作基础"><a href="#git操作基础" class="headerlink" title="git操作基础"></a>git操作基础</h2><p>推荐一个git官方的GUI客户端:<a target="_blank" rel="noopener" href="https://desktop.github.com/">https://desktop.github.com/</a></p>
+<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><p><img src="https://i.loli.net/2020/05/09/QMgToH8ti9CSzVw.png" alt="git-process.png"></p>
+<p>git基本命令格式</p>
+<pre><code>git 命令 参数
+</code></pre>
+<p>部分名词解释:</p>
+<pre><code>origin: 本地代码库  (可以自己设置)
+
+remote: 远端代码库地址
+
+head: 版本指针
+
+branch: 分支
+</code></pre>
+<p>Git的相关配置有两份一份在项目中的<code>.git</code>文件夹中，一份全局的位于用户目录下的<code>.git</code>目录中。项目配置优先于全局配置， 会覆盖掉全局中的配置，所以我们修改配置要注意一下修改的位置</p>
+<h2 id="获取项目"><a href="#获取项目" class="headerlink" title="获取项目"></a>获取项目</h2><ol>
+<li>新建仓库</li>
+</ol>
+<ul>
+<li>对已存在的项目目录使用 <code>git init</code></li>
+</ul>
+<ol start="2">
+<li>克隆仓库</li>
+</ol>
+<ul>
+<li>https方式</li>
+</ul>
+<p>例如: <code>git clone  https://git.coding.net/gongchang/gc.buyer.git</code></p>
+<p>该方式推送更新可能需要先设置用户名和密码</p>
+<ul>
+<li>ssh方式(推荐)</li>
+</ul>
+<p>例如:<code>git clone git@git.coding.net:gongchang/gc.buyer.git</code></p>
+<p>该方式获取项目建议先生成ssh-key, 并将ssh-key添加到授权中(github&#x2F;gitlab等设置中都有添加ssh-key的方法)</p>
+<p>对应svn命令 : <code>svn clone XXXXXX</code></p>
+<h3 id="生成ssh-key"><a href="#生成ssh-key" class="headerlink" title="生成ssh-key"></a>生成ssh-key</h3><p><code>ssh-keygen -t rsa -C &quot;youremail@example.com&quot;</code> </p>
+<p>使用ssh生成ssh-key</p>
+<p>生成的ssh-key位于用户目录下的.ssh目录中, 一共有两个一个公钥, 一个私钥</p>
+<p>将<code>xxx.pub</code>中的公钥copy到git服务器中,再检查用户名和密码,就可以用ssh登录git了<br>3. 获取更新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master   //origin代表当前版本库,master是远端分支名,如果要更新dev分支就是 git pull origin dev </span><br><span class="line"></span><br><span class="line">或者简化版</span><br><span class="line"></span><br><span class="line">git pull  //这种方式有时候默认拉下来的不是master分支,需要自己手动切换一下</span><br></pre></td></tr></table></figure>
+<p>此命令等同<code>git fetch</code>+ <code>git merge</code>, 对应svn命令:<code>svn update</code></p>
+<h2 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h2><ol>
+<li>暂存区</li>
+</ol>
+<p>修改完代码以后需要将修改添加到暂存区 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .                 //.代表当前目录</span><br><span class="line">如果要添加当前目录下的 1.txt文件,相应的命令就是</span><br><span class="line">git add 1.txt</span><br></pre></td></tr></table></figure>
+
+<p>未添加到暂存区的修改可以用<code>git checkout</code> 撤销,对应svn命令 <code>svn revert -R .</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout .    //.代表当前目录</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>提交</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;测试提交&quot;</span>  //<span class="string">&quot;测试提交&quot;</span>是对本次提交的描述</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>推送</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git push origin master   //origin 当前版本库  master远端分支名</span><br><span class="line"> </span><br><span class="line">git push origin dev      //往dev分支上推送代码</span><br></pre></td></tr></table></figure>
+
+<p>下面三条命令 相当于 svn的一条命令  <code>svn commit -m &quot;测试&quot;</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;测试&quot;</span></span><br><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<h2 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h2><ol>
+<li>查看当前分支, *号所在就是你当前分支<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch</span><br></pre></td></tr></table></figure></li>
+<li>新建分支</li>
+</ol>
+<p>新建分支dev_test,假设当前在dev分支</p>
+<p>命令:<code>git checkout -b dev_test</code>或<code>git branch dev_test</code></p>
+<p>对应svn命令 :<code>svn copy dev dev_test </code></p>
+<ol start="3">
+<li>切换分支</li>
+</ol>
+<p>命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout dev_test   //切换到dev_test分支</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>合并dev_test到dev</li>
+</ol>
+<p>当前所在分支为dev,命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge origin/dev_test</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>删除分支</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d dev_test</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决冲突"><a href="#解决冲突" class="headerlink" title="解决冲突"></a>解决冲突</h2><ol>
+<li>处理冲突</li>
+</ol>
+<p>下面是冲突代码的显示形式,表明两个代码库此处代码不一致,需要手动解决冲突</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;&lt;&lt;&lt;<span class="string">&lt;&lt;&lt; HEAD</span></span><br><span class="line"><span class="string">test1</span></span><br><span class="line"><span class="string">=======</span></span><br><span class="line"><span class="string">test2</span></span><br><span class="line"><span class="string">&gt;&gt;&gt;&gt;&gt;&gt;&gt; </span></span><br></pre></td></tr></table></figure>
+<p>将代码手动修改为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test2</span><br></pre></td></tr></table></figure>
+<p>然后执行 1. <code>git add .</code> 2.<code>git commit -m &quot;解决冲突&quot;</code>    3.<code>git push origin master</code></p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li>查看日志   <code>git log</code> </li>
+<li>查看状态   <code>git status</code></li>
+<li>查看修改   <code>git diff</code></li>
+<li><code>git log --pretty=oneline 文件名</code> 可以查看某文件的修改记录</li>
+</ol>
+<h2 id="高级操作"><a href="#高级操作" class="headerlink" title="高级操作"></a>高级操作</h2><ul>
+<li>场景1: 如果觉得Git的提交记录太多太乱,想清理git的提交记录,变得整洁</li>
+</ul>
+<p><code>git rebase </code> </p>
+<p>重新设定分支,十分少用,把当前提交定位到某次提交之后</p>
+<ul>
+<li>场景2: 有时候部分修改已经提交,但后来发现这个功能不用上线了,你当然可以手动切换一个新分支, 但是也可以使用另一个命令将当前分支设置为之前的某一个版本</li>
+</ul>
+<p><code>git reset </code></p>
+<p>放弃所有未推送的提交</p>
+<ul>
+<li>场景3: 线上某个版本上线之后出了问题,需要紧急会退到上一个正常的版本</li>
+</ul>
+<p><code>git revert</code></p>
+<p>版本回退,可用于撤销已推送的错误提交</p>
+<p><em>ps: <code>git reset HEAD</code> 然后<code>git push -f</code>这样也能达到撤销错误提交的作用,但是如果在你错误提交之后,有同学进行了新提交,这个新提交也会被撤销</em></p>
+<ul>
+<li>场景4: 你正在A分支上面开发新功能,此时有个紧急bug需要你处理</li>
+</ul>
+<p>可以使用<code>git stash</code>暂存起来, 切换到其他分支上去开发功能, 开发完毕切换回来, 用 <code>git stash apply</code>恢复之前的修改</p>
+<p><code>git stash list</code>:列出储藏列表</p>
+<p><code>git stash drop</code>: 删除一个储藏</p>
+<p><code>git stash apply stash@&#123;2&#125;</code>: 应用储藏</p>
+<p><code>git stash pop</code>: 应用最新的一个储藏</p>
+<p><code>git stash clear</code>: 清理所有储藏</p>
+<p><code>git stash branch testchanges</code>: 从储藏中创建分支</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#git%E6%93%8D%E4%BD%9C%E5%9F%BA%E7%A1%80"><span class="toc-number">1.</span> <span class="toc-text">git操作基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text">获取项目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90ssh-key"><span class="toc-number">3.1.</span> <span class="toc-text">生成ssh-key</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">提交代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">分支操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="toc-number">6.</span> <span class="toc-text">解决冲突</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">7.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E6%93%8D%E4%BD%9C"><span class="toc-number">8.</span> <span class="toc-text">高级操作</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-06-01-simple-git-operation/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-06-01-simple-git-operation/&text=git简单使用指南"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-06-01-simple-git-operation/&is_video=false&description=git简单使用指南"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=git简单使用指南&body=Check out this article: https://leriou.github.io/2015-06-01-simple-git-operation/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-06-01-simple-git-operation/&title=git简单使用指南"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-06-01-simple-git-operation/&name=git简单使用指南&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-06-01-simple-git-operation/&t=git简单使用指南"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

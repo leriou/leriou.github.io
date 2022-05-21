@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="redis对象redis中有五种常用对象 我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis中的数据对象">
+<meta property="og:url" content="https://leriou.github.io/2017-01-11-redis-object/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="redis对象redis中有五种常用对象 我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-01-11T10:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.897Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="NoSQL">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>redis中的数据对象</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-01-17-distribute-unique-id/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-01-09-redis-data-structure/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-01-11-redis-object/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-01-11-redis-object/&text=redis中的数据对象"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-01-11-redis-object/&is_video=false&description=redis中的数据对象"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=redis中的数据对象&body=Check out this article: https://leriou.github.io/2017-01-11-redis-object/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-01-11-redis-object/&name=redis中的数据对象&description=&lt;h1 id=&#34;redis对象&#34;&gt;&lt;a href=&#34;#redis对象&#34; class=&#34;headerlink&#34; title=&#34;redis对象&#34;&gt;&lt;/a&gt;redis对象&lt;/h1&gt;&lt;p&gt;redis中有五种常用对象&lt;/p&gt;
+&lt;p&gt;我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-01-11-redis-object/&t=redis中的数据对象"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">redis对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.</span> <span class="toc-text">字符串对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis3-2%E4%B9%8B%E5%89%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">redis3.2之前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis3-2%E4%B9%8B%E5%90%8E"><span class="toc-number">1.2.2.</span> <span class="toc-text">redis3.2之后</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">哈希对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88"><span class="toc-number">1.4.</span> <span class="toc-text">集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="toc-number">1.5.</span> <span class="toc-text">有序集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E6%94%B6"><span class="toc-number">1.7.</span> <span class="toc-text">回收</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%85%B1%E4%BA%AB"><span class="toc-number">1.8.</span> <span class="toc-text">对象共享</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        redis中的数据对象
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-01-11T10:00:00.000Z" itemprop="datePublished">2017-01-11</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/">编程工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/NoSQL/" rel="tag">NoSQL</a>, <a class="tag-link-link" href="/tags/redis/" rel="tag">redis</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="redis对象"><a href="#redis对象" class="headerlink" title="redis对象"></a>redis对象</h1><p>redis中有五种常用对象</p>
+<p>我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的</p>
+<span id="more"></span>
+<p>redisObject的结构如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> type:<span class="number">4</span>; <span class="comment">//类型 有五种,分别对应五种常见的值类型</span></span><br><span class="line">    <span class="type">unsigned</span> encoding:<span class="number">4</span>; <span class="comment">// 编码,标明底层数据结构的类型</span></span><br><span class="line">    <span class="type">unsigned</span> lru:LRU_BITS; <span class="comment">/* LRU time (relative to global lru_clock) or</span></span><br><span class="line"><span class="comment">                            * LFU data (least significant 8 bits frequency</span></span><br><span class="line"><span class="comment">                            * and most significant 16 bits decreas time). */</span></span><br><span class="line">    <span class="type">int</span> refcount; <span class="comment">//  引用计数</span></span><br><span class="line">    <span class="type">void</span> *ptr;    <span class="comment">//  存储结构指针</span></span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+
+<p>type的可选值有五种.分别是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">REDIS_STRING,</span><br><span class="line">REDIS_LIST,</span><br><span class="line">REDIS_SET,</span><br><span class="line">REDIS_ZSET ,</span><br><span class="line">REDIS_HASH</span><br></pre></td></tr></table></figure>
+
+<p>encoding的可选值有八种(redis3.2版本新加入了quicklist)</p>
+<table>
+<thead>
+<tr>
+<th align="left">REDIS_ENCODING_INT</th>
+<th align="left">long型的整数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">REDIS_ENCODING_EMBSTR</td>
+<td align="left">embstr编码的简单动态字符串</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_ROW</td>
+<td align="left">简单动态字符串</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_LINKEDLIST</td>
+<td align="left">双端链表</td>
+</tr>
+<tr>
+<td align="left">OBJ_ENCODING_QUICKLIST</td>
+<td align="left">快速链表</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_HH</td>
+<td align="left">字典</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_ZIPLIST</td>
+<td align="left">压缩列表</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_INTSET</td>
+<td align="left">整数集合</td>
+</tr>
+<tr>
+<td align="left">REDIS_ENCODING_SKIPLIST</td>
+<td align="left">跳跃表</td>
+</tr>
+</tbody></table>
+<p>新的redis3.2以后的源码中更改了底层的数据结构,新的的定义如下,在<code>server.h</code>文件中有定义</p>
+<p>其中linkedlist是旧的list的底层实现,现已被quicklist代替</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/* Objects encoding. Some kind of objects like Strings and Hashes can be</span></span><br><span class="line"><span class="comment"> * internally represented in multiple ways. The &#x27;encoding&#x27; field of the object</span></span><br><span class="line"><span class="comment"> * is set to one of this fields for this object. */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_RAW 0     <span class="comment">/* Raw representation */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_INT 1     <span class="comment">/* Encoded as integer */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_HT 2      <span class="comment">/* Encoded as hash table */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_ZIPMAP 3  <span class="comment">/* Encoded as zipmap */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_LINKEDLIST 4 <span class="comment">/* No longer used: old list encoding. */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_ZIPLIST 5 <span class="comment">/* Encoded as ziplist */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_INTSET 6  <span class="comment">/* Encoded as intset */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_SKIPLIST 7  <span class="comment">/* Encoded as skiplist */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_EMBSTR 8  <span class="comment">/* Embedded sds string encoding */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OBJ_ENCODING_QUICKLIST 9 <span class="comment">/* Encoded as linked list of ziplists */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>type和encoding共同决定了数值对象的底层结构和存储</p>
+<h2 id="字符串对象"><a href="#字符串对象" class="headerlink" title="字符串对象"></a>字符串对象</h2><p>字符串对象的编码可以是int,embstr和row</p>
+<p>redis中的字符串对象是最常用的数据对象之一,redis中的许多键都是采用的字符串对象</p>
+<p>字符串类型在redis中根据情况不同有3中情况</p>
+<ol>
+<li>对于元素都是纯数字类型的, 例如,’1’,’2’这种会使用int类型存储,redis默认初始化了10000个数字对象</li>
+<li>对于长度小于32的字符串类型,例如’hello’,redis会使用embstr类型存储数据</li>
+<li>对于长度超过32的使用row存储原字符</li>
+</ol>
+<blockquote>
+<p>ps: embstr类型的字符串在修改后总会变成row编码类型(redis3.2之后该机制已失效)</p>
+</blockquote>
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><h3 id="redis3-2之前"><a href="#redis3-2之前" class="headerlink" title="redis3.2之前"></a>redis3.2之前</h3><p>在redis3.2之前, 列表的编码可以是linkedlist或者ziplist</p>
+<ol>
+<li>当列表对象保存的所有字符串长度小于64字节</li>
+<li>当列表对象保存的元素数量小于512个的时候</li>
+</ol>
+<p>这个时候会使用,ziplist来作为列表对象的编码, 当不满足这两个条件的时候使用linkedlist</p>
+<blockquote>
+<p>ps:这两个值是更改的,list-max-ziplist-value 和 list-max-ziplist-entries</p>
+</blockquote>
+<h3 id="redis3-2之后"><a href="#redis3-2之后" class="headerlink" title="redis3.2之后"></a>redis3.2之后</h3><p>列表的实现在3.2之后改为quicklist实现</p>
+<p>quicklist可以看做一个类似链表的结构, 但是每个节点都是一个ziplist,所以每个ziplist内部可以包含多个数据</p>
+<blockquote>
+<p>ps: 理念上有点类似于Java中的concurrenthashmap</p>
+</blockquote>
+<h2 id="哈希对象"><a href="#哈希对象" class="headerlink" title="哈希对象"></a>哈希对象</h2><p>哈希对象的编码可以是ziplist或者hashtable</p>
+<p>字典的每一个键和值都是一个字符串对象</p>
+<ol>
+<li>哈希对象保存的所有键和值的长度都小于64字节</li>
+<li>哈希对象保存的键值对数量小于512个的时候</li>
+</ol>
+<p>满足以上两个条件,使用ziplist存储,否则采用hashtable存储</p>
+<blockquote>
+<p>ps:这两个值是更改的,hash-max-ziplist-value 和 hash-max-ziplist-entries</p>
+</blockquote>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p>集合对象的编码可以是intset或者hashtable</p>
+<p>当集合对象满足以下两个条件的时候采用intset</p>
+<ol>
+<li>集合对象保存的元素都是整数</li>
+<li>集合对象保存的元素数量不超过512个</li>
+</ol>
+<p>不满足以上两个条件都是用hashtable存储</p>
+<blockquote>
+<p>ps: 该数值可以使用set-max-intset-entries设置</p>
+</blockquote>
+<h2 id="有序集合"><a href="#有序集合" class="headerlink" title="有序集合"></a>有序集合</h2><p>有序集合对象的编码可以是ziplist或者skiplist</p>
+<p>有序集合对象跟前面的几个对象不大一样</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zset</span>&#123;</span></span><br><span class="line">    zskiplist *zsl;</span><br><span class="line">    dict *dict;</span><br><span class="line">&#125; zset;</span><br></pre></td></tr></table></figure>
+<p>zsl中保存一个跳跃表,表节点的对象即是键,score即是分值,该结构主要为 zrange,zrank等函数服务同时还保存一个dict,dict中也保存有键和对应的分值,获取某键的函数zscore使用这个结构,同时持有字典和跳跃表是为了性能考虑，当有序集合满足一下两个条件时候,使用ziplist编码</p>
+<ol>
+<li>有序集合元素数量小于128</li>
+<li>有序集合元素长度小于64</li>
+</ol>
+<p>不能满足以上两个条件的使用skiplist</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>数据对象的实现之所以有这种情况,其实是适应2个不同场景, 节省内存和常规场景,具体表格如下</p>
+<table>
+<thead>
+<tr>
+<th align="left">对象</th>
+<th align="left">省内存</th>
+<th align="left">常规</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">str</td>
+<td align="left">int&#x2F;embstr</td>
+<td align="left">row</td>
+</tr>
+<tr>
+<td align="left">list</td>
+<td align="left">ziplist</td>
+<td align="left">linkedlist(quicklist)</td>
+</tr>
+<tr>
+<td align="left">hash</td>
+<td align="left">ziplist</td>
+<td align="left">hashtable</td>
+</tr>
+<tr>
+<td align="left">set</td>
+<td align="left">intset</td>
+<td align="left">hashtable</td>
+</tr>
+<tr>
+<td align="left">zset</td>
+<td align="left">ziplist</td>
+<td align="left">skiplist</td>
+</tr>
+</tbody></table>
+<h2 id="回收"><a href="#回收" class="headerlink" title="回收"></a>回收</h2><p>redis的对象资源垃圾回收是基于引用计数</p>
+<p>当一个对象被使用一次,引用计数增加1，当一个引用被销毁,对象的引用计数会减1，当一个对象的引用计数为0,会被销毁。</p>
+<h2 id="对象共享"><a href="#对象共享" class="headerlink" title="对象共享"></a>对象共享</h2><p>redis默认创建了0到9999的数字对象1万个，其他用到这些对象的时候可以不用创建新对象,直接使用已有的对象</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">redis对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.1.</span> <span class="toc-text">字符串对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#redis3-2%E4%B9%8B%E5%89%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">redis3.2之前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis3-2%E4%B9%8B%E5%90%8E"><span class="toc-number">1.2.2.</span> <span class="toc-text">redis3.2之后</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">哈希对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88"><span class="toc-number">1.4.</span> <span class="toc-text">集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88"><span class="toc-number">1.5.</span> <span class="toc-text">有序集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E6%94%B6"><span class="toc-number">1.7.</span> <span class="toc-text">回收</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E5%85%B1%E4%BA%AB"><span class="toc-number">1.8.</span> <span class="toc-text">对象共享</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-01-11-redis-object/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-01-11-redis-object/&text=redis中的数据对象"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-01-11-redis-object/&is_video=false&description=redis中的数据对象"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=redis中的数据对象&body=Check out this article: https://leriou.github.io/2017-01-11-redis-object/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-01-11-redis-object/&title=redis中的数据对象"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-01-11-redis-object/&name=redis中的数据对象&description=&lt;h1 id=&#34;redis对象&#34;&gt;&lt;a href=&#34;#redis对象&#34; class=&#34;headerlink&#34; title=&#34;redis对象&#34;&gt;&lt;/a&gt;redis对象&lt;/h1&gt;&lt;p&gt;redis中有五种常用对象&lt;/p&gt;
+&lt;p&gt;我们所说的对象的类型大多是值的类型,键的类型大多是字符串对象,值得类型大概有以下几种,但是无论哪种都是基于redisObject实现的&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-01-11-redis-object/&t=redis中的数据对象"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

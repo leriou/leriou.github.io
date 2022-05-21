@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="A*寻路背景介绍我们日常生活中的很多决策问题都可以转化为对应的路径规划问题,如何从复杂的路径中寻找两个或者多个点之间的最短距离就是一个很值得研究的东西 A*算法是一种寻路算法,解决的是路径规划问题的一种 目的是:  找出某地图中两点之间的最短路径  寻路过程先来看个地图 s:起点   e:终点  #:障碍 | | | | | | | |           | | | |#| | | | | |s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习A*寻路算法">
+<meta property="og:url" content="https://leriou.github.io/2015-09-29-Astar-algorithm/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="A*寻路背景介绍我们日常生活中的很多决策问题都可以转化为对应的路径规划问题,如何从复杂的路径中寻找两个或者多个点之间的最短距离就是一个很值得研究的东西 A*算法是一种寻路算法,解决的是路径规划问题的一种 目的是:  找出某地图中两点之间的最短路径  寻路过程先来看个地图 s:起点   e:终点  #:障碍 | | | | | | | |           | | | |#| | | | | |s">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-09-29T10:51:59.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.883Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="A*算法">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>学习A*寻路算法</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2015-12-30-design-pattern/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2015-09-28-smallpt/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-29-Astar-algorithm/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&text=学习A*寻路算法"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&is_video=false&description=学习A*寻路算法"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习A*寻路算法&body=Check out this article: https://leriou.github.io/2015-09-29-Astar-algorithm/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&name=学习A*寻路算法&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-29-Astar-algorithm/&t=学习A*寻路算法"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#A-%E5%AF%BB%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">A*寻路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">背景介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E8%B7%AF%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">寻路过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-%E5%AF%BB%E8%B7%AF%E7%9A%84%E4%B8%BB%E8%A6%81%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">A*寻路的主要过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">具体过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E8%B4%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">实质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-%E7%9A%84%E5%8F%98%E7%A7%8D"><span class="toc-number">1.4.</span> <span class="toc-text">A*的变种</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E8%B7%AF%E7%AE%97%E6%B3%95%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.5.</span> <span class="toc-text">寻路算法的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="toc-number">1.6.</span> <span class="toc-text">推荐阅读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%BC%94%E7%A4%BA"><span class="toc-number">1.7.</span> <span class="toc-text">代码演示</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        学习A*寻路算法
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-09-29T10:51:59.000Z" itemprop="datePublished">2015-09-29</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/A-%E7%AE%97%E6%B3%95/" rel="tag">A*算法</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="A-寻路"><a href="#A-寻路" class="headerlink" title="A*寻路"></a><code>A*</code>寻路</h1><h2 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h2><p>我们日常生活中的很多决策问题都可以转化为对应的路径规划问题,如何从复杂的路径中寻找两个或者多个点之间的最短距离就是一个很值得研究的东西</p>
+<p><code>A*</code>算法是一种寻路算法,解决的是路径规划问题的一种</p>
+<p>目的是:</p>
+<blockquote>
+<p>找出某地图中两点之间的最短路径</p>
+</blockquote>
+<h2 id="寻路过程"><a href="#寻路过程" class="headerlink" title="寻路过程"></a>寻路过程</h2><p>先来看个地图</p>
+<pre><code>s:起点   e:终点  #:障碍
+| | | | | | | |          
+| | | |#| | | |
+| |s| |#| |e| |
+| | | |#| | | |
+| | | | | | | |
+</code></pre>
+<p>现在有这样的需求,我们需要找出s-&gt;e的最短路径 ，但是,s和e之间有一堵’墙’,就是”#”啦。这样怎么才能找出最短路径呢?  </p>
+<p>第一种做法(Dijkstra算法):</p>
+<pre><code>s:起点   e:终点  *:检索路径 #:障碍
+|*|*|*| | | | |
+|*|*|*|#| | | |
+|*|s|*|#| |e| |
+|*|*|*|#|*|*| |
+|*|*|*|*|*| | |
+</code></pre>
+<p>或者我们可以这样做(A*):</p>
+<pre><code>s:起点   e:终点 *:检索路径 #:障碍
+| | | | | | | |       
+|*|*|*|#| | | |
+|*|s|*|#| |e| |
+|*|*|*|#|*| | |
+| | |*|*|*| | |
+</code></pre>
+<p>很明显,第二种做法比第一种做法检索的路径要少很多,当然,速度上就要快一些,对一些更复杂的地图,<code>A*</code>要比普通广度优先的算法快上许多</p>
+<p>例如:</p>
+<pre><code>s:起点  e:终点  *:检索路径  #:障碍
+| | | | | | | | | | | | | |    
+| | | | | | | | |e| | | | |    
+| | | |#|#|#|#|#|#|#| | | |    
+| | |#| | | | | | | |#| | |    
+| | |#| | | | | | | |#| | |    
+| | |#| | | | | | | |#| | |    
+| | |#| | | | | | | |#| | |    
+| | | | | | | | | | | | | |
+| | | | | | |s| | | | | | |
+| | | | | | | | | | | | | |
+| | | | | | | | | | | | | |
+</code></pre>
+<p>这个地图中从s到e,如果使用普通寻路可能是这样的</p>
+<pre><code>s:起点  e:终点  *:最终路径  #:障碍
+| | | | | | | | | | | | | |    
+| | | | | | | | |e|*|*| | |    
+| | | |#|#|#|#|#|#|#|*|*| |    
+| | |#| | | |*|*|*|*|#|*| |    
+| | |#| | | |*| | |*|#|*| |    
+| | |#| | | |*| | |*|#|*| |    
+| | |#| | | |*| | |*|#|*| |    
+| | | | | | |*| | | |*|*| |
+| | | | | | |s| | | | | | |
+| | | | | | | | | | | | | |
+| | | | | | | | | | | | | |
+</code></pre>
+<p>很明显,寻路过程中出现了较多的无用步数,寻路进入了布袋口里面,我们期望的是寻路尽量快速,寻找最短路径,<code>A*</code>的做法就比较符合我们的期望</p>
+<p><code>A*</code>寻路:</p>
+<pre><code>s:起点  e:终点  *:最终路径 #:障碍
+| | | | | | | | | | | | | |    
+| | | | | | | | |e|*|*| | |    
+| | | |#|#|#|#|#|#|#|*|*| |    
+| | |#| | | | | | | |#|*| |    
+| | |#| | | | | | | |#|*| |    
+| | |#| | | | | | | |#|*| |    
+| | |#| | | | | | | |#|*| |    
+| | | | | | |*|*|*|*|*|*| |
+| | | | | | |s| | | | | | |
+| | | | | | | | | | | | | |
+| | | | | | | | | | | | | |
+</code></pre>
+<h2 id="A-寻路的主要过程"><a href="#A-寻路的主要过程" class="headerlink" title="A*寻路的主要过程"></a><code>A*</code>寻路的主要过程</h2><p><strong><code>A*</code>寻路的精髓</strong></p>
+<p>核心公式：$$F &#x3D; G + H$$</p>
+<p>F:用来评价点距起点距离的值</p>
+<p>G:实际已耗费的路径</p>
+<p>H:未来还需要耗费的路径</p>
+<h3 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h3><ol>
+<li>将起点S加入到开放列表(开放列表中的点都是可用的)</li>
+<li>寻找起点S周围所有可到达的点,并计算F值(最终衡量路径距离的值),设置这些点的父节点为起点,将这些点加入到一个开放列表</li>
+<li>将起点从开放列表中删除,并添加到关闭列表,从开放列表中选取F值最小的点M(如果有多个最小F值,随机取其一)</li>
+<li>将M从开放列表中删除,并添加到关闭列表,计算M周围可到达的点,重新计算F值,将周围这些点都存入开放列表,设置他们的父节点为M</li>
+<li>如果M周围某个点已经在开放列表中,重新计算F值和G值(已消耗路径),选取新旧G值中最小的点</li>
+<li>最后如果发现终点在开放列表中,终止程序</li>
+</ol>
+<h3 id="实质"><a href="#实质" class="headerlink" title="实质"></a>实质</h3><p><code>A*</code>算法的实质是通过维护一个<code>待检测点的列表(open list)</code>和一个<code>已检测点的列表(closed list)</code>来记录寻路过程,从图形上来看，OPEN集是已访问区域的边界，CLOSED集是已访问区域的内部。每个节点还包含一个指向父节点的指针，以确定追踪关系。</p>
+<p>算法有一个主循环,重复地从OPEN集中取最优节点n(即f值最小的节点)来检测.如果n是目标节点,那么算法结束;<br>否则,将节点n从OPEN集删除,并添加到CLOSED集中,然后查看n的所有邻节点n’,如果邻节点在CLOSED集,它已被检测过,则无需再检测;<br>如果邻节点在OPEN集,它将会被检测,则无需此时检测;<br>否则,将该邻节点加入OPEN集,设置其父节点为n,到n’的路径开销<code>F(n&#39;) = G(n) + H(n,n&#39;)</code></p>
+<h2 id="A-的变种"><a href="#A-的变种" class="headerlink" title="A*的变种"></a><code>A*</code>的变种</h2><p><code>A*</code>算法可以通过<code>动态加权</code>,<code>跳跃点搜索</code>,<code>双向搜索</code>,<code>迭代深化</code>等进行性能和功能的优化</p>
+<p>此外还有<code>动态A*</code>与<code>终身规划A*</code>等变化,这些变化其实都是基于基本的<code>A*</code>理论来进行优化</p>
+<h2 id="寻路算法的应用"><a href="#寻路算法的应用" class="headerlink" title="寻路算法的应用"></a>寻路算法的应用</h2><p>比较常见的是寻路算法在游戏中的应用,因为很多游戏中会有地图的概念,涉及到地图就很容易有寻路规划的需要</p>
+<p>比如:许多RPG游戏中会有去寻找某个NPC接任务或者去某个地方打败某个BOSS</p>
+<p>寻路算法在生活中也有应用,比如 探索和侦查,道路建设,地形分析,城市规划等</p>
+<p>总之,深入研究寻路算法是非常有意义的</p>
+<h2 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h2><p>如果有希望深入了解<code>A*</code>的读者,强烈推荐一篇文章,作者写的非常用心,讲的也特别细</p>
+<p>地址:<a target="_blank" rel="noopener" href="http://theory.stanford.edu/~amitp/GameProgramming/index.html">http://theory.stanford.edu/~amitp&#x2F;GameProgramming&#x2F;index.html</a></p>
+<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><p>下面是一个Python实现的<code>A*寻路</code>的代码:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Node_Elem</span>:</span><br><span class="line">    <span class="comment">#开放列表和关闭列表的元素类型，parent用来在成功的时候回溯路径</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, parent, x, y, dist</span>):</span><br><span class="line">        self.parent = parent</span><br><span class="line">        self.x = x</span><br><span class="line">        self.y = y</span><br><span class="line">        self.dist = dist</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>主要程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A_Star</span>:</span><br><span class="line"></span><br><span class="line">    <span class="comment">#A星算法实现类</span></span><br><span class="line">    <span class="comment">#注意w,h两个参数，如果你修改了地图，需要传入一个正确值或者修改这里的默认参数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, s_x, s_y, e_x, e_y, w=<span class="number">60</span>, h=<span class="number">30</span></span>):</span><br><span class="line">        self.s_x = s_x</span><br><span class="line">        self.s_y = s_y</span><br><span class="line">        self.e_x = e_x</span><br><span class="line">        self.e_y = e_y</span><br><span class="line"></span><br><span class="line">        self.width = w</span><br><span class="line">        self.height = h</span><br><span class="line"></span><br><span class="line">        self.<span class="built_in">open</span> = []</span><br><span class="line">        self.close = []</span><br><span class="line">        self.path = []</span><br><span class="line"></span><br><span class="line">    <span class="comment">#查找路径的入口函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find_path</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment">#构建开始节点</span></span><br><span class="line">        p = Node_Elem(<span class="literal">None</span>, self.s_x, self.s_y, <span class="number">0.0</span>)</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="comment">#扩展F值最小的节点</span></span><br><span class="line">            self.extend_round(p)</span><br><span class="line">            <span class="comment">#如果开放列表为空，则不存在路径，返回</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> self.<span class="built_in">open</span>:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            <span class="comment">#获取F值最小的节点</span></span><br><span class="line">            idx, p = self.get_best()</span><br><span class="line">            <span class="comment">#找到路径，生成路径，返回</span></span><br><span class="line">            <span class="keyword">if</span> self.is_target(p):</span><br><span class="line">                self.make_path(p)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            <span class="comment">#把此节点压入关闭列表，并从开放列表里删除</span></span><br><span class="line">            self.close.append(p)</span><br><span class="line">            <span class="keyword">del</span> self.<span class="built_in">open</span>[idx]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">make_path</span>(<span class="params">self,p</span>):</span><br><span class="line">        <span class="comment">#从结束点回溯到开始点，开始点的parent == None</span></span><br><span class="line">        <span class="keyword">while</span> p:</span><br><span class="line">            self.path.append((p.x, p.y))</span><br><span class="line">            p = p.parent</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_target</span>(<span class="params">self, i</span>):</span><br><span class="line">        <span class="keyword">return</span> i.x == self.e_x <span class="keyword">and</span> i.y == self.e_y</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_best</span>(<span class="params">self</span>):</span><br><span class="line">        best = <span class="literal">None</span></span><br><span class="line">        <span class="comment">#开放列表中最好的值</span></span><br><span class="line">        bv = self.width*self.height*<span class="number">10000</span> <span class="comment">#这个值应该大于地图的最大格子数量</span></span><br><span class="line">        <span class="comment">#开放列表中最好的键</span></span><br><span class="line">        bi = -<span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> idx, i <span class="keyword">in</span> <span class="built_in">enumerate</span>(self.<span class="built_in">open</span>):</span><br><span class="line">            value = self.get_dist(i)<span class="comment">#获取F值</span></span><br><span class="line">            <span class="keyword">if</span> value &lt; bv:<span class="comment">#比以前的更好，即F值更小</span></span><br><span class="line">                best = i</span><br><span class="line">                bv = value</span><br><span class="line">                bi = idx</span><br><span class="line">        <span class="keyword">return</span> bi, best</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_dist</span>(<span class="params">self, i</span>):</span><br><span class="line">        <span class="comment"># F = G + H</span></span><br><span class="line">        <span class="comment"># G 为已经走过的路径长度， H为估计还要走多远</span></span><br><span class="line">        <span class="comment"># 这个公式就是A*算法的精华了。</span></span><br><span class="line">        <span class="keyword">return</span> i.dist + math.sqrt((self.e_x-i.x)*(self.e_x-i.x)+ (self.e_y-i.y)*(self.e_y-i.y))*<span class="number">1.4</span><span class="comment">#这里的1.4为优化数字，可选范围[1.0-1.4],</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">extend_round</span>(<span class="params">self, p</span>):</span><br><span class="line">        <span class="comment">#可以从8个方向走</span></span><br><span class="line">        xs = (-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        ys = (-<span class="number">1</span>,-<span class="number">1</span>,-<span class="number">1</span>,  <span class="number">0</span>, <span class="number">0</span>,  <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="comment">#只能走上下左右四个方向</span></span><br><span class="line">        <span class="comment">#xs = (0, -1, 1, 0)</span></span><br><span class="line">        <span class="comment">#ys = (-1, 0, 0, 1)</span></span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> <span class="built_in">zip</span>(xs, ys):</span><br><span class="line">            new_x, new_y = x + p.x, y + p.y</span><br><span class="line">            <span class="comment">#无效或者不可行走区域，则勿略</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> self.is_valid_coord(new_x, new_y):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="comment">#构造新的节点</span></span><br><span class="line">            node = Node_Elem(p, new_x, new_y, p.dist+self.get_cost(p.x, p.y, new_x, new_y))</span><br><span class="line">            <span class="comment">#新节点在关闭列表，则忽略</span></span><br><span class="line">            <span class="keyword">if</span> self.node_in_close(node):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            i = self.node_in_open(node)</span><br><span class="line">            <span class="keyword">if</span> i != -<span class="number">1</span>:</span><br><span class="line">                <span class="comment">#新节点在开放列表</span></span><br><span class="line">                <span class="keyword">if</span> self.<span class="built_in">open</span>[i].dist &gt; node.dist:</span><br><span class="line">                    <span class="comment">#现在的路径到比以前到这个节点的路径更好~</span></span><br><span class="line">                    <span class="comment">#则使用现在的路径</span></span><br><span class="line">                    self.<span class="built_in">open</span>[i].parent = p</span><br><span class="line">                    self.<span class="built_in">open</span>[i].dist = node.dist</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            self.<span class="built_in">open</span>.append(node)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_cost</span>(<span class="params">self, x1, y1, x2, y2</span>):</span><br><span class="line"></span><br><span class="line">        <span class="comment">#上下左右直走，代价为1.0，斜走，代价为1.4</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> x1 == x2 <span class="keyword">or</span> y1 == y2:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1.0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1.4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">node_in_close</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> self.close:</span><br><span class="line">            <span class="keyword">if</span> node.x == i.x <span class="keyword">and</span> node.y == i.y:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">node_in_open</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="keyword">for</span> i, n <span class="keyword">in</span> <span class="built_in">enumerate</span>(self.<span class="built_in">open</span>):</span><br><span class="line">            <span class="keyword">if</span> node.x == n.x <span class="keyword">and</span> node.y == n.y:</span><br><span class="line">                <span class="keyword">return</span> i</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_valid_coord</span>(<span class="params">self, x, y</span>):</span><br><span class="line">        <span class="keyword">if</span> x &lt; <span class="number">0</span> <span class="keyword">or</span> x &gt;= self.width <span class="keyword">or</span> y &lt; <span class="number">0</span> <span class="keyword">or</span> y &gt;= self.height:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">return</span> test_map[y][x] != <span class="string">&#x27;#&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_searched</span>(<span class="params">self</span>):</span><br><span class="line">        l = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> self.<span class="built_in">open</span>:</span><br><span class="line">            l.append((i.x, i.y))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> self.close:</span><br><span class="line">            l.append((i.x, i.y))</span><br><span class="line">        <span class="keyword">return</span> l</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#A-%E5%AF%BB%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">A*寻路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">背景介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E8%B7%AF%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">寻路过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-%E5%AF%BB%E8%B7%AF%E7%9A%84%E4%B8%BB%E8%A6%81%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">A*寻路的主要过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E8%BF%87%E7%A8%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">具体过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E8%B4%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">实质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-%E7%9A%84%E5%8F%98%E7%A7%8D"><span class="toc-number">1.4.</span> <span class="toc-text">A*的变种</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E8%B7%AF%E7%AE%97%E6%B3%95%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.5.</span> <span class="toc-text">寻路算法的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="toc-number">1.6.</span> <span class="toc-text">推荐阅读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%BC%94%E7%A4%BA"><span class="toc-number">1.7.</span> <span class="toc-text">代码演示</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-09-29-Astar-algorithm/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&text=学习A*寻路算法"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&is_video=false&description=学习A*寻路算法"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习A*寻路算法&body=Check out this article: https://leriou.github.io/2015-09-29-Astar-algorithm/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&title=学习A*寻路算法"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-09-29-Astar-algorithm/&name=学习A*寻路算法&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-09-29-Astar-algorithm/&t=学习A*寻路算法"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

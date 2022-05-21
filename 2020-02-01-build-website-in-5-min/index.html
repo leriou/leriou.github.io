@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="五分钟搭建一个博客网站（mac os）这是一个面向不懂计算机的纯小白的搭建个人网站的教程，需要的东西如下  一台能联网的电脑 一个知道什么是文件以及会创建文件夹的人  第一步：必备软件和文件下载我们的网站的运行需要一个软件的支持，这个软件就是docker，使用doker能让我们的安装过程非常方便  1. 下载docker软件目标：这一步的目的是下载必备的软件docker并安装启动docker 下载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="纯小白向-5分钟搭建个人博客">
+<meta property="og:url" content="https://leriou.github.io/2020-02-01-build-website-in-5-min/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="五分钟搭建一个博客网站（mac os）这是一个面向不懂计算机的纯小白的搭建个人网站的教程，需要的东西如下  一台能联网的电脑 一个知道什么是文件以及会创建文件夹的人  第一步：必备软件和文件下载我们的网站的运行需要一个软件的支持，这个软件就是docker，使用doker能让我们的安装过程非常方便  1. 下载docker软件目标：这一步的目的是下载必备的软件docker并安装启动docker 下载">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/eTVfZkXJwyIj4BH.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/REnJX6AZ5r7LKIM.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/qxfZOnI1aprD4uJ.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/56CnuP2qjmNgeDE.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/EMOW7JcrC2v5VPA.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/W8OUEBsc1GzTaZi.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/Ikei31hNYpXcSLW.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/ExKfGXa24y6dPno.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/zbft3SWr962ohVP.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/13/PLS3IAJKamhvOeG.png">
+<meta property="article:published_time" content="2020-01-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.891Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="wordpress">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/13/eTVfZkXJwyIj4BH.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>纯小白向-5分钟搭建个人博客</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020-03-11-content-evaluate/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-01-11-data-migration/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-02-01-build-website-in-5-min/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&text=纯小白向-5分钟搭建个人博客"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&is_video=false&description=纯小白向-5分钟搭建个人博客"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=纯小白向-5分钟搭建个人博客&body=Check out this article: https://leriou.github.io/2020-02-01-build-website-in-5-min/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&name=纯小白向-5分钟搭建个人博客&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-02-01-build-website-in-5-min/&t=纯小白向-5分钟搭建个人博客"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88mac-os%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">五分钟搭建一个博客网站（mac os）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%BF%85%E5%A4%87%E8%BD%AF%E4%BB%B6%E5%92%8C%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.1.</span> <span class="toc-text">第一步：必备软件和文件下载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%8B%E8%BD%BDdocker%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 下载docker软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%8E%B7%E5%8F%96%E6%90%AD%E5%BB%BA%E7%BD%91%E7%AB%99%E9%9C%80%E8%A6%81%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. 获取搭建网站需要的文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%90%AF%E5%8A%A8%E7%BD%91%E7%AB%99"><span class="toc-number">1.2.</span> <span class="toc-text">第二步：启动网站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E7%AE%A1%E7%90%86%E5%92%8C%E4%BD%BF%E7%94%A8%E7%BD%91%E7%AB%99"><span class="toc-number">1.3.</span> <span class="toc-text">第三步：管理和使用网站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%BD%91%E7%AB%99%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">测试网站是否成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%AB%99%E8%AF%AD%E8%A8%80%E5%92%8C%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81"><span class="toc-number">1.3.2.</span> <span class="toc-text">设置网站语言和账号密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%AB%99%E7%9A%84%E4%B8%BB%E9%A2%98%EF%BC%8C%E5%8F%98%E5%BE%97%E6%9B%B4%E5%A5%BD%E7%9C%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">设置网站的主题，变得更好看</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        纯小白向-5分钟搭建个人博客
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-31T16:00:00.000Z" itemprop="datePublished">2020-02-01</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/wordpress/" rel="tag">wordpress</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="五分钟搭建一个博客网站（mac-os）"><a href="#五分钟搭建一个博客网站（mac-os）" class="headerlink" title="五分钟搭建一个博客网站（mac os）"></a>五分钟搭建一个博客网站（mac os）</h1><p>这是一个面向<strong>不懂计算机的纯小白</strong>的搭建个人网站的教程，需要的东西如下</p>
+<ol>
+<li>一台能联网的电脑</li>
+<li>一个知道什么是文件以及会创建文件夹的人</li>
+</ol>
+<h2 id="第一步：必备软件和文件下载"><a href="#第一步：必备软件和文件下载" class="headerlink" title="第一步：必备软件和文件下载"></a>第一步：必备软件和文件下载</h2><p>我们的网站的运行需要一个软件的支持，这个软件就是docker，使用doker能让我们的安装过程非常方便 </p>
+<h3 id="1-下载docker软件"><a href="#1-下载docker软件" class="headerlink" title="1. 下载docker软件"></a>1. 下载docker软件</h3><p>目标：这一步的目的是下载必备的软件docker并安装启动docker</p>
+<p>下载地址： <a target="_blank" rel="noopener" href="https://www.docker.com/products/docker-desktop">https://www.docker.com/products/docker-desktop</a></p>
+<p><img src="https://i.loli.net/2020/11/13/eTVfZkXJwyIj4BH.png" alt="docker-1.png"></p>
+<h3 id="2-获取搭建网站需要的文件"><a href="#2-获取搭建网站需要的文件" class="headerlink" title="2. 获取搭建网站需要的文件"></a>2. 获取搭建网站需要的文件</h3><p>目标：这一步的目的用一个文件告诉docker我们要搭建一个网站，这个文件名字必须叫 <code>docker-compose.yml</code></p>
+<p>文件我已经提前准备好了，直接下载就行了</p>
+<p>地址：<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/leriou/docker-env/master/docker-compose/wordpress/docker-compose.yml">https://raw.githubusercontent.com/leriou/docker-env/master/docker-compose/wordpress/docker-compose.yml</a> </p>
+<p>可以直接使用迅雷啥的下载，也可以使用以下命令直接下载</p>
+<p>打开 终端软件(Terminal)，</p>
+<p><img src="https://i.loli.net/2020/11/13/REnJX6AZ5r7LKIM.png" alt="docker-2.png"></p>
+<p>粘贴命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --no-check-certificate https://raw.githubusercontent.com/leriou/docker-env/master/docker-compose/wordpress/docker-compose.yml</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/11/13/qxfZOnI1aprD4uJ.png" alt="docker-3.png"></p>
+<p>并回车，等待下载文件</p>
+<hr>
+<p>到此，我们的准备工作就结束了</p>
+<p>总结一下，我们需要一个docker软件和一个文件docker-compose.yml在docker上搭建一个网站</p>
+<h2 id="第二步：启动网站"><a href="#第二步：启动网站" class="headerlink" title="第二步：启动网站"></a>第二步：启动网站</h2><p>打开终端, 执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls </span><br></pre></td></tr></table></figure>
+
+<p>检查列出的文件中是否有docker-compose.yml</p>
+<p><img src="https://i.loli.net/2020/11/13/56CnuP2qjmNgeDE.png" alt="docker-4.png"></p>
+<p>执行命令 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/11/13/EMOW7JcrC2v5VPA.png" alt="docker-5.png"></p>
+<p><img src="https://i.loli.net/2020/11/13/W8OUEBsc1GzTaZi.png" alt="docker-6.png"></p>
+<p>等待下载必备的东西完毕就可以使用网站了</p>
+<h2 id="第三步：管理和使用网站"><a href="#第三步：管理和使用网站" class="headerlink" title="第三步：管理和使用网站"></a>第三步：管理和使用网站</h2><h3 id="测试网站是否成功"><a href="#测试网站是否成功" class="headerlink" title="测试网站是否成功"></a>测试网站是否成功</h3><p>打开浏览器，访问 <a target="_blank" rel="noopener" href="http://localhost:8077/">http://localhost:8077</a> </p>
+<p><img src="https://i.loli.net/2020/11/13/Ikei31hNYpXcSLW.png" alt="docker-9.png"></p>
+<h3 id="设置网站语言和账号密码"><a href="#设置网站语言和账号密码" class="headerlink" title="设置网站语言和账号密码"></a>设置网站语言和账号密码</h3><p>就可以设置网站使用的语言和账号密码</p>
+<p><img src="https://i.loli.net/2020/11/13/ExKfGXa24y6dPno.png" alt="docker-7.png"></p>
+<p><img src="https://i.loli.net/2020/11/13/zbft3SWr962ohVP.png" alt="docker-8.png"></p>
+<h3 id="设置网站的主题，变得更好看"><a href="#设置网站的主题，变得更好看" class="headerlink" title="设置网站的主题，变得更好看"></a>设置网站的主题，变得更好看</h3><p>网站是基于Wordpress制作的，所以可以直接从主题库选择喜欢的主题换上就可以了</p>
+<p><img src="https://i.loli.net/2020/11/13/PLS3IAJKamhvOeG.png" alt="docker-10.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%EF%BC%88mac-os%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">五分钟搭建一个博客网站（mac os）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%BF%85%E5%A4%87%E8%BD%AF%E4%BB%B6%E5%92%8C%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.1.</span> <span class="toc-text">第一步：必备软件和文件下载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%8B%E8%BD%BDdocker%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 下载docker软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%8E%B7%E5%8F%96%E6%90%AD%E5%BB%BA%E7%BD%91%E7%AB%99%E9%9C%80%E8%A6%81%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. 获取搭建网站需要的文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%90%AF%E5%8A%A8%E7%BD%91%E7%AB%99"><span class="toc-number">1.2.</span> <span class="toc-text">第二步：启动网站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E7%AE%A1%E7%90%86%E5%92%8C%E4%BD%BF%E7%94%A8%E7%BD%91%E7%AB%99"><span class="toc-number">1.3.</span> <span class="toc-text">第三步：管理和使用网站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%BD%91%E7%AB%99%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">测试网站是否成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%AB%99%E8%AF%AD%E8%A8%80%E5%92%8C%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81"><span class="toc-number">1.3.2.</span> <span class="toc-text">设置网站语言和账号密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%AB%99%E7%9A%84%E4%B8%BB%E9%A2%98%EF%BC%8C%E5%8F%98%E5%BE%97%E6%9B%B4%E5%A5%BD%E7%9C%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">设置网站的主题，变得更好看</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-02-01-build-website-in-5-min/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&text=纯小白向-5分钟搭建个人博客"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&is_video=false&description=纯小白向-5分钟搭建个人博客"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=纯小白向-5分钟搭建个人博客&body=Check out this article: https://leriou.github.io/2020-02-01-build-website-in-5-min/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&title=纯小白向-5分钟搭建个人博客"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-02-01-build-website-in-5-min/&name=纯小白向-5分钟搭建个人博客&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-02-01-build-website-in-5-min/&t=纯小白向-5分钟搭建个人博客"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

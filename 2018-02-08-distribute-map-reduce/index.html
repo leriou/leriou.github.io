@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Google搜索背后的索引计算工作是搜索引擎的核心之一， Google现有的搜索引擎是基于Caffeine的增量索引系统构建的(Caffeine相关论文极少)。由于谷歌的网页索引和计算数据量巨大，Google发布了一种适用于超大规模数据的分布式计算模型，就是map-reduce，Google后续的一系列大数据计算引擎都是基于MapReduce的思想构建出来的 MapReduce在2004年Goog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习分布式计算框架-MapReduce">
+<meta property="og:url" content="https://leriou.github.io/2018-02-08-distribute-map-reduce/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="Google搜索背后的索引计算工作是搜索引擎的核心之一， Google现有的搜索引擎是基于Caffeine的增量索引系统构建的(Caffeine相关论文极少)。由于谷歌的网页索引和计算数据量巨大，Google发布了一种适用于超大规模数据的分布式计算模型，就是map-reduce，Google后续的一系列大数据计算引擎都是基于MapReduce的思想构建出来的 MapReduce在2004年Goog">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/4lu5Ek2yZDi7doF.png">
+<meta property="article:published_time" content="2018-02-08T03:07:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.894Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="MapReduce">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/4lu5Ek2yZDi7doF.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>学习分布式计算框架-MapReduce</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018-03-09-woolgather-social-problem/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018-02-02-distribute-storage-gfs/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2018-02-08-distribute-map-reduce/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&text=学习分布式计算框架-MapReduce"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&is_video=false&description=学习分布式计算框架-MapReduce"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习分布式计算框架-MapReduce&body=Check out this article: https://leriou.github.io/2018-02-08-distribute-map-reduce/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&name=学习分布式计算框架-MapReduce&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2018-02-08-distribute-map-reduce/&t=学习分布式计算框架-MapReduce"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MapReduce"><span class="toc-number">1.</span> <span class="toc-text">MapReduce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%AE%80%E5%8D%95%E4%BE%8B%E5%AD%90%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.1.</span> <span class="toc-text">从简单例子说起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">1.2.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reduce"><span class="toc-number">1.3.</span> <span class="toc-text">Reduce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text">过程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-%E5%8D%95%E6%9C%BA%E7%89%88"><span class="toc-number">1.5.</span> <span class="toc-text">代码(单机版)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MapReduce%E7%B1%BB"><span class="toc-number">1.5.1.</span> <span class="toc-text">MapReduce类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map%E5%87%BD%E6%95%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">map函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reduce%E5%87%BD%E6%95%B0"><span class="toc-number">1.5.3.</span> <span class="toc-text">reduce函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        学习分布式计算框架-MapReduce
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-02-08T03:07:00.000Z" itemprop="datePublished">2018-02-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97/">分布式计算</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/MapReduce/" rel="tag">MapReduce</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>Google搜索背后的索引计算工作是搜索引擎的核心之一， Google现有的搜索引擎是基于Caffeine的增量索引系统构建的(Caffeine相关论文极少)。由于谷歌的网页索引和计算数据量巨大，Google发布了一种适用于超大规模数据的分布式计算模型，就是map-reduce，Google后续的一系列大数据计算引擎都是基于MapReduce的思想构建出来的</p>
+<h1 id="MapReduce"><a href="#MapReduce" class="headerlink" title="MapReduce"></a>MapReduce</h1><p>在2004年Google发布了一篇论文, 描述了Google内部针对大数据处理的一种通用模式:MapReduce(简称MR)</p>
+<p>MapReduce是一种编程模型,主要用来对大量的数据进行分布式处理和计算,MR的本质是对大量通用计算过程的抽象，经过谷歌工程师长期的计算经验总结，发现很多常见的数据处理任务都可以被拆分为Map和Reduce两个计算过程。MR描述的就是如何使用这两个计算过程实现常用的数据计算工作</p>
+<p>论文地址:<a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/mapreduce-osdi04.pdf">MapReduce论文</a></p>
+<h2 id="从简单例子说起"><a href="#从简单例子说起" class="headerlink" title="从简单例子说起"></a>从简单例子说起</h2><p>我们用一个实际的问题来描述MapReduce的思想</p>
+<p>假设我们有一个文档集合<code>C</code>,里面包含<code>M</code>个文档,我们要对文档集合中的文档进行单词次数统计,统计在所有文档中的每个单词出现的次数</p>
+<p>我们自然的想法就是 先统计每个文档里面的单词和出现次数， 在统计一个集合里面的所有文档的单词和出现次数，最后统计所有文档的单词和出现次数。</p>
+<p>没错，这种直觉的解决方案就可以用以下MR过程描述:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">1. 拿到文档 -&gt; map -&gt; (文档 , [(&quot;word&quot;:1)])</span></span><br><span class="line"><span class="string">这一步需要编写一个map函数， 该函数接受一个文档名和文档内容， 返回 文档内的关键词频次序列</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">2. 拿到 [(文档，关键词统计)] -&gt; 通过集合内的文档名 group by -&gt;  (集合 -》 [(word, 1)])</span></span><br><span class="line"><span class="string">这一步需要编写一个reduce函数，可以对[(&quot;name&quot;,value)]类型的数据按照name进行累加</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span> </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">map</span>(<span class="params">key: string, values: string</span>) -&gt; <span class="type">List</span>[(string, <span class="built_in">int</span>)]:  </span><br><span class="line">  	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  	key: document name</span></span><br><span class="line"><span class="string">    return 该函数返回一个[(&quot;to&quot;,1),(&quot;yours&quot;,12)]这样的列表数据</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    ans = []</span><br><span class="line">    content = get_doc(key)</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> content:</span><br><span class="line">      ans.append((word,<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">return</span> ans</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reduce</span>(<span class="params">key: string, values: <span class="type">List</span></span>) -&gt; <span class="type">List</span>[(string, <span class="built_in">int</span>)]: </span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    key: a word eg: &quot;t1&quot;</span></span><br><span class="line"><span class="string">    values: a list of counts 示例: [1,2,3]</span></span><br><span class="line"><span class="string">    return 该函数同样返回一个[(&quot;to&quot;,1),(&quot;yours&quot;,12)]的数据</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="built_in">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> v <span class="keyword">in</span> values:</span><br><span class="line">      result += ParseInt(v);</span><br><span class="line">    Emit(result)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map是一个将问题分解成多个小问题为后续的分发提供基础的技术</p>
+<p>Map的过程用函数来表示就是:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">map</span>(<span class="params">k,v</span>) -&gt; (k1,<span class="type">List</span>&lt;v1&gt;):</span><br><span class="line">  <span class="comment"># map函数接收一对k,v键值对,返回一个(k1,v1&lt;list&gt;)</span></span><br><span class="line">  <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>map函数的目的是为了将任务分割方便后续的任务合成，之所以要传入文档名字是为了在磁盘上对返回结果进行标记，标记出调用方是谁。现代化的基于内存的MR基本不需要传文档标记参数了</p>
+<h2 id="Reduce"><a href="#Reduce" class="headerlink" title="Reduce"></a>Reduce</h2><p>Reduce是将多个k-v pair按照相同的k进行合并的过程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reduce</span>(<span class="params">k,<span class="built_in">list</span>[v2]</span>) -&gt; (<span class="built_in">list</span>[v3]&gt;):</span><br><span class="line">  <span class="comment"># reduce函数接收一个k,v1&lt;list&gt;, 返回一个v2&lt;list&gt;</span></span><br><span class="line">  <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>ps:大多数情况下map的返回结果不能直接用于reduce函数,需要特殊处理一下</p>
+</blockquote>
+<h2 id="过程图"><a href="#过程图" class="headerlink" title="过程图"></a>过程图</h2><p>以下是一个很详细的对MongoDB中的MapReduce过程的解读图</p>
+<p><img src="https://i.loli.net/2020/05/09/4lu5Ek2yZDi7doF.png" alt="map-reduce.png"></p>
+<p>我们可以看到map函数的输入是多个被查询过滤过的文档集合,返回值是一个map对应的值列表,我们可以认为map函数式对所有符合条件的数据进行一次简单的处理</p>
+<p>reduce则是将这个值列表按照key进行处理,即对map的结果进行最终结果合并操作</p>
+<h2 id="代码-单机版"><a href="#代码-单机版" class="headerlink" title="代码(单机版)"></a>代码(单机版)</h2><p>以下是使用mapreduce进行文档词频统计的示例代码</p>
+<p>其中的主要代码简单解释一下</p>
+<h3 id="MapReduce类"><a href="#MapReduce类" class="headerlink" title="MapReduce类"></a>MapReduce类</h3><p><code>MapReduce</code>类是一个通用的MapReduce框架,理论上任意MapReduce任务都可以套用这个框架</p>
+<p>要处理不同的问题我们只需要修改对应的map和reduce函数即可</p>
+<p>MapReduce类接收3个参数</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i:       要处理的数据源,格式是一个普通的字典; </span><br><span class="line">mapper:  映射函数,该函接收一个kv键值对,根据需要对每个v值进行处理,返回一个(k,v&lt;list&gt;),此处的k值并不一定是传入的k值; </span><br><span class="line">reducer: 压缩函数,接收一个(k,v&lt;list&gt;),根据需求对数据进行压缩合并;</span><br></pre></td></tr></table></figure>
+
+<h3 id="map函数"><a href="#map函数" class="headerlink" title="map函数"></a>map函数</h3><p>其中<code>get_most_common_from_text</code>使用了结巴分词插件</p>
+<p>参数:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">k:&quot;a&quot;</span><br><span class="line">v:&quot;The quick brown fox jumped over the lazy grey dogs.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>返回:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  (<span class="string">&quot;the&quot;</span>,<span class="number">1</span>),</span><br><span class="line">  (<span class="string">&quot;quick&quot;</span>,<span class="number">1</span>),</span><br><span class="line">  (<span class="string">&quot;fox&quot;</span>,<span class="number">1</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h3 id="reduce函数"><a href="#reduce函数" class="headerlink" title="reduce函数"></a>reduce函数</h3><p>参数:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">k:<span class="string">&quot;the&quot;</span></span><br><span class="line">v&lt;<span class="built_in">list</span>&gt;:[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+<p>返回: </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&quot;the&quot;</span>,<span class="number">3</span>),(<span class="string">&quot;quick&quot;</span>:<span class="number">1</span>)...]</span><br></pre></td></tr></table></figure>
+<p>完整代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MapReduce</span>:</span><br><span class="line">    __doc__ = <span class="string">&#x27;&#x27;&#x27;提供map_reduce功能&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">map_reduce</span>(<span class="params">i, mapper, reducer</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        map_reduce方法</span></span><br><span class="line"><span class="string">        :param i: 需要MapReduce的集合</span></span><br><span class="line"><span class="string">        :param mapper: 自定义mapper方法</span></span><br><span class="line"><span class="string">        :param reducer: 自定义reducer方法</span></span><br><span class="line"><span class="string">        :return: 以自定义reducer方法的返回值为元素的一个列表</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        intermediate = []  <span class="comment"># 存放所有的(intermediate_key, intermediate_value)</span></span><br><span class="line">        <span class="keyword">for</span> (key, value) <span class="keyword">in</span> i.items():</span><br><span class="line">            intermediate.extend(mapper(key,value))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># sorted返回一个排序好的list，因为list中的元素是一个个的tuple，key设定按照tuple中第几个元素排序</span></span><br><span class="line">        <span class="comment"># groupby把迭代器中相邻的重复元素挑出来放在一起,key设定按照tuple中第几个元素为关键字来挑选重复元素</span></span><br><span class="line">        <span class="comment"># 下面的循环中groupby返回的key是intermediate_key，而group是个list，是1个或多个</span></span><br><span class="line">        <span class="comment"># 有着相同intermediate_key的(intermediate_key, intermediate_value)</span></span><br><span class="line">        groups = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> key, group <span class="keyword">in</span> itertools.groupby(<span class="built_in">sorted</span>(intermediate, key=<span class="keyword">lambda</span> im: im[<span class="number">0</span>]), key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>]):</span><br><span class="line">            groups[key] = [y <span class="keyword">for</span> x, y <span class="keyword">in</span> group]</span><br><span class="line">        <span class="comment"># groups是一个字典，其key为上面说到的intermediate_key，value为所有对应intermediate_key的intermediate_value</span></span><br><span class="line">        <span class="comment"># 组成的一个列表</span></span><br><span class="line">        <span class="comment"># print(groups)</span></span><br><span class="line">        <span class="keyword">return</span> [reducer(intermediate_key, groups[intermediate_key]) <span class="keyword">for</span> intermediate_key <span class="keyword">in</span> groups]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">test</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_most_common_from_text</span>(<span class="params">self,text,n = <span class="number">100</span></span>):</span><br><span class="line">        word_list = [x <span class="keyword">for</span> x <span class="keyword">in</span> jieba.cut(text) <span class="keyword">if</span> <span class="built_in">len</span>(x) &gt;= <span class="number">2</span>]</span><br><span class="line">        <span class="keyword">return</span> Counter(word_list).most_common(n)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">map</span>(<span class="params">self,k,v</span>): <span class="comment"># k:文档名, v:文档内容</span></span><br><span class="line">        <span class="keyword">return</span> self.get_most_common_from_text(v,<span class="number">10000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">self,k,v</span>): <span class="comment"># k:词  v:词出现的次数</span></span><br><span class="line">         <span class="keyword">return</span> k, <span class="built_in">sum</span>(v)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        </span><br><span class="line">        i = &#123;</span><br><span class="line">            <span class="string">&quot;a&quot;</span>:<span class="string">&quot;The quick brown fox jumped over the lazy grey dogs.&quot;</span>,</span><br><span class="line">            <span class="string">&quot;b&quot;</span>:<span class="string">&quot;That&#x27;s one small step for a man, one giant leap for mankind.&quot;</span>,</span><br><span class="line">            <span class="string">&quot;c&quot;</span>:<span class="string">&quot;　　Mary had a little lamb,Its fleece was white as snow;And everywhere that Mary went,The lamb was sure to go&quot;</span>,</span><br><span class="line">            <span class="string">&quot;d&quot;</span>:<span class="string">&quot;I pledge to honor and defend you and yours above all others&quot;</span>,</span><br><span class="line">            <span class="string">&quot;e&quot;</span>:<span class="string">&quot;To share in blessings and burdens, to be your advocate, your champion&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        t = MapReduce.map_reduce(i,self.<span class="built_in">map</span>,self.reducer)</span><br><span class="line">        <span class="built_in">print</span>(t)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">m = test()</span><br><span class="line">m.run()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>MapReduce其实就是我们常说的分而治之的思想，统一了数据模型规范, 使之能适用于更广泛的数据计算</p>
+<p>不过这个过程中借助了中间存储，早些年因为内存价格昂贵，所以谷歌选择采用磁盘作为中间存储，后来随着技术发展，出现了spark等利用内存做数据中转的新型MR工具，但是本质还是MR的思想</p>
+<p>本文提到的MR只是一个为了学习制作的简单的单机模型，真正的用MR处理大规模数据的难点往往不在map和reduce函数的编写，而在分布式集群调度和任务执行上面 </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MapReduce"><span class="toc-number">1.</span> <span class="toc-text">MapReduce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%AE%80%E5%8D%95%E4%BE%8B%E5%AD%90%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.1.</span> <span class="toc-text">从简单例子说起</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">1.2.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reduce"><span class="toc-number">1.3.</span> <span class="toc-text">Reduce</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B%E5%9B%BE"><span class="toc-number">1.4.</span> <span class="toc-text">过程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-%E5%8D%95%E6%9C%BA%E7%89%88"><span class="toc-number">1.5.</span> <span class="toc-text">代码(单机版)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MapReduce%E7%B1%BB"><span class="toc-number">1.5.1.</span> <span class="toc-text">MapReduce类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map%E5%87%BD%E6%95%B0"><span class="toc-number">1.5.2.</span> <span class="toc-text">map函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reduce%E5%87%BD%E6%95%B0"><span class="toc-number">1.5.3.</span> <span class="toc-text">reduce函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2018-02-08-distribute-map-reduce/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&text=学习分布式计算框架-MapReduce"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&is_video=false&description=学习分布式计算框架-MapReduce"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习分布式计算框架-MapReduce&body=Check out this article: https://leriou.github.io/2018-02-08-distribute-map-reduce/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&title=学习分布式计算框架-MapReduce"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2018-02-08-distribute-map-reduce/&name=学习分布式计算框架-MapReduce&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2018-02-08-distribute-map-reduce/&t=学习分布式计算框架-MapReduce"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

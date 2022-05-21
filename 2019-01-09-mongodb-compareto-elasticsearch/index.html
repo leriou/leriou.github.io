@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="MongoDB  vs Elasticsearch    MongoDB ElasticSearch 备注    定位 (文档型)数据库 (文档型)搜索引擎 一个管理数据,一个检索数据   资源占用 一般 高 mongo使用c++, es使用Java开发   写入延迟 低 高 es的写入延迟默认1s, 可配置, 但是要牺牲一些东西   全文索引支持度 一般 非常好 es本来就是搜索引擎, 这个没啥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB和Elasticsearch的对比">
+<meta property="og:url" content="https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="MongoDB  vs Elasticsearch    MongoDB ElasticSearch 备注    定位 (文档型)数据库 (文档型)搜索引擎 一个管理数据,一个检索数据   资源占用 一般 高 mongo使用c++, es使用Java开发   写入延迟 低 高 es的写入延迟默认1s, 可配置, 但是要牺牲一些东西   全文索引支持度 一般 非常好 es本来就是搜索引擎, 这个没啥">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-01-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.890Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="NoSQL">
+<meta property="article:tag" content="MongoDB">
+<meta property="article:tag" content="Elasticsearch">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>MongoDB和Elasticsearch的对比</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019-04-01-recommended-system-filter-module-md/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019-01-01-summary-md/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&text=MongoDB和Elasticsearch的对比"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&is_video=false&description=MongoDB和Elasticsearch的对比"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MongoDB和Elasticsearch的对比&body=Check out this article: https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&name=MongoDB和Elasticsearch的对比&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&t=MongoDB和Elasticsearch的对比"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB-vs-Elasticsearch"><span class="toc-number">1.</span> <span class="toc-text">MongoDB  vs Elasticsearch</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E7%9A%84%E5%AE%9A%E4%BD%8D"><span class="toc-number">2.</span> <span class="toc-text">两者的定位</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E8%AF%BB%E5%86%99%E6%95%B0%E6%8D%AE%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-number">3.</span> <span class="toc-text">两者读写数据的异同</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E5%92%8C%E8%B5%84%E6%BA%90%E5%8D%A0%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">部署和资源占用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E7%94%A8%E6%80%A7%E5%92%8C%E5%AE%B9%E9%94%99"><span class="toc-number">5.</span> <span class="toc-text">可用性和容错</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%B9%E6%A1%88%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%8D%E5%90%8C"><span class="toc-number">5.1.</span> <span class="toc-text">两者分布式方案的一些不同</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%89%B9%E7%82%B9%E5%92%8C%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">文档型数据库的特点和问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0schema"><span class="toc-number">6.1.</span> <span class="toc-text">无schema</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%B8%A1%E8%82%8B%E7%9A%84Collection-%E5%92%8C-Type"><span class="toc-number">6.2.</span> <span class="toc-text">鸡肋的Collection 和 Type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%B1%E4%BA%8B%E5%8A%A1"><span class="toc-number">6.3.</span> <span class="toc-text">弱事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0join%E6%94%AF%E6%8C%81"><span class="toc-number">6.4.</span> <span class="toc-text">无join支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bully%E7%9A%84%E9%80%89%E4%B8%BB%E7%AE%97%E6%B3%95%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-number">6.5.</span> <span class="toc-text">Bully的选主算法的缺陷</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">7.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">8.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        MongoDB和Elasticsearch的对比
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-08T16:00:00.000Z" itemprop="datePublished">2019-01-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E5%B7%A5%E5%85%B7/">编程工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/Elasticsearch/" rel="tag">Elasticsearch</a>, <a class="tag-link-link" href="/tags/MongoDB/" rel="tag">MongoDB</a>, <a class="tag-link-link" href="/tags/NoSQL/" rel="tag">NoSQL</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="MongoDB-vs-Elasticsearch"><a href="#MongoDB-vs-Elasticsearch" class="headerlink" title="MongoDB  vs Elasticsearch"></a>MongoDB  vs Elasticsearch</h1><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">MongoDB</th>
+<th align="center">ElasticSearch</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">定位</td>
+<td align="center">(文档型)数据库</td>
+<td align="center">(文档型)搜索引擎</td>
+<td>一个管理数据,一个检索数据</td>
+</tr>
+<tr>
+<td align="center">资源占用</td>
+<td align="center">一般</td>
+<td align="center">高</td>
+<td>mongo使用c++, es使用Java开发</td>
+</tr>
+<tr>
+<td align="center">写入延迟</td>
+<td align="center">低</td>
+<td align="center">高</td>
+<td>es的写入延迟默认1s, 可配置, 但是要牺牲一些东西</td>
+</tr>
+<tr>
+<td align="center">全文索引支持度</td>
+<td align="center">一般</td>
+<td align="center">非常好</td>
+<td>es本来就是搜索引擎, 这个没啥可比性</td>
+</tr>
+<tr>
+<td align="center">有无Schema</td>
+<td align="center">无</td>
+<td align="center">无</td>
+<td>两者都是无Schema</td>
+</tr>
+<tr>
+<td align="center">支持的数据量</td>
+<td align="center">PB+</td>
+<td align="center">TB+  ~ PB</td>
+<td>两者支持的量并不好说的太死, 都支持分片和横向扩展, 但是相对来说MongoDB的数据量支持要更大一点</td>
+</tr>
+<tr>
+<td align="center">性能</td>
+<td align="center">非常好</td>
+<td align="center">好</td>
+<td>MongoDB在大部分场景性能比es强的多</td>
+</tr>
+<tr>
+<td align="center">索引结构</td>
+<td align="center">B树</td>
+<td align="center">LSM树</td>
+<td>es追求写入吞吐量, MongoDB读写比较均衡</td>
+</tr>
+<tr>
+<td align="center">操作接口</td>
+<td align="center">TCP</td>
+<td align="center">Restful(Http)</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">是否支持分片</td>
+<td align="center">是</td>
+<td align="center">是</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">是否支持副本</td>
+<td align="center">是</td>
+<td align="center">是</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">选主算法</td>
+<td align="center">Bully(霸凌)</td>
+<td align="center">Bully(霸凌)</td>
+<td>相比于Paxos和Raft算法实现更简单并有一定可靠性上的妥协，但是选举速度比较快</td>
+</tr>
+<tr>
+<td align="center">扩展难度</td>
+<td align="center">容易</td>
+<td align="center">非常容易</td>
+<td>es真的是我用过的扩展最方便的存储系统之一</td>
+</tr>
+<tr>
+<td align="center">配置难度</td>
+<td align="center">难</td>
+<td align="center">非常容易</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">地理位置</td>
+<td align="center">支持</td>
+<td align="center">支持</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">运维工具</td>
+<td align="center">丰富</td>
+<td align="center">一般</td>
+<td></td>
+</tr>
+<tr>
+<td align="center">插件和引擎</td>
+<td align="center">有多个存储引擎供选择</td>
+<td align="center">有大量插件可以使用</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h1 id="两者的定位"><a href="#两者的定位" class="headerlink" title="两者的定位"></a>两者的定位</h1><p><code>MongoDB</code>和<code>Elasticsearch</code>都属于NoSQL大家族, 且都属于文档型数据存储</p>
+<p>所以这两者的很多功能和特性高度重合, 但其实两者定位完全不同     </p>
+<p>MongoDB 是 <strong>文档型数据库</strong>,  提供 <strong>数据存储和管理服务</strong><br>Elasticsearch 是<strong>搜索服务</strong>, 提供 <strong>数据检索服务</strong></p>
+<p>两者的很大区别在于源数据的存储和管理</p>
+<ul>
+<li>MongoDB作为一个数据库产品, 是拥有源数据管理能力的     </li>
+<li>Elasticsearch作为一个搜索引擎, 定位是<strong>提供数据检索服务</strong>, 也就是说我只管查, 不管写 ^_^, Elasticsearch的Mapping不可变也是为此服务的, 带来的代价就是<code> es不适合作为数据管理者</code>, es可以从其他数据源同步数据过来提供查询, 但是不适合自己对数据进行存储和管理</li>
+</ul>
+<p>es更侧重数据的查询, 各种复杂的花式查询支持的很好, 相比来说 MongoDB的查询能力就显得比较平庸了</p>
+<p>由此可见, 对于个人, 如果你有一批数据要看, 但是不经常进行修改, 这个时候毫无疑问可以用es, 但是如果你还打算继续修改数据, 最好就是使用MongoDB，但其实对大多数人公司来讲，这两者的数据管理能力并没有多大的影响</p>
+<blockquote>
+<p>ps: es修改Mapping的代价非常高, 所以我们一般都是把新数据重新写入一份新索引，然后直接切换读取的别名到新的索引</p>
+</blockquote>
+<h1 id="两者读写数据的异同"><a href="#两者读写数据的异同" class="headerlink" title="两者读写数据的异同"></a>两者读写数据的异同</h1><p><code>MongoDB</code>和<code>ElasticSearch</code>都支持全文索引, 虽然MongoDB的全文索引效果完全无法跟es相比(es毕竟是专业的搜索引擎产品, 着重提供数据的检所支持, 这方面吊打MongoDB也是可以理解的)</p>
+<p>MongoDB虽然在支持的部分查询功能上稍微弱于es, 但是在大部分场景下性能方面完爆es, 不管是读性能, 还是写性能</p>
+<p>es的写入延迟默认为1s, 这个虽然是写入延迟的范畴, 但是毫无疑问是一大缺点, 虽然可以配置为更短的时间, 但是这样就要牺牲一定的数据吞吐量, 会造成更频繁的磁盘刷新操作</p>
+<p>es底层使用<code>Lucene</code>作为核心引擎, 很多es的设计就是为了匹配Lucene中的概念, 其实es可以看成一个lucene的proxy层包装,将lucene的原生接口封装的更好用, 同时还实现了很多管理和监控等辅助功能, 但是整体来说es上层的模块和lucene的隔阂还是挺明显的, 耦合度上有一定的欠缺</p>
+<p>MongoDB则是完整的一个单体数据库产品, 虽然内部的存储引擎也是可插拔式的, 整体而言还是更加的浑然一体</p>
+<blockquote>
+<p>MongoDB支持多种存储引擎, 本文所有涉及mongo存储引擎的只谈默认的WiredTiger引擎, 其实还有某些方面更优秀的其他引擎,例如: MongoRocks等</p>
+</blockquote>
+<h1 id="部署和资源占用"><a href="#部署和资源占用" class="headerlink" title="部署和资源占用"></a>部署和资源占用</h1><p>单机部署的话其实MongoDB和Elasticsearch都十分的方便, 不过es相对来说资源占用更多一点, 性能也比MongoDB要弱一点</p>
+<p>集群化的部署, 我们一般都会选择分片+副本的部署方式, 这种方式下, es部署起来比MongoDB方便太多, MongoDB要部署一套完整的分片 + 副本模式还是比较麻烦的, 没有经验的人部署起来需要一定的学习成本    </p>
+<p>资源占用方面, MongoDB可以支持存储文件类型的数据, 作为数据库也有数据压缩能力, es则因为大量的索引存在需要占用大量的磁盘和内存空间</p>
+<h1 id="可用性和容错"><a href="#可用性和容错" class="headerlink" title="可用性和容错"></a>可用性和容错</h1><p>MongoDB和ElasticSearch作为天生分布式的代表产品都支持数据分片和副本   </p>
+<p>两者都通过分片支持水平扩展, 同时都通过副本来支持高可用(HA) </p>
+<p>分片就是一个数据集的数据分为多份, 同时分布在多个节点上存储和管理, 主流分片方式有两种: hash分片和range分片, 两种分片方式各有优势, 适合不同的场景</p>
+<p>副本就是一份数据集同时有一个或者多个复制品(有些地方叫主从), 每份复制品都一模一样, 但是为了保证数据的一致性, 往往多个副本中只有一个作为Primary副本(通过选主算法从多个副本中选出Primary), 提供写服务, 其他副本只提供读, 或者只提供备份服务</p>
+<blockquote>
+<p>ps:es和MongoDB都可以通过副本增强读能力, 这与kafka很不一样(kafka的副本只有备份功能)</p>
+</blockquote>
+<h2 id="两者分布式方案的一些不同"><a href="#两者分布式方案的一些不同" class="headerlink" title="两者分布式方案的一些不同"></a>两者分布式方案的一些不同</h2><p>MongoDB和Elasticsearch虽然都是分布式服务, 但是还是有一些不同方案的选择的</p>
+<ul>
+<li>分片和副本单位的划分</li>
+</ul>
+<p>MongoDB是以节点为单位划分角色, 一旦一个节点被指定为副本, 其上面的数据都是副本</p>
+<p>Elasticsearch是以分片为单位划分角色, 一个节点上即可以拥有某分片的主分片和可以同时拥有另一个分片的副本分片, 同时es还支持自动的副本负载均衡, 如果一个新节点上面什么数据都没有, 系统会自动分配分片数据过来 </p>
+<ul>
+<li>架构模式</li>
+</ul>
+<p>MongoDB的副本和分片是两种不同的模式, 虽然可以同时使用但是依然有各自的架构设计, 用户可以任意选择选型进行搭配, 每个节点的职责更加专一, 方便据此调整机器配置和进行优化</p>
+<p>Elasticsearch中的分片 + 副本是一套统一的架构设计, 每个节点具有接近同等的地位, 配置使用起来更加简单, 但是如果要针对节点所负责的功能对机器进一步做定制就不如MongoDB灵活</p>
+<h1 id="文档型数据库的特点和问题"><a href="#文档型数据库的特点和问题" class="headerlink" title="文档型数据库的特点和问题"></a>文档型数据库的特点和问题</h1><h2 id="无schema"><a href="#无schema" class="headerlink" title="无schema"></a>无schema</h2><p>文档型数据存储既能享受无schema限制带来的灵活, 又能享受索引查询的快速和类SQL查询的便捷</p>
+<p>使他们用起来不像传统的RDBMS那么麻烦, 又不像 Redis,Hbase这种数据库查询功能不够强大, 处在一个传统RDBMS和经典K-V存储之间的比较均衡的位置</p>
+<p>我个人很喜欢这个特性, 没有schema的限制, 存储数据更方便也更灵活了, 但是有得有失, 很多固定schema的好处就无法享受到了, 比如: 对数据的高效压缩</p>
+<h2 id="鸡肋的Collection-和-Type"><a href="#鸡肋的Collection-和-Type" class="headerlink" title="鸡肋的Collection 和 Type"></a>鸡肋的Collection 和 Type</h2><p>早期为了跟传统rdbms数据库保持概念一致 ，mongodb和elasticsearch都设计了跟传统数据库里面的<code>库-&gt;表-&gt;记录行</code>对应的概念，具体如下</p>
+<table>
+<thead>
+<tr>
+<th>RDBMS</th>
+<th>MongoDB</th>
+<th>Elasticsearch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>库</td>
+<td>库</td>
+<td>索引</td>
+</tr>
+<tr>
+<td>表</td>
+<td>集合</td>
+<td>类型</td>
+</tr>
+<tr>
+<td>记录</td>
+<td>文档</td>
+<td>文档</td>
+</tr>
+</tbody></table>
+<p>其实对于nosql数据库来讲, 集合&#x2F;类型的意义其实不大, Nosql数据库几乎都是k-v类型的存储结构，完全可以通过key进行业务隔离和区分，真的没有必要为了跟传统数据库对应强行搞出来一个中间概念 ^_^</p>
+<p>Elasticsearch从<code>6.x</code>版本开始强制只允许一个索引使用一个type, 其实就是意识到这个这个设计的失误, 不想让你用这个type类型, 因为type和传统数据库里面的表概念其实是不一样的，这种概念类比给人造成了误解，到了es的7.x版本会默认取消type类型, 就说明这个type字段真的是鸡肋的不行</p>
+<h2 id="弱事务"><a href="#弱事务" class="headerlink" title="弱事务"></a>弱事务</h2><p>MongoDB以前只是支持同一文档内的原子更新, 以此来实现伪事务功能, 不过Mongo4.0支持Replica Set事务, 大大加强了事务方面的能力 </p>
+<p>es在这方面倒没有什么进展，因为从应用场景上es对事务的需求不高，不过用户其实也可以使用同文档更新或者通过程序自己来实现事务机制</p>
+<h2 id="无join支持"><a href="#无join支持" class="headerlink" title="无join支持"></a>无join支持</h2><p>文档型数据库大多数都不支持join(也有少量支持的), 但是我一般也用不上多表join的功能, 即便真的需要使用join也可以通过应用层或者通过耦合数据来实现（不过据说未来Mongo4.2版本会带来对join的支持）</p>
+<p>不支持join带来的问题就是我们需要自己对数据进行连接, 但是这在擅长使用分布式计算的大数据领域不算什么问题, 相应的缺少join功能可能对善于使用SQL的数据分析师就不大友好</p>
+<h2 id="Bully的选主算法的缺陷"><a href="#Bully的选主算法的缺陷" class="headerlink" title="Bully的选主算法的缺陷"></a>Bully的选主算法的缺陷</h2><p>elasticsearch和MongoDB选择的选主算法实现很简单, 但是代价就是有几率出现脑裂的情况, 当然, 具体情况跟配置也有关系(比如:你有三个es节点但是设置的最小主节点数为1, 将最小主节点数设置为2可以避免脑裂情况)</p>
+<p>不过脑裂问题一方面发生概率较低，另一方面即使出现了脑裂的情况, 使用<code>重启大法</code>一般就能解决 ^_^</p>
+<p>总体来说, 这方面不如使用Paxos和Raft算法或者使用zk做协调器的其他分布式系统靠谱</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
+<li>运维工具</li>
+</ul>
+<p>两者背后都有商业公司的支持</p>
+<p>MongoDB的很多客户端和运维工具更丰富, 但是MongoDB作为一个数据库产品, 相对应的对运维人员的要求也要更高一点</p>
+<p>Elasticsearch则有整套的数据分析和收集工具提供, 配套的kibana就是一个很不错的管控es的工具</p>
+<ul>
+<li>操作接口</li>
+</ul>
+<p>es使用Restful来提供统一的操作接口, 屏蔽了各种语言之间的障碍, 但是同样带来了表达能力和性能的损失</p>
+<p>MongoDB则使用TCP, 降低了序列化和网络这一层的性能损耗, 并最大程度保留了接口的内容表达能力, 但是相对的使用起来就不如http那么的方便</p>
+<h1 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h1><p>两者其实在很多使用场景上有重合之处, 是可以互相替代, 比如日志收集</p>
+<p>但是某些方面两者又各有特色，比如： 如果打算使用一个文档型的业务数据库， 那最好还是选mongodb, 如果你有要求复杂查询又并发性能要求高的场景，类似搜索服务，那最好的选择是elasticsearch</p>
+<p>除此之外：</p>
+<p>MongoDB有多个存储引擎可以选择, 而且MongoDB不仅看重数据的分析, 对数据的管理同样看重, 总的来说MongoDB更倾向于数据的存储和管理, 可以作为数据源对外提供， 未来说不定还会有支持join和支持倒排索引的mongo引擎出现</p>
+<p>Elasticsearch则有很多插件可以使用, 相对来讲Elasticsearch更倾向于数据的查询, 一般情况下elasticsearch仅作为数据检索服务和数据分析平台, 不直接作为源数据管理者</p>
+<ul>
+<li>MongoDB适合</li>
+</ul>
+<ol>
+<li>对服务可用性和一致性有高要求</li>
+<li>无schema的数据存储 + 需要索引数据</li>
+<li>高读写性能要求, 数据使用场景简单的海量数据场景</li>
+<li>有热点数据, 有数据分片需求的数据存储</li>
+<li>日志, html, 爬虫数据等半结构化或图片，视频等非结构化数据的存储</li>
+<li>有js使用经验的人员(MongoDB内置操作语言为js)</li>
+</ol>
+<ul>
+<li>Elasticsearch适合</li>
+</ul>
+<ol>
+<li>已经有其他系统负责数据管理</li>
+<li>对复杂场景下的查询需求，对查询性能有要求, 对写入及时性要求不高的场景</li>
+<li>监控信息&#x2F;日志信息检索</li>
+<li>小团队但是有多语言服务，es拥有restful接口，用起来最方便</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>MongoDB和Elasticsearch都是我比较喜欢的存储产品</p>
+<p>两者的功能特性也存在很多重合的地方, 其实现在很多数据库产品都在互相借(chao)鉴(xi), 功能和特性都在逐渐变得相似, 这也是未来很多存储产品的发展趋势, 大家都希望自己能覆盖尽量多的场景和用户群体</p>
+<p>很多产品总是在不断的从<code>没有</code>-&gt;<code>有</code>-&gt;<code>功能丰富</code>,但是功能丰富一定是做了很多的妥协, 于是又有了 <code>功能众多的单体服务</code>-&gt;<code>多个功能单一的子服务</code> 方向的转变,就像三国里面说的 “天下大势, 分久必合合久必分”. </p>
+<p>现在NoSQL数据库产品就在这个路上, NoSQL归根到底都是 RDBMS的某个方面的妥协, 现在各种NoSQL 也都在加入对经典SQL和传统RDBMS的 join, 事务的支持, 但是我相信等到两者区别足够小的时候, 一定会有放弃了大而全, 而专注于某一场景的新的存储产品出现，到时候搞不好又是一波新的Nosql潮流 </p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB-vs-Elasticsearch"><span class="toc-number">1.</span> <span class="toc-text">MongoDB  vs Elasticsearch</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E7%9A%84%E5%AE%9A%E4%BD%8D"><span class="toc-number">2.</span> <span class="toc-text">两者的定位</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E8%AF%BB%E5%86%99%E6%95%B0%E6%8D%AE%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-number">3.</span> <span class="toc-text">两者读写数据的异同</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E5%92%8C%E8%B5%84%E6%BA%90%E5%8D%A0%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">部署和资源占用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%AF%E7%94%A8%E6%80%A7%E5%92%8C%E5%AE%B9%E9%94%99"><span class="toc-number">5.</span> <span class="toc-text">可用性和容错</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%B9%E6%A1%88%E7%9A%84%E4%B8%80%E4%BA%9B%E4%B8%8D%E5%90%8C"><span class="toc-number">5.1.</span> <span class="toc-text">两者分布式方案的一些不同</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%89%B9%E7%82%B9%E5%92%8C%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">文档型数据库的特点和问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0schema"><span class="toc-number">6.1.</span> <span class="toc-text">无schema</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%B8%A1%E8%82%8B%E7%9A%84Collection-%E5%92%8C-Type"><span class="toc-number">6.2.</span> <span class="toc-text">鸡肋的Collection 和 Type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%B1%E4%BA%8B%E5%8A%A1"><span class="toc-number">6.3.</span> <span class="toc-text">弱事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0join%E6%94%AF%E6%8C%81"><span class="toc-number">6.4.</span> <span class="toc-text">无join支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bully%E7%9A%84%E9%80%89%E4%B8%BB%E7%AE%97%E6%B3%95%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-number">6.5.</span> <span class="toc-text">Bully的选主算法的缺陷</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">7.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">8.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&text=MongoDB和Elasticsearch的对比"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&is_video=false&description=MongoDB和Elasticsearch的对比"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MongoDB和Elasticsearch的对比&body=Check out this article: https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&title=MongoDB和Elasticsearch的对比"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&name=MongoDB和Elasticsearch的对比&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-01-09-mongodb-compareto-elasticsearch/&t=MongoDB和Elasticsearch的对比"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

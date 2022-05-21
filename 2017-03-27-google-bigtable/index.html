@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Google Bigtable本文希望能解答如下问题  Bigtable产生的原因是什么，解决了什么问题 Bigtable是怎么解决这些问题的 Bigtable当前采用的方案有什么优点和不足  GFS的限制GFS是谷歌的分布式文件系统，提供了基础的分布式存储和读写服务，解决了大规模的数据的存储和使用的问题。但是由于GFS接口过于底层，内部存储的都是纯粹的二进制文件数据。Google希望提供一个具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google-Bigtable学习记录">
+<meta property="og:url" content="https://leriou.github.io/2017-03-27-google-bigtable/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="Google Bigtable本文希望能解答如下问题  Bigtable产生的原因是什么，解决了什么问题 Bigtable是怎么解决这些问题的 Bigtable当前采用的方案有什么优点和不足  GFS的限制GFS是谷歌的分布式文件系统，提供了基础的分布式存储和读写服务，解决了大规模的数据的存储和使用的问题。但是由于GFS接口过于底层，内部存储的都是纯粹的二进制文件数据。Google希望提供一个具有">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/rvzm8XYQhSPCpfD.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/JETjbsYLZaFNyDA.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/10/kaMqH1gF7BNvE4b.png">
+<meta property="article:published_time" content="2017-03-27T10:51:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.886Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="Bigtable">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/rvzm8XYQhSPCpfD.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Google-Bigtable学习记录</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-06-01-multi-git-user-config/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-03-03-rate-limit-method/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-03-27-google-bigtable/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-03-27-google-bigtable/&text=Google-Bigtable学习记录"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-03-27-google-bigtable/&is_video=false&description=Google-Bigtable学习记录"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Google-Bigtable学习记录&body=Check out this article: https://leriou.github.io/2017-03-27-google-bigtable/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-03-27-google-bigtable/&name=Google-Bigtable学习记录&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-03-27-google-bigtable/&t=Google-Bigtable学习记录"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Google-Bigtable"><span class="toc-number">1.</span> <span class="toc-text">Google Bigtable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">GFS的限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C"><span class="toc-number">3.1.</span> <span class="toc-text">行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E6%97%8F"><span class="toc-number">3.2.</span> <span class="toc-text">列族</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3"><span class="toc-number">3.3.</span> <span class="toc-text">时间戳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E7%BA%A6%E5%AE%9A"><span class="toc-number">4.</span> <span class="toc-text">接口约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bigtable%E6%9E%B6%E6%9E%84"><span class="toc-number">5.</span> <span class="toc-text">Bigtable架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bigtable%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%8C%E5%8F%AF%E7%94%A8%E6%80%A7%E5%92%8C%E5%88%86%E5%8C%BA%E5%AE%B9%E5%BF%8D%E6%80%A7"><span class="toc-number">5.1.</span> <span class="toc-text">Bigtable怎么解决一致性，可用性和分区容忍性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E6%BA%90%E7%9A%84Bigtable%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text">开源的Bigtable实现</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Google-Bigtable学习记录
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-27T10:51:00.000Z" itemprop="datePublished">2017-03-27</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/Bigtable/" rel="tag">Bigtable</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Google-Bigtable"><a href="#Google-Bigtable" class="headerlink" title="Google Bigtable"></a>Google Bigtable</h2><p>本文希望能解答如下问题</p>
+<ol>
+<li>Bigtable产生的原因是什么，解决了什么问题</li>
+<li>Bigtable是怎么解决这些问题的</li>
+<li>Bigtable当前采用的方案有什么优点和不足</li>
+</ol>
+<h2 id="GFS的限制"><a href="#GFS的限制" class="headerlink" title="GFS的限制"></a>GFS的限制</h2><p>GFS是谷歌的分布式文件系统，提供了基础的分布式存储和读写服务，解决了大规模的数据的存储和使用的问题。但是由于GFS接口过于底层，内部存储的都是纯粹的二进制文件数据。Google希望提供一个具有结构模型的数据库产品以方便上层业务易于使用分布式数据存储服务</p>
+<h2 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h2><p>Bigtable 是一个稀疏的、分布式的、持久化存储的多维度排序 Map。Map 的索引是行关键字、列关键字以及时间戳；Map 中的每个 value 都是一个未经解析的 byte 数组。</p>
+<p>map的key是以 &lt;row, column, time&gt; 为综合key的字符串</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(row:string, column:string,time:int64) -&gt; string</span><br></pre></td></tr></table></figure>
+
+<p>之所以采用这个一个简单的模型主要原因有以下几个</p>
+<ul>
+<li>足够简单灵活，可以满足大多数的数据存储需求</li>
+<li>足够可靠</li>
+</ul>
+<p><img src="https://i.loli.net/2020/05/09/rvzm8XYQhSPCpfD.png" alt="bigtable_figure1.png"></p>
+<p>这套k-v模型看起来简单， 却足以表达我们的其他表模型， 例如如下表格-table1</p>
+<table>
+<thead>
+<tr>
+<th>rowkey</th>
+<th>info:name</th>
+<th>info:age</th>
+<th>meta:status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>小明</td>
+<td>19</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>小红</td>
+<td>17</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>小刚</td>
+<td>13</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>像上面的一个常见的二维表格在Bigtable中我们可以使用如下方式表示</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">table1:<span class="number">1</span>:info:name   -&gt; 小明</span><br><span class="line">table1:<span class="number">1</span>:info:age    -&gt; <span class="number">19</span></span><br><span class="line">table1:<span class="number">1</span>:meta:status -&gt; <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>上面3个条记录共同构成原表中的rowkey为1的一行记录</p>
+<h3 id="行"><a href="#行" class="headerlink" title="行"></a>行</h3><p>表中的行关键字可以是任意小于64k的字符串，同一个行关键字的读或者写都是原子性的。上述的例子里面我们就可以把1&#x2F;2&#x2F;3作为行关键字。某种意义上，行关键字类似于传统数据库中的主键ID。</p>
+<p>Bigtable中的数据拆分是按照行关键字来进行的，也就是说，如果我们有3个数据节点， 1 ， 2， 3这三条记录可以被被分到不同的机器上面</p>
+<h3 id="列族"><a href="#列族" class="headerlink" title="列族"></a>列族</h3><p>我们上述的表中的INFO和META就是列族, 图表1 中的anchor也是列族的体现。 列族必须提前创建。列族下还可以含有多个列，像NAME和AGE就同属于一个列族下面的不同列。</p>
+<p>列族的存在是为了方便对数据进行压缩</p>
+<h3 id="时间戳"><a href="#时间戳" class="headerlink" title="时间戳"></a>时间戳</h3><p>在 Bigtable 中，表的每一个数据项都可以包含同一份数据的不同版本;不同版本的数据通过时间戳来索 引。Bigtable 时间戳的类型是 64 位整型。Bigtable 可以给时间戳赋值，用来表示精确到毫秒的“实时”时间; 用户程序也可以给时间戳赋值。</p>
+<p>如果应用程序需要避免数据版本冲突，那么它必须自己生成具有唯一性的时间戳。数据项中，不同版本的数据按照时间戳倒序排序，即最新的数据排在最前面。</p>
+<h2 id="接口约定"><a href="#接口约定" class="headerlink" title="接口约定"></a>接口约定</h2><p>客户程序可以对 Bigtable 进行如下的操作:写入或者删除 Bigtable 中的值、从每个行中查找值、或者遍历表中的一个数据子集。</p>
+<p>Bigtable 可以和 MapReduce一起使用，MapReduce 是 Google 开发的大规模并行计算框架。Google已 经开发了一些 Wrapper 类，通过使用这些 Wrapper 类，Bigtable 可以作为 MapReduce 框架的输入和输出。</p>
+<h2 id="Bigtable架构"><a href="#Bigtable架构" class="headerlink" title="Bigtable架构"></a>Bigtable架构</h2><p>Bigtable是建立在其它的几个Google基础构件上的。BigTable使用Google的分布式文件系统(GFS)存储日志文件和数据文件。</p>
+<p>刚才提到的列族就是Bigtable存储的文件单位， 同一个列族的信息会被整合成一个SSTable文件，会随着rowkey分布到不同的机器上。多个SSTable会由索引文件来定位数据，也可以被加载到内存，通过二分查找查找其中的有序数据。</p>
+<p>BigTable 还依赖一个高可用的、序列化的分布式锁服务组件，叫做 Chubby。一个 Chubby 服务包括了 5 个活动的实例，其中的一个实例被选为 Master，并且处理请求。</p>
+<p>Bigtable 包括了三个主要的组件:链接到客户程序中的库、一个 Master 服务器和多个 Tablet 服务器。针 对系统工作负载的变化情况，BigTable 可以动态的向集群中添加(或者删除)Tablet 服务器。</p>
+<p>Google使用一个三层的、类似B+树的结构存储 Tablet 的位置信息</p>
+<p><img src="https://i.loli.net/2020/05/09/JETjbsYLZaFNyDA.png" alt="bigtable_figure4.png"></p>
+<p>第一层数据在chubby中，提供root tablet的位置信息。</p>
+<p>Bigtable读写流程</p>
+<p><img src="https://i.loli.net/2020/05/10/kaMqH1gF7BNvE4b.png" alt="FElNjQbZkntR3YJ.png"></p>
+<p>Bigtable采用LSM树的形式进行读写操作，新数据先写入日志文件和内存，等内存达到一定数量或者一定时间在将内存中的数据固化到磁盘。 读取的时候先读区内存中的数据， 如果内存中没有要找的数据，返回磁盘进行逐级向上的查找。</p>
+<p>写入日志的存在是为了防止机器挂掉以后内存数据的丢失</p>
+<h3 id="Bigtable怎么解决一致性，可用性和分区容忍性"><a href="#Bigtable怎么解决一致性，可用性和分区容忍性" class="headerlink" title="Bigtable怎么解决一致性，可用性和分区容忍性"></a>Bigtable怎么解决一致性，可用性和分区容忍性</h3><p>Bigtable构架于GFS之上， Bigtable本身并没有提供备份或者主从副本的方案。所以Bigtable依赖于GFS提供一致性和可用性保证。</p>
+<h2 id="开源的Bigtable实现"><a href="#开源的Bigtable实现" class="headerlink" title="开源的Bigtable实现"></a>开源的Bigtable实现</h2><p>Hadoop系列中的<a target="_blank" rel="noopener" href="https://hbase.apache.org/">Hbase</a>一般被认为是bigtable的开源实现，两者采用了相似的设计思路，适用场景也大部分重合。还有一个<a target="_blank" rel="noopener" href="https://cassandra.apache.org/">Cassandra</a>也拥有类似的功能不过在部分设计思路上有很大不同，有兴趣的读者可以自行研究</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Google-Bigtable"><span class="toc-number">1.</span> <span class="toc-text">Google Bigtable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">GFS的限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C"><span class="toc-number">3.1.</span> <span class="toc-text">行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E6%97%8F"><span class="toc-number">3.2.</span> <span class="toc-text">列族</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3"><span class="toc-number">3.3.</span> <span class="toc-text">时间戳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E7%BA%A6%E5%AE%9A"><span class="toc-number">4.</span> <span class="toc-text">接口约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bigtable%E6%9E%B6%E6%9E%84"><span class="toc-number">5.</span> <span class="toc-text">Bigtable架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bigtable%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%8C%E5%8F%AF%E7%94%A8%E6%80%A7%E5%92%8C%E5%88%86%E5%8C%BA%E5%AE%B9%E5%BF%8D%E6%80%A7"><span class="toc-number">5.1.</span> <span class="toc-text">Bigtable怎么解决一致性，可用性和分区容忍性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E6%BA%90%E7%9A%84Bigtable%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text">开源的Bigtable实现</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-03-27-google-bigtable/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-03-27-google-bigtable/&text=Google-Bigtable学习记录"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-03-27-google-bigtable/&is_video=false&description=Google-Bigtable学习记录"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Google-Bigtable学习记录&body=Check out this article: https://leriou.github.io/2017-03-27-google-bigtable/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-03-27-google-bigtable/&title=Google-Bigtable学习记录"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-03-27-google-bigtable/&name=Google-Bigtable学习记录&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-03-27-google-bigtable/&t=Google-Bigtable学习记录"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

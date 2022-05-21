@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="这里是一些简单的three.js原理说明和演示.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The First Three.js Project">
+<meta property="og:url" content="https://leriou.github.io/2016-06-01-threejs-demo/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="这里是一些简单的three.js原理说明和演示.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/UjivxQIND2FwgXu.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/OMT2v7BDgYNmpXS.jpg">
+<meta property="article:published_time" content="2016-06-01T10:51:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.885Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="计算机图形学">
+<meta property="article:tag" content="three.js">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/UjivxQIND2FwgXu.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>The First Three.js Project</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2016-06-08-idea-programing-language/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2016-05-12-The-Chrysanthemum-and-the-Sword/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2016-06-01-threejs-demo/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2016-06-01-threejs-demo/&text=The First Three.js Project"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2016-06-01-threejs-demo/&is_video=false&description=The First Three.js Project"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=The First Three.js Project&body=Check out this article: https://leriou.github.io/2016-06-01-threejs-demo/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2016-06-01-threejs-demo/&name=The First Three.js Project&description=这里是一些简单的three.js原理说明和演示."><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2016-06-01-threejs-demo/&t=The First Three.js Project"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Three-js%E7%AE%80%E5%8D%95%E6%BC%94%E7%A4%BA"><span class="toc-number">1.</span> <span class="toc-text">Three.js简单演示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87"><span class="toc-number">1.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-number">1.2.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%8F%E8%A7%86%E5%92%8C%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.</span> <span class="toc-text">透视和投影</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E4%BA%A4%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.1.</span> <span class="toc-text">正交投影</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%8F%E8%A7%86%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.2.</span> <span class="toc-text">透视投影</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.</span> <span class="toc-text">材质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">基础材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phong%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">Phong材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lambert%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">lambert材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%95%E5%90%91%E9%87%8F%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">法向量材质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E6%BA%90"><span class="toc-number">1.5.</span> <span class="toc-text">光源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%85%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">环境光</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><span class="toc-number">1.5.2.</span> <span class="toc-text">仿射变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%9A%E5%85%89%E7%81%AF"><span class="toc-number">1.5.3.</span> <span class="toc-text">聚光灯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%85%89%E6%BA%90"><span class="toc-number">1.5.4.</span> <span class="toc-text">点光源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E8%A1%8C%E5%85%89"><span class="toc-number">1.5.5.</span> <span class="toc-text">平行光</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA"><span class="toc-number">1.6.</span> <span class="toc-text">在线演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#So-Sad"><span class="toc-number">1.7.</span> <span class="toc-text">So Sad</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        The First Three.js Project
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-06-01T10:51:00.000Z" itemprop="datePublished">2016-06-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/three-js/" rel="tag">three.js</a>, <a class="tag-link-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">计算机图形学</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js" ></script>
+
+<h1 id="Three-js简单演示"><a href="#Three-js简单演示" class="headerlink" title="Three.js简单演示"></a><code>Three.js</code>简单演示</h1><p><code>Three.js</code>是基于<code>WebGl</code>封装的一个现成图形库,更新速度非常快,这里简单列出一些three.js的简单例子和演示</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>要使用<code>three.js</code>首先要引入库文件<br>首先,到<a target="_blank" rel="noopener" href="http://threejs.org/">http://threejs.org/</a>下载<code>three.js</code>类库<br>也可以使用cdn服务,例如<a target="_blank" rel="noopener" href="http://cdn.bootcss.com/three.js/">http://cdn.bootcss.com/three.js/r83/three.js</a></p>
+<p>然后这里讲解一下<code>Three.js</code>主要用到的知识(这些也是所有3D绘图要用到的基础知识)</p>
+<h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><ul>
+<li><p><strong>场景</strong><br>场景就是你要绘制的图形所放置的容器,是所有几何体发生交互和展示的所在,几何体对象必须放到场景中才可以显现出来</p>
+</li>
+<li><p><strong>渲染器</strong><br>渲染器可以把你所绘制的图形通过像素画出来,比如颜色,材质,纹理,反射效果啥的</p>
+</li>
+<li><p><strong>照相机</strong><br>相当于人的眼睛,就是你所观看的视角的方向</p>
+</li>
+</ul>
+<p>以下部分可以酌情使用:</p>
+<ul>
+<li><p><strong>光源</strong><br>  光源是<code>WebGL</code>中必须的部分,如果没有光源,即便渲染出了东西,也是没有办法在屏幕上看到的(没有光当然就是黑漆漆的一片啦)<br>  光源还分好多种,常用的有环境光,聚光灯,和点光源等</p>
+</li>
+<li><p><strong>几何体</strong><br>  几何体是我们平常生活中最容易遇到的东西,<code>WebGL</code>中提供了几种常用的几何体类<br>  每种几何体使用的时候都是这么几个步骤</p>
+<ol>
+<li>实例化类对象</li>
+<li>设置材质</li>
+<li>用栅格把几何体对象和材质编织起来,得到3D对象</li>
+<li>设置3D对象的属性(位置,阴影之类)</li>
+</ol>
+<p>  一个复杂的物体可以拆分成几个简单的几何体</p>
+</li>
+</ul>
+<h2 id="透视和投影"><a href="#透视和投影" class="headerlink" title="透视和投影"></a>透视和投影</h2><p>透视和投影是3D图形中非常重要和基础的概念</p>
+<p>这里主要跟<code>three.js</code>中的照相机类有关系,照相机代表模拟人眼的观察方向</p>
+<p>透视在<code>three.js</code>中只有是用线框模型才能很好的表现</p>
+<p>投影主要分为正交投影和透视投影</p>
+<h3 id="正交投影"><a href="#正交投影" class="headerlink" title="正交投影"></a>正交投影</h3><p><img src="https://i.loli.net/2020/05/09/UjivxQIND2FwgXu.png" alt="28210109_oXpx.jpg"></p>
+<p>正交投影一般用于平面制图,建模,游戏中的小地图也使用正交投影,正交投影不会改变物体的比例</p>
+<p>正交投影相机函数如下</p>
+<p><code>THREE.OrthographicCamera(left, right, top, bottom, near, far)</code></p>
+<p>传入<code>视景体</code>的(左,右,上,下,前边界,后边界),即可完成一个正交投影相机的设定</p>
+<ul>
+<li>example</li>
+</ul>
+<p>设置照相机,照相机位置为(0,0,5)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> camera = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">OrthographicCamera</span>(-<span class="number">2</span>, <span class="number">2</span>, <span class="number">1.5</span>, -<span class="number">1.5</span>, <span class="number">1</span>, <span class="number">10</span>);</span><br><span class="line">camera.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">scene.<span class="title function_">add</span>(camera);</span><br></pre></td></tr></table></figure>
+<p>在原点处创建一个边长为1的正方体，为了和透视效果做对比，这里我们使用<code>wireframe(线框模型)</code>而不是实心的材质，以便看到正方体后方的边：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BoxGeometry</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshBasicMaterial</span>(&#123;</span><br><span class="line">        <span class="attr">color</span>: <span class="number">0xff0000</span>,</span><br><span class="line">        <span class="attr">wireframe</span>: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>效果如下:</p>
+<div id="Orthographic1" style="margin:0;text-align: center;"></div>
+
+<p>但是由于角度问题,我们现在只能看到正方体的正面,现在我们调整相机位置<br><code>camera.position.set(4, -3, 5);</code><br>调整视角方向(看向原点),这样我们就能看到整个正方体的线框了<br><code>camera.lookAt(new THREE.Vector3(0, 0, 0));</code></p>
+<div id="Orthographic2" style="margin:0;text-align: center;"></div>
+
+<script>
+Orthographic1();
+Orthographic2();
+function Orthographic2(){
+    // renderer
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(600,400);
+    document.getElementById("Orthographic2").appendChild(renderer.domElement);
+    renderer.setClearColor(new THREE.Color(0X000000,0.5)); // black
+    // scene
+    var scene = new THREE.Scene();
+    //camara
+    var camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
+    camera.position.set(4, -3, 5);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    scene.add(camera);
+    //cube
+    var cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            wireframe: true
+        })
+    );
+    scene.add(cube);
+    // render
+    renderer.render(scene, camera)
+}
+function Orthographic1(){
+    // renderer
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(600,400);
+    document.getElementById("Orthographic1").appendChild(renderer.domElement);
+    renderer.setClearColor(new THREE.Color(0X000000,0.5)); // black
+    // scene
+    var scene = new THREE.Scene();
+    //camara
+    var camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
+    camera.position.set(0,0,5);
+    // camera.lookAt(new THREE.Vector3(0, 0, 0));
+    scene.add(camera);
+    //cube
+    var cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            wireframe: true
+        })
+    );
+    scene.add(cube);
+    // render
+    renderer.render(scene, camera)
+}
+
+</script>
+
+<h3 id="透视投影"><a href="#透视投影" class="headerlink" title="透视投影"></a>透视投影</h3><p><img src="https://i.loli.net/2020/05/09/OMT2v7BDgYNmpXS.jpg" alt="28210109_n5sg.jpg"></p>
+<p>透视投影类似人眼看到的效果,大多数游戏,应用等都使用透视投影,透视投影会使看到的物体产生形变,产生”远小近大”的效果</p>
+<p>透视投影相机函数如下</p>
+<p><code>THREE.PerspectiveCamera(fov, aspect, near, far)</code></p>
+<p>透视相机需要传入(俯仰角,画面比,近边界,远边界)来完成透视相机的参数设置</p>
+<ul>
+<li>example</li>
+</ul>
+<p>设置透视投影照相机，这里Canvas长600px，宽400px，所以aspect设为600 &#x2F; 400：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> camera = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PerspectiveCamera</span>(<span class="number">45</span>, <span class="number">600</span> / <span class="number">400</span>, <span class="number">1</span>, <span class="number">10</span>);</span><br><span class="line">camera.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">scene.<span class="title function_">add</span>(camera);</span><br></pre></td></tr></table></figure>
+
+<p>设置一个在原点处的边长为1的正方体:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BoxGeometry</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshBasicMaterial</span>(&#123;</span><br><span class="line">        <span class="attr">color</span>: <span class="number">0xff0000</span>,</span><br><span class="line">        <span class="attr">wireframe</span>: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br><span class="line">scene.<span class="title function_">add</span>(cube);</span><br></pre></td></tr></table></figure>
+
+<p>效果如下:</p>
+<div id="Perspective" style="margin:0;text-align: center;"></div>
+
+<script>
+Perspective();
+function Perspective() {
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(600,400);
+    document.getElementById("Perspective").appendChild(renderer.domElement);
+    renderer.setClearColor(new THREE.Color(0X000000,0.5)); // black
+    // scene
+    var scene = new THREE.Scene();
+    //camara
+    var camera = new THREE.PerspectiveCamera(45, 600 / 400, 1, 10);
+    camera.position.set(0, 0, 5);
+    scene.add(camera);
+    //cube
+    var cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            wireframe: true
+        })
+    );
+    scene.add(cube);
+    // render
+    renderer.render(scene, camera)
+}
+</script>
+
+<h2 id="材质"><a href="#材质" class="headerlink" title="材质"></a>材质</h2><p>材质有大量共有属性,这些属性可以设置材质的纹理,颜色,雾化等许多效果,这里挑选几种常用材质进行简单说明</p>
+<h3 id="基础材质"><a href="#基础材质" class="headerlink" title="基础材质"></a>基础材质</h3><p>基础材质不受灯光影响,多用于实现简单展示</p>
+<p>构造函数:<code>THREE.MeshBasicMaterial( parameters )</code></p>
+<h3 id="Phong材质"><a href="#Phong材质" class="headerlink" title="Phong材质"></a>Phong材质</h3><p>Phong材质&#x3D; 环境光 + 漫反射 + 镜面反射</p>
+<p>该材质具有极高的真实感,可产生高光效果,可以模拟金属等物体</p>
+<p>构造函数:<code>THREE.MeshPhongMaterial( parameters )</code></p>
+<h3 id="lambert材质"><a href="#lambert材质" class="headerlink" title="lambert材质"></a>lambert材质</h3><p>lambert材质可以模拟一些无需高光反射的哑光效果,例如:皮纹</p>
+<p>构造函数:<code>THREE.MeshLambertMaterial( parameters )</code></p>
+<h3 id="法向量材质"><a href="#法向量材质" class="headerlink" title="法向量材质"></a>法向量材质</h3><p>根据表面法向量方向产生不同颜色,多用于调试</p>
+<p>构造函数:<code>THREE.MeshNormalMaterial( parameters )</code></p>
+<h2 id="光源"><a href="#光源" class="headerlink" title="光源"></a>光源</h2><p>光源可谓是3D绘图中极其重要的部分,光源分为很多种,除了环境光,点光源这几种常见的之外,还有面光源等特殊光源</p>
+<p>所有光源都具有一部分共同属性,在<code>three.js</code>中这些属性为缺省值,不填则会有默认值,例如:color</p>
+<h3 id="环境光"><a href="#环境光" class="headerlink" title="环境光"></a>环境光</h3><p>环境光是模拟自然环境中无处不在的被多次反射的光线,环境光的特点</p>
+<ul>
+<li>无法产生阴影</li>
+<li>从四周所有方向照射</li>
+</ul>
+<p>环境光构造函数  <code>THREE.AmbientLight(hex)</code></p>
+<p>hex:十六进制的颜色值,例如:0xff0000</p>
+<p>添加一个环境光源</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> light = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">AmbientLight</span>(&#123;<span class="number">0xffffff</span>&#125;);</span><br><span class="line">scene.<span class="title function_">add</span>(light);</span><br></pre></td></tr></table></figure>
+
+<p>但是只添加环境光而没有物体是无法看出来效果的<br>所以再添加两个长方体</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> greenCube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BoxGeometry</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;<span class="attr">color</span>: <span class="number">0x00ff00</span>&#125;));</span><br><span class="line">greenCube.<span class="property">position</span>.<span class="property">x</span> = <span class="number">3</span>;</span><br><span class="line">scene.<span class="title function_">add</span>(greenCube);</span><br><span class="line"><span class="keyword">var</span> whiteCube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BoxGeometry</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshLambertMaterial</span>(&#123;<span class="attr">color</span>: <span class="number">0xffffff</span>&#125;));</span><br><span class="line">whiteCube.<span class="property">position</span>.<span class="property">x</span> = -<span class="number">3</span>;</span><br><span class="line">scene.<span class="title function_">add</span>(whiteCube);</span><br></pre></td></tr></table></figure>
+
+<div id="Ambient" style="margin:0;text-align: center;"></div>
+
+<script>
+Ambient();
+function Ambient() {
+    var renderer = new THREE.WebGLRenderer();
+    var width = 600;
+    var height = 400;
+    document.getElementById("Ambient").appendChild(renderer.domElement);
+    renderer.setClearColor(new THREE.Color(0x000000,0.5));
+    renderer.setSize(width,height);
+    // scene
+    var scene = new THREE.Scene();
+    //camara
+    var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10);
+    camera.position.set(0, 3, 10);
+    camera.lookAt(new THREE.Vector3(0,0,0));
+    scene.add(camera);
+    var light = new THREE.AmbientLight( 0x880000); // soft white light
+    scene.add(light);
+    //cube
+    var greenCube = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshLambertMaterial({color: 0x00ff00}));
+    greenCube.position.x = 2;
+    scene.add(greenCube);
+    var whiteCube = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2),
+            new THREE.MeshLambertMaterial({color: 0xff0000}));
+    whiteCube.position.x = -2;
+    scene.add(whiteCube);
+    // render
+    renderer.render(scene, camera)
+}
+</script>
+
+<h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><p>仿射变换是指计算机图形学中表示物体运动和变化的一系列动作</p>
+<p>主要有 平移,旋转,缩放和切变</p>
+<p>图形学中一般使用一个四维矩阵来表示仿射变换</p>
+<p>具体如下:</p>
+<pre><code>[ 缩放/旋转矩阵(3x3矩阵),0]
+[ 平移矩阵,1]
+</code></pre>
+<p>原因:</p>
+<pre><code>[2,3]
+[4,5] 
+</code></pre>
+<p>这样的一个矩阵我们可以看成是两个二元方程组, 在图形上表示一个二维平面图形</p>
+<p>同样的表示三维平面图形我们用三元方程组</p>
+<p>表示为矩阵就是</p>
+<pre><code>[2,5,6]
+[6,2,1]
+[-1,3,4]
+</code></pre>
+<p>对三维图形做变换其实就是对矩阵进行操作</p>
+<h3 id="聚光灯"><a href="#聚光灯" class="headerlink" title="聚光灯"></a>聚光灯</h3><p>聚光灯模拟的是舞台上的聚光灯,手电筒等光源效果,特点有</p>
+<ul>
+<li>可以产生阴影</li>
+<li>从一点沿某一方向射出,具有明显边界,影响范围一般呈锥体形状</li>
+</ul>
+<p>聚光灯构造函数</p>
+<p><code>THREE.SpotLight(hex, intensity, distance, angle, penumbra,decay)</code></p>
+<p>hex: 十六进制颜色值<br>indensity: 光强度<br>distance: 光照有效距离<br>angle: 角度<br>penumbra: 半影<br>decay: 衰减度</p>
+<h3 id="点光源"><a href="#点光源" class="headerlink" title="点光源"></a>点光源</h3><p>点光源模拟的类似于生活中的灯泡,蜡烛等由一点  </p>
+<p>点光源构造函数:<br><code>THREE.PointLight(hex, intensity, distance)</code></p>
+<p>例如:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> light = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PointLight</span>(<span class="number">0xffffff</span>, <span class="number">2</span>, <span class="number">100</span>);</span><br><span class="line">light.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">0</span>, <span class="number">1.5</span>, <span class="number">2</span>);</span><br><span class="line">scene.<span class="title function_">add</span>(light);</span><br></pre></td></tr></table></figure>
+
+<div id="PointLight" style="margin:0;text-align: center;"></div>
+
+<script>
+PointLight();
+function PointLight() {
+    var renderer = new THREE.WebGLRenderer();
+    var width = 600;
+    var height = 400;
+    document.getElementById("PointLight").appendChild(renderer.domElement);
+    renderer.setClearColor(new THREE.Color(0x000000,0.5));
+    renderer.setSize(width,height);
+    // scene
+    var scene = new THREE.Scene();
+    //camara
+    var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10);
+    camera.position.set(0, 5, 5);
+    camera.lookAt(new THREE.Vector3(0,0,0));
+    scene.add(camera);
+    var light = new THREE.PointLight(0xffffff, 2, 100);
+    light.position.set(0, 1.5, 2);
+    scene.add(light);
+    //cube
+    var greenCube = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshLambertMaterial({color: 0x00ff00}));
+    greenCube.position.x = 2;
+    scene.add(greenCube);
+    var whiteCube = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2),
+            new THREE.MeshLambertMaterial({color: 0xff0000}));
+    whiteCube.position.x = -2;
+    scene.add(whiteCube);
+    // render
+    renderer.render(scene, camera)
+}
+</script>
+
+
+<h3 id="平行光"><a href="#平行光" class="headerlink" title="平行光"></a>平行光</h3><p>一般距离极远的点光源表现为平行光,例如:太阳</p>
+<p>平行光可以产生阴影</p>
+<p><code>THREE.DirectionalLight(hex, intensity)</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> light = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">DirectionalLight</span>();</span><br><span class="line">light.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line">scene.<span class="title function_">add</span>(light);</span><br></pre></td></tr></table></figure>
+
+<h2 id="在线演示"><a href="#在线演示" class="headerlink" title="在线演示"></a>在线演示</h2><p>好啦,了解以上知识,再稍微熟悉一下基础<code>three.js</code>类就能做一个简单的东西了<br>比如:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scene = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Scene</span>();</span><br><span class="line"><span class="keyword">var</span> width = <span class="number">700</span>;</span><br><span class="line"><span class="keyword">var</span> height = <span class="number">330</span>;</span><br><span class="line"><span class="keyword">var</span> camera = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PerspectiveCamera</span>(<span class="number">45</span>,width/height,<span class="number">0.1</span>,<span class="number">1000</span>);</span><br><span class="line"><span class="keyword">var</span> renderer = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">WebGLRenderer</span>();</span><br><span class="line">renderer.<span class="title function_">setClearColor</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Color</span>(<span class="number">0x000000</span>,<span class="number">0.5</span>));</span><br><span class="line">renderer.<span class="title function_">setSize</span>(width, height);</span><br><span class="line">camera.<span class="property">position</span>.<span class="title function_">set</span>(-<span class="number">30</span>,<span class="number">50</span>,<span class="number">50</span>);</span><br><span class="line">camera.<span class="title function_">lookAt</span>(<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Vector3</span>(<span class="number">10</span>,<span class="number">10</span>,<span class="number">10</span>));</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;scene&quot;</span>).<span class="title function_">appendChild</span>(renderer.<span class="property">domElement</span>);</span><br><span class="line"><span class="keyword">var</span> groundGeom = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">PlaneGeometry</span>(<span class="number">100</span>,<span class="number">100</span>);</span><br><span class="line"><span class="keyword">var</span> groundMesh = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(groundGeom,<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshBasicMaterial</span>(&#123;<span class="attr">color</span>:<span class="number">0xffee00</span>&#125;));</span><br><span class="line">groundMesh.<span class="property">rotation</span>.<span class="property">x</span> = -<span class="title class_">Math</span>.<span class="property">PI</span>/<span class="number">2</span>-<span class="number">0.08</span>;</span><br><span class="line">scene.<span class="title function_">add</span>(groundMesh);</span><br><span class="line"><span class="keyword">var</span> geomCube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">BoxGeometry</span>(<span class="number">16</span>,<span class="number">32</span>,<span class="number">16</span>);</span><br><span class="line"><span class="keyword">var</span> cube = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Mesh</span>(geomCube,<span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">MeshNormalMaterial</span>(&#123;<span class="attr">color</span>:<span class="number">0x7777ff</span>&#125;));</span><br><span class="line">scene.<span class="title function_">add</span>(cube);</span><br><span class="line"><span class="keyword">var</span> ambientLight = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">AmbientLight</span>(&#123;<span class="attr">color</span>:<span class="number">0xff0000</span>&#125;);</span><br><span class="line">scene.<span class="title function_">add</span>(ambientLight);</span><br><span class="line">scene.<span class="property">fog</span> = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">Fog</span>(<span class="number">0x0000ff</span>,<span class="number">0.03</span>,<span class="number">100</span>);</span><br><span class="line"><span class="keyword">var</span> spotLight = <span class="keyword">new</span> <span class="variable constant_">THREE</span>.<span class="title class_">SpotLight</span>(<span class="number">0x00ff00</span>);</span><br><span class="line">spotLight.<span class="property">position</span>.<span class="title function_">set</span>(<span class="number">40</span>,<span class="number">20</span>,<span class="number">10</span>);</span><br><span class="line">spotLight.<span class="property">castShadow</span> = <span class="literal">true</span>;</span><br><span class="line">scene.<span class="title function_">add</span>(spotLight);</span><br><span class="line"><span class="title function_">render</span>();</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>)&#123;</span><br><span class="line">    cube.<span class="property">rotation</span>.<span class="property">y</span> += <span class="number">0.01</span>;</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(render);</span><br><span class="line">    renderer.<span class="title function_">render</span>(scene,camera);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>测试区域(代码复制到下边文本框运行即可):</p>
+<textarea id="test" style="width:600px;height:400px; border:1px solid #ccc;border-radius:5px;"></textarea>
+
+<p><button class="btn btn-info" onclick="eval(document.getElementById('test').value)">运行测试代码</button></p>
+<div id="scene" style="margin:0;text-align: center;">
+</div>
+
+<h2 id="So-Sad"><a href="#So-Sad" class="headerlink" title="So Sad"></a>So Sad</h2><p>由于Three.js更新太快了,所以我打算暂时不更新了,等版本稳定再继续更新…</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Three-js%E7%AE%80%E5%8D%95%E6%BC%94%E7%A4%BA"><span class="toc-number">1.</span> <span class="toc-text">Three.js简单演示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87"><span class="toc-number">1.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-number">1.2.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%8F%E8%A7%86%E5%92%8C%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.</span> <span class="toc-text">透视和投影</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E4%BA%A4%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.1.</span> <span class="toc-text">正交投影</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%8F%E8%A7%86%E6%8A%95%E5%BD%B1"><span class="toc-number">1.3.2.</span> <span class="toc-text">透视投影</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.</span> <span class="toc-text">材质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">基础材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phong%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">Phong材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lambert%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">lambert材质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%95%E5%90%91%E9%87%8F%E6%9D%90%E8%B4%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">法向量材质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E6%BA%90"><span class="toc-number">1.5.</span> <span class="toc-text">光源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%85%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">环境光</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><span class="toc-number">1.5.2.</span> <span class="toc-text">仿射变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%9A%E5%85%89%E7%81%AF"><span class="toc-number">1.5.3.</span> <span class="toc-text">聚光灯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%85%89%E6%BA%90"><span class="toc-number">1.5.4.</span> <span class="toc-text">点光源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E8%A1%8C%E5%85%89"><span class="toc-number">1.5.5.</span> <span class="toc-text">平行光</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E6%BC%94%E7%A4%BA"><span class="toc-number">1.6.</span> <span class="toc-text">在线演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#So-Sad"><span class="toc-number">1.7.</span> <span class="toc-text">So Sad</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2016-06-01-threejs-demo/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2016-06-01-threejs-demo/&text=The First Three.js Project"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2016-06-01-threejs-demo/&is_video=false&description=The First Three.js Project"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=The First Three.js Project&body=Check out this article: https://leriou.github.io/2016-06-01-threejs-demo/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2016-06-01-threejs-demo/&title=The First Three.js Project"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2016-06-01-threejs-demo/&name=The First Three.js Project&description=这里是一些简单的three.js原理说明和演示."><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2016-06-01-threejs-demo/&t=The First Three.js Project"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

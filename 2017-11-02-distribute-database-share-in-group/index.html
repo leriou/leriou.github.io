@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="这个是写给组内成员的分布式知识简单分享 什么是分布式什么是集群? 什么是分布式?集群:   一个任务多个人可以做(实际是一个人做), 集群的主要目的是高可用, 通过冗余解决单点故障问题分布式: 一个任务拆分成多个部分由多个机器来做, 解决业务解耦, 水平扩展和性能问题    几个典型的分布式系统:    名称 类型 数据分布方式 故障转移 节点类型    kafka 消息系统 broker-&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式存储服务组内分享">
+<meta property="og:url" content="https://leriou.github.io/2017-11-02-distribute-database-share-in-group/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="这个是写给组内成员的分布式知识简单分享 什么是分布式什么是集群? 什么是分布式?集群:   一个任务多个人可以做(实际是一个人做), 集群的主要目的是高可用, 通过冗余解决单点故障问题分布式: 一个任务拆分成多个部分由多个机器来做, 解决业务解耦, 水平扩展和性能问题    几个典型的分布式系统:    名称 类型 数据分布方式 故障转移 节点类型    kafka 消息系统 broker-&amp;gt">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/bO1gZiWHtFBvKj2.jpg">
+<meta property="article:published_time" content="2017-11-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.882Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/bO1gZiWHtFBvKj2.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>分布式存储服务组内分享</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-12-29-programming-languages-are-not-tools/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-11-01-kafka-share-in-group/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&text=分布式存储服务组内分享"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&is_video=false&description=分布式存储服务组内分享"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=分布式存储服务组内分享&body=Check out this article: https://leriou.github.io/2017-11-02-distribute-database-share-in-group/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&name=分布式存储服务组内分享&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&t=分布式存储服务组内分享"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">什么是分布式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">分布式要解决的常见问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%88%86%E5%8C%BA%E5%AE%B9%E5%BF%8D%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">如何解决分区容忍性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Gossip"><span class="toc-number">3.1.</span> <span class="toc-text">Gossip</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.</span> <span class="toc-text">如何保证数据一致性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.1.</span> <span class="toc-text">单节点的数据一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.2.</span> <span class="toc-text">分布式的一致性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.2.1.</span> <span class="toc-text">主从一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NRW%E7%AE%97%E6%B3%95"><span class="toc-number">4.2.2.</span> <span class="toc-text">NRW算法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">如何处理可用性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="toc-number">6.</span> <span class="toc-text">分布式事务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C"><span class="toc-number">7.</span> <span class="toc-text">使用经验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E5%90%88%E7%90%86%E7%9A%84%E5%88%86%E5%8C%BA%E5%92%8C%E5%89%AF%E6%9C%AC%E6%95%B0%E9%87%8F"><span class="toc-number">7.0.1.</span> <span class="toc-text">如何设置合理的分区和副本数量</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        分布式存储服务组内分享
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-11-01T16:00:00.000Z" itemprop="datePublished">2017-11-02</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag">分布式</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这个是写给组内成员的分布式知识简单分享</p>
+<h1 id="什么是分布式"><a href="#什么是分布式" class="headerlink" title="什么是分布式"></a>什么是分布式</h1><p>什么是集群? 什么是分布式?<br>集群:   一个任务多个人可以做(实际是一个人做), 集群的主要目的是高可用, 通过冗余解决单点故障问题<br>分布式: 一个任务拆分成多个部分由多个机器来做, 解决业务解耦, 水平扩展和性能问题   </p>
+<p>几个典型的分布式系统:</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>类型</th>
+<th>数据分布方式</th>
+<th>故障转移</th>
+<th>节点类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kafka</td>
+<td>消息系统</td>
+<td>broker-&gt;partition</td>
+<td>partition选举</td>
+<td>对等节点</td>
+</tr>
+<tr>
+<td>redis</td>
+<td>缓存</td>
+<td>instance-&gt;shard</td>
+<td>sentinal选举&#x2F;主从</td>
+<td>对等节点</td>
+</tr>
+<tr>
+<td>es</td>
+<td>搜索服务</td>
+<td>node-&gt;shard</td>
+<td>master选举和partition选举</td>
+<td>对等节点</td>
+</tr>
+<tr>
+<td>Tidb</td>
+<td>数据库</td>
+<td>TiDB+TiKV+PD</td>
+<td>node选举</td>
+<td>非对等节点</td>
+</tr>
+<tr>
+<td>hdfs</td>
+<td>文件系统</td>
+<td>namenode+datanode</td>
+<td>主从</td>
+<td>非对等节点</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p> 节点类型：对等节点是说节点之间功能相似，非对等节点是说节点之间功能不同，无法互相取代</p>
+</blockquote>
+<h1 id="分布式要解决的常见问题"><a href="#分布式要解决的常见问题" class="headerlink" title="分布式要解决的常见问题"></a>分布式要解决的常见问题</h1><p>分布式要满足三个特性之二 CAP(C:一致性, P:分区容忍性, A:可用性)</p>
+<ul>
+<li>一致性（C）：在分布式系统中的所有数据备份，在同一时刻是否同样的值。（等同于所有节点访问同一份最新的数据副本），换句话就是说，任何时刻，所用的应用程序都能访问得到相同的数据。</li>
+<li>可用性（A）：在集群中一部分节点故障后，集群整体是否还能响应客户端的读写请求。（对数据更新具备高可用性），换句话就是说，任何时候，任何应用程序都可以读写数据。</li>
+<li>分区容错性（P）：以实际效果而言，分区相当于对通信的时限要求。系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在C和A之间做出选择，换句话说，系统可以跨网络分区线性的伸缩和扩展。</li>
+</ul>
+<p>CAP三个特性不可能同时满足, 只能同时满足两个特性<br>对大多数的分布式应用来说 CAP中的 P 是必不可少的<br>所以我们一般都会从CA中选取一个, 一般会选择CP 或者 AP   </p>
+<p>具体处理cap协议的方法如下图</p>
+<p><img src="https://i.loli.net/2020/05/09/bO1gZiWHtFBvKj2.jpg" alt="cap.jpg"></p>
+<h1 id="如何解决分区容忍性"><a href="#如何解决分区容忍性" class="headerlink" title="如何解决分区容忍性"></a>如何解决分区容忍性</h1><p>解决分区容忍性问题首先就是对数据进行分区或者叫分片</p>
+<p>分区手段有很多, 但大多分两种, hash分区和线性分区 ，系统将数据分为逻辑上的几个区块, 每个区块可以在多个机器上进行自由的部署和移动。<br>这样就做到了将数据和机器进行隔离, 可以以分片为单位在不同机器上进行数据的移动和备份，但是这样在使用数据的时候就需要从多个分片同时获取数据进行合并。<br>如果因为某些原因， 导致某些分片所在的节点出现故障， 此时我们就认为出现了网络分区， 分区容忍性要求在此种状况下，系统依然能对外提供有效服务 。</p>
+<h2 id="Gossip"><a href="#Gossip" class="headerlink" title="Gossip"></a>Gossip</h2><p>使用者: Redis<br>Gossip协议是节点将自己的数据通知给集群内所有节点的协议, 但是不能做到数据一致性<br>Gossip只能保证可用性和分区容忍性</p>
+<p>如果对数据的分片进行备份, 同时将备份分布到多个不同的网络节点上, 这样即便部分数据分区不可用, 在可容忍的范围内只要不是该分区的所有数据分片都出问题, 还是能提供正常的数据服务  </p>
+<p>数据分片是分布式存储的基础, 数据分片好处很多    </p>
+<ol>
+<li>对数据分片可以使数据不受单机存储制约</li>
+<li>对数据分片可以通过多分区共同协作并行处理提高性能</li>
+<li>对分区数据进行冗余可以提高系统可用性</li>
+</ol>
+<p>但是数据分片和副本会带来一致性问题</p>
+<h1 id="如何保证数据一致性"><a href="#如何保证数据一致性" class="headerlink" title="如何保证数据一致性"></a>如何保证数据一致性</h1><h2 id="单节点的数据一致性"><a href="#单节点的数据一致性" class="headerlink" title="单节点的数据一致性"></a>单节点的数据一致性</h2><p>单节点如何保证数据一致性和完整性</p>
+<p>比如: 数据库索引的更新, B树在分裂过程中出现问题怎么办, </p>
+<p>一般处理单节点的一致性可以用 WAL(预写日志,或者叫redo日志) 或者 写时复制(copy on write)</p>
+<p>WAL就是先把操作追加到一个日志文件, 然后再对内存进行操作, lsm树中的memtable就是典型的使用这种方案</p>
+<p>写时复制就是先在其他地方把数据处理完毕, 最后直接修改数据引用, gfs的快照技术有使用类似的方案</p>
+<p>典型的例子是 修改B+树时预先生成一个小的B+树, 然后直接替换B+树上的节点指针</p>
+<h2 id="分布式的一致性"><a href="#分布式的一致性" class="headerlink" title="分布式的一致性"></a>分布式的一致性</h2><h3 id="主从一致性"><a href="#主从一致性" class="headerlink" title="主从一致性"></a>主从一致性</h3><p>目前业界的普遍做法是将分区的多个副本形成一个小组, 组内选举一个primary副本来执行写操作或确定写入顺序, 其他副本仅提供读操作或根本只提供备份功能, 这样对外部系统只有一个主副本做写入操作, 就可以保证数据写入的一致性</p>
+<p>如何从多个副本集合中选举主副本就涉及到共识算法（选主算法），常见的共识算法有 <code>Paxos</code>,<code>Raft</code>,<code>Zab协议</code>,<code>Bully</code> 等</p>
+<h3 id="NRW算法"><a href="#NRW算法" class="headerlink" title="NRW算法"></a>NRW算法</h3><p>NRW是一种特殊的保障一致性的算法, 通过饱和读取策略充分保证数据读取的一致性，具体详情如下:   </p>
+<pre><code>R(读取分片数) + W(写入分片数) &gt; N(节点总分片数)
+</code></pre>
+<p>只要满足以上公式, 我们必然可以拿到一个正确分片的数据<br>举例: 我们对某个数据有5个分片, 我们只要保证 写入分片为3,读取分片为3,这样,我们必然可以保证读取的分片其中有一个含有最新的数据 </p>
+<h1 id="如何处理可用性"><a href="#如何处理可用性" class="headerlink" title="如何处理可用性"></a>如何处理可用性</h1><p>实现高可用一般都是通过节点或数据备份来实现, 采用主从或主备节点, 主节点或主分片不可用, 就采用副本分片或备份节点替代原有的服务</p>
+<h1 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h1><p>解决分布式事物要处理ACID 四个问题，常用如下方式</p>
+<ol>
+<li>2PC, 使用者: mysql&#x2F;flink, 两阶段提交协议</li>
+<li>3PC, 三阶段提交协议, 二阶段提交协议的优化</li>
+<li>TCC  事务补偿</li>
+</ol>
+<h1 id="使用经验"><a href="#使用经验" class="headerlink" title="使用经验"></a>使用经验</h1><h3 id="如何设置合理的分区和副本数量"><a href="#如何设置合理的分区和副本数量" class="headerlink" title="如何设置合理的分区和副本数量"></a>如何设置合理的分区和副本数量</h3><ol>
+<li>其实对于副本数量的设置一般取决于副本的用途</li>
+</ol>
+<p>如果你副本只做备份，不对外提供读取服务，那设置3个是比较理想的情况，因为3个副本足以覆盖副本所有的可能状态（可用，不可用，升级中），也就是说只要有3个副本， 就一定有一个副本处于可用状态</p>
+<p>如果副本同时提供读功能， 那可以根据情况酌情增加副本数量</p>
+<ol start="2">
+<li>分片的设置</li>
+</ol>
+<p>其实针对不同的系统，不通的分片方式，分片设置有各自的考虑，不过一般受以下因素影响</p>
+<ul>
+<li>数据量</li>
+<li>分布节点数量</li>
+<li>使用者数量</li>
+<li>数据同步和网络开销</li>
+</ul>
+<p>我们以一个服务于全国的500万用户的15个节点的存储容量为5TB的es集群来举例子。<br>我们可以设置 3个副本，15-30个分片。副本数太多会增加集群同步的成本，副本数太少会导致数据不安全，读性能较差，分片太多会增加后期数据合并的成本，分片太少会导致单个分片数据量过大。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">什么是分布式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">分布式要解决的常见问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%88%86%E5%8C%BA%E5%AE%B9%E5%BF%8D%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">如何解决分区容忍性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Gossip"><span class="toc-number">3.1.</span> <span class="toc-text">Gossip</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.</span> <span class="toc-text">如何保证数据一致性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.1.</span> <span class="toc-text">单节点的数据一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.2.</span> <span class="toc-text">分布式的一致性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">4.2.1.</span> <span class="toc-text">主从一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NRW%E7%AE%97%E6%B3%95"><span class="toc-number">4.2.2.</span> <span class="toc-text">NRW算法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">如何处理可用性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="toc-number">6.</span> <span class="toc-text">分布式事务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C"><span class="toc-number">7.</span> <span class="toc-text">使用经验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E5%90%88%E7%90%86%E7%9A%84%E5%88%86%E5%8C%BA%E5%92%8C%E5%89%AF%E6%9C%AC%E6%95%B0%E9%87%8F"><span class="toc-number">7.0.1.</span> <span class="toc-text">如何设置合理的分区和副本数量</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&text=分布式存储服务组内分享"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&is_video=false&description=分布式存储服务组内分享"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=分布式存储服务组内分享&body=Check out this article: https://leriou.github.io/2017-11-02-distribute-database-share-in-group/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&title=分布式存储服务组内分享"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&name=分布式存储服务组内分享&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-11-02-distribute-database-share-in-group/&t=分布式存储服务组内分享"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

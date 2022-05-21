@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="redis分享Author:   leriou lee       2017.10.12本篇内容主要是针对团队成员的redis中间件分享 目的是帮助不熟悉redis的团队成员快速的了解redis，对redis大概有一个了解已经使用过redis的能对其有进一步的了解，以及总结了一些遇到的业务问题和解决方案 redis基础 redis是什么  redis是一个使用c语言开发的k-v存储系统,其实不仅仅">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给团队成员的Redis分享总结">
+<meta property="og:url" content="https://leriou.github.io/2017-10-29-redis-share-in-group/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="redis分享Author:   leriou lee       2017.10.12本篇内容主要是针对团队成员的redis中间件分享 目的是帮助不熟悉redis的团队成员快速的了解redis，对redis大概有一个了解已经使用过redis的能对其有进一步的了解，以及总结了一些遇到的业务问题和解决方案 redis基础 redis是什么  redis是一个使用c语言开发的k-v存储系统,其实不仅仅">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/BKtdElZifANIg8c.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/deSBNkvgwpaE2tK.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/xpNhU9XPYFn4OcA.png">
+<meta property="article:published_time" content="2017-10-29T03:07:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.885Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="NoSQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/BKtdElZifANIg8c.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>给团队成员的Redis分享总结</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-11-01-kafka-share-in-group/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-10-03-redis-cluster-problem/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-10-29-redis-share-in-group/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&text=给团队成员的Redis分享总结"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&is_video=false&description=给团队成员的Redis分享总结"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=给团队成员的Redis分享总结&body=Check out this article: https://leriou.github.io/2017-10-29-redis-share-in-group/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&name=给团队成员的Redis分享总结&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-10-29-redis-share-in-group/&t=给团队成员的Redis分享总结"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%88%86%E4%BA%AB"><span class="toc-number">1.</span> <span class="toc-text">redis分享</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%9F%BA%E7%A1%80"><span class="toc-number">2.</span> <span class="toc-text">redis基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E7%9A%84%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Redis的读写流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E7%9A%84%E7%89%B9%E8%89%B2%E5%8A%9F%E8%83%BD"><span class="toc-number">4.</span> <span class="toc-text">Redis的特色功能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis-Representation"><span class="toc-number">5.</span> <span class="toc-text">redis Representation</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4"><span class="toc-number">6.</span> <span class="toc-text">Redis集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AF%B9%E8%B1%A1%E5%92%8C%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">7.</span> <span class="toc-text">数据对象和底层数据结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E9%97%AE%E9%A2%98%E5%AE%9E%E4%BE%8B"><span class="toc-number">8.</span> <span class="toc-text">生产问题实例</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        给团队成员的Redis分享总结
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">leriou</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-10-29T03:07:00.000Z" itemprop="datePublished">2017-10-29</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/NoSQL/" rel="tag">NoSQL</a>, <a class="tag-link-link" href="/tags/redis/" rel="tag">redis</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="redis分享"><a href="#redis分享" class="headerlink" title="redis分享"></a>redis分享</h1><p>Author:   leriou lee       2017.10.12<br>本篇内容主要是针对团队成员的redis中间件分享</p>
+<p>目的是帮助不熟悉redis的团队成员快速的了解redis，对redis大概有一个了解<br>已经使用过redis的能对其有进一步的了解，以及总结了一些遇到的业务问题和解决方案</p>
+<h1 id="redis基础"><a href="#redis基础" class="headerlink" title="redis基础"></a>redis基础</h1><ol>
+<li>redis是什么</li>
+</ol>
+<p><code>redis</code>是一个使用c语言开发的k-v存储系统,其实不仅仅作为缓存,由于<code>redis</code>内部的底层数据结构设计的非常完善</p>
+<p>我们也可以把<code>redis</code>作为一个现成的数据结构实现集合,只要了解<code>redis</code>内部的基础数据结构和实现,我们就能利用它做很多事情</p>
+<p>比如我们想利用某种数据结构的特性(例如:跳跃表),又不想自己实现,就可以在<code>redis</code>的基础之上构建业务</p>
+<p>redis目前支持5种数据对象, 基本可以满足大多数的业务场景</p>
+<blockquote>
+<p>ps: 现在5.0发布已经有6种了</p>
+</blockquote>
+<ol start="2">
+<li><p>redis的大致工作流程</p>
+<ol>
+<li>启用redis-server,使用socket服务监听端口(redis服务端)</li>
+<li>客户端启用socket连接到服务器,通过认证,服务器维护client的信息(使用链表持有)</li>
+<li>客户端发送命令, 服务器接收到命令根据命令表进行执行和查找等,返回结果(将结果保存到client的输出缓冲区)</li>
+<li>客户端解析服务器返回的结果</li>
+</ol>
+</li>
+<li><p>redis能做什么</p>
+</li>
+</ol>
+<p>redis作为一个缓存中间件, 可以帮助我们解决很多业务中遇到的问题,由于redis内部功能机制比较丰富,其实不仅仅可以作为简单的缓存中间件使用</p>
+<p>redis可以作为高速的k-v存储，非常适合存储一些直接针对用户的应用数据，或者进行用户行为统计。 比如：对用户进行限流，统计用户访问量</p>
+<ol start="4">
+<li>基于redis可以解决的一些常见问题</li>
+</ol>
+<p>redis可以帮助我们解决很多业务中的问题,下面简单列举一下</p>
+<ul>
+<li><p>作为服务间的共享空间或临时存储，解决数据共享问题 例如: 计数器,注册器&#x2F;协调器,在分布式应用中做桥接</p>
+<p>  由于redis是一个独立的服务,不依赖任何其他的服务,同时又具有高效的存储功能<br>  我们可以用redis在不同的应用和系统服务之间进行简单的数据传递,或者存放部分中间数据<br>  相当于多个服务之间的共享内存,我们可以”使用共享内存来通信”</p>
+</li>
+<li><p>为高读写要求的场景提供数据存储，解决性能问题  例如: 热点数据缓存&#x2F;流量控制(漏桶和令牌桶)</p>
+<p>  redis由于是一个内存数据库,读写速度执行非常的快<br>  在一个最低配的的阿里云机器上可以达到8w&#x2F;s的ops,非常适合用来处理一些对读写性能要求极高的场景<br>  比如:部分热点商品数据,秒杀活动,流量控制等</p>
+</li>
+<li><p>其他可以利用redis特性的场景，解决业务问题    例如: 搜索&#x2F;bitmap&#x2F;数据匹配&#x2F;消息队列&#x2F;发布订阅</p>
+<p>  redis内部还有很多的特殊机制实现了比较丰富的功能, 如:发布订阅.<br>  我们也可以利用redis的一写数据结构特性来构建倒排索引,以实现简单的搜索功能<br>  也可以利用list的数据结构的特性实现简单的消息队列</p>
+</li>
+</ul>
+<h1 id="Redis的读写流程"><a href="#Redis的读写流程" class="headerlink" title="Redis的读写流程"></a>Redis的读写流程</h1><ul>
+<li>通信协议RESP</li>
+</ul>
+<p>RESP协议在Redis 1.2中引入，但它成为与Redis 2.0中的Redis服务器通信的标准方式。 这是每一个Redis客户端中应该实现的协议。</p>
+<p>RESP实际上是一个支持以下数据类型的序列化协议：单行字符串，错误信息，整型，多行字符串和数组。<br>RESP在Redis中用作请求 - 响应协议的方式如下：</p>
+<p>客户端将命令作为字符串数组发送到Redis服务器。<br>服务器根据命令实现回复一种RESP类型数据。<br>在 RESP 中, 一些数据的类型通过它的第一个字节进行判断：</p>
+<p>单行回复：回复的第一个字节是 “+”</p>
+<p>错误信息：回复的第一个字节是 “-“</p>
+<p>整形数字：回复的第一个字节是 “:”</p>
+<p>多行字符串：回复的第一个字节是 “$”</p>
+<p>数组：回复的第一个字节是 “*”</p>
+<p>此外，RESP能够使用稍后指定的Bulk Strings或Array的特殊变体来表示Null值。<br>在RESP中，协议的不同部分始终以“\ r \ n”（CRLF）结束。</p>
+<ul>
+<li>读写过程</li>
+</ul>
+<p>Redis的读过程可以简化为:</p>
+<ol>
+<li>client客户端通过socket发请求</li>
+<li>server端监听服务端口, 收到请求, 解析协议, 查找命令表</li>
+<li>server端进行数据操作, 更新数据状态</li>
+<li>server端返回数据或信息, client端接受并解析</li>
+</ol>
+<p>其中细节颇多, 值得注意的就是 server端内部会进行很多检查工作</p>
+<p>比如: 检查键的订阅者, 是否有监听者(monitor), hash负载因子如何, 是否需要rehash, 主从同步等信息 </p>
+<p>Redis在集群模式下, 会把<code>key</code>根据hash映射到 <code>16384</code>个槽其中的一个, 再根据槽所在的节点对客户端操作进行应答</p>
+<p>如果该<code>key</code>所在槽不归本节点维护, 服务器会返回<code>moved</code>错误</p>
+<p>而且cluster模式下不能使用Redis的pipeline功能, 除非你能保证pipeline操作的所有key都在同一节点上</p>
+<h1 id="Redis的特色功能"><a href="#Redis的特色功能" class="headerlink" title="Redis的特色功能"></a>Redis的特色功能</h1><ol>
+<li>Redis的持久化</li>
+</ol>
+<p>redis有别于memcache的一个区别就是redis支持数据持久化,redis可以通过采用一定的策略将内存中的数据持久化到本地磁盘上面</p>
+<p>这么做不仅有利于数据的完整性和可用性, 同时也可以在服务器重启或者迁移过程中实现方便的数据恢复,一般来说如果设置了合理的持久化策略,就算是服务进程出了问题只要重启服务,并不会丢失太多的数据</p>
+<p>redis的持久化相关的主要有以下几点:</p>
+<ol>
+<li>RDB: 基于内存状态的持久化操作</li>
+<li>AOF: 基于命令操作的持久化操作</li>
+<li>AOF重写: 基于内存的持久化(命令格式)</li>
+</ol>
+<p><strong>RDB</strong></p>
+<p>RDB:持久化相当于对当前的数据库状态进行一次快照备份, 是将当前的内存数据库中的数据进行序列化保存到本地的操作, 如果数据库使用量比较大,在持久化的时候可能会对性能造成比较大的影响,可以使用命令 <code>save</code>(在主进程执行持久化,会造成主进程阻塞) 或 <code>bgsave</code>(创建一个子进程来执行持久化,不会阻塞主进程,但是执行时会消耗大量的内存)来执行RDB持久化</p>
+<p><strong>AOF</strong></p>
+<p>AOF(append only file): AOF持久化是对redis的命令进行记录,恢复时按照命令重新执行一遍,以恢复数据库状态的持久化形式,有点类似于GFS里面的基于日志的恢复机制. AOF持久化对性能影响没有RDB那么大,每当redis执行一个命令,redis会根据AOF持久化的设置规则判断是否进行持久化,AOF可以根据命令执行时间和频率来执行持久化策略,比如: 3s执行100个命令则进行持久化,每个命令都持久化等</p>
+<p><strong>Rewrite AOF</strong></p>
+<p>AOF重写: 但是AOF也有一些缺点,有可能造成AOF文件非常的大,举个例子: 我先设置键a为10(set a 10),然后设置键a为5(set a 5),重新设置键a为10(set a 10), 这三条命令执行以后最终的数据状态中的表现结果是a&#x3D;10,但是在AOF文件中会有3条命令.如果某个键的变动频率非常的高,就会消耗还多的数据命令来记录数据的变化,比如计数器. </p>
+<p>redis提供了AOF重写功能来解决这种情况, AOF重写是对当前的内存数据库状态进行命令反向解析,比如,上面的例子,在进行AOF重写的时候,redis看到数据库中的键a的值是10 ,会反向生成一条命令 set a 10,将该命令写到重写文件中,这样就能有效的减小AOF文件的体积</p>
+<ol>
+<li><p>事务</p>
+<pre><code> redis中的事务基于链表实现,跟普通的数据库事务不同的是,redis的事务不支持回滚数据,执行失败了也不会进行通知
+ redis在的事务其实相当于使用一个pipeline 将一系列的操作一起打包发给redisServer来执行
+</code></pre>
+</li>
+<li><p>发布订阅</p>
+<pre><code> redis的发布订阅也是基于链表实现,redis的订阅相当于将某个客户端加入到订阅该模式的链表中,redis在执行发布消息的时候会沿着链表去检查所有订阅了符合该模式的所有客户端,将消息发送给他们.
+</code></pre>
+</li>
+<li><p>监控(monitor)</p>
+<pre><code> 监控功能也是基于链表实现,redis的监视器是一种特殊的redis客户端,服务器会在执行命令时候,将命令同时发送给所有监视器列表上面的客户端
+</code></pre>
+</li>
+<li><p>哨兵(sentinal)</p>
+<pre><code> redis哨兵是官方的集群方案出来之前的一种分布式解决方案,哨兵可以监控服务器,并在服务器出问题时候采用选举策略将从服务器省纪委主服务器保证服务稳定
+</code></pre>
+</li>
+<li><p>排序(内部实现)</p>
+<pre><code> redis的内部排序主要对set,sort set,list这三个数据结构起作用,旨在让用户可以用过自定义的方式对内部数据进行排序
+</code></pre>
+</li>
+</ol>
+<h1 id="redis-Representation"><a href="#redis-Representation" class="headerlink" title="redis Representation"></a>redis Representation</h1><p>这里做了一个简单的redis的脑图, 着重描述了一下内部的基本数据结构的关系</p>
+<p><img src="https://i.loli.net/2020/05/09/BKtdElZifANIg8c.png" alt="redis.png"></p>
+<p>百度脑图地址:<br><a target="_blank" rel="noopener" href="http://naotu.baidu.com/file/ee2d1316a2eb6b2d4fc5b0c876c50685?token=cb284164f0989037">http://naotu.baidu.com/file/ee2d1316a2eb6b2d4fc5b0c876c50685?token=cb284164f0989037</a></p>
+<h1 id="Redis集群"><a href="#Redis集群" class="headerlink" title="Redis集群"></a>Redis集群</h1><p>redis的常见高可用部署方案</p>
+<ul>
+<li>keepalived(基于VRRP协议)</li>
+<li>哨兵(sentinal)</li>
+<li>集群(cluster): redis3.0之后提供，同时也是个人比较建议的方案</li>
+<li>其他第三方方案</li>
+</ul>
+<p>其中各种方案各有优点, 我们使用的是redis的官方cluster方案</p>
+<p><strong>集群使用中的一些坑</strong></p>
+<ol>
+<li>主从切换,故障转移</li>
+</ol>
+<p>redis的主服务器出问题以后,从服务器会顶替主服务器对外提供副服务,但是如果客户端没有对集群中的主节点配置进行更新, 会导致客户端和服务器主节点配置对应不上,从而导致redis操作失败,部分redis客户端支持集群模式,可以自动判断当前集群的主节点,从而自动进行配置调整</p>
+<ol start="2">
+<li>分片导致的数据分布问题</li>
+</ol>
+<p>redis内部采用16384个槽来对存储的数据进行分配,数据分配到槽上面,槽分配到节点机器上面.但是这样也而导致在进行部分数据操作的时候会出现问题</p>
+<p><strong>故障转移</strong></p>
+<p>主节点挂掉之后,怎么自动修改配置,使服务正常?</p>
+<p>3个思路:</p>
+<ol>
+<li>后台定时检查,修改配置或将配置放入zk等,实例化客户端的时候从zk中实时获取配置信息</li>
+<li>客户端程序执行redis命令失败时,进行消息通知,检查当前的节点配置,修改配置 </li>
+<li>每次redis对象实例化之后检查集群状态,程序中动态修改配置</li>
+</ol>
+<p>以上思路都需要使用<code>cluster node</code>命令从集群中获取当前节点信息,解析出来当前的集群主节点,区别就是修改配置的方式和时间点不同</p>
+<ol>
+<li><p>使用<code>cluster info</code> 命令检查集群状态</p>
+<p>cluster info返回信息如下(redis3.2):</p>
+</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">cluster_state</span>:ok</span><br><span class="line"><span class="attr">cluster_slots_assigned</span>:<span class="number">16384</span></span><br><span class="line"><span class="attr">cluster_slots_ok</span>:<span class="number">16384</span></span><br><span class="line"><span class="attr">cluster_slots_pfail</span>:<span class="number">0</span></span><br><span class="line"><span class="attr">cluster_slots_fail</span>:<span class="number">0</span></span><br><span class="line"><span class="attr">cluster_known_nodes</span>:<span class="number">6</span></span><br><span class="line"><span class="attr">cluster_size</span>:<span class="number">3</span></span><br><span class="line"><span class="attr">cluster_current_epoch</span>:<span class="number">9</span></span><br><span class="line"><span class="attr">cluster_my_epoch</span>:<span class="number">8</span></span><br><span class="line"><span class="attr">cluster_stats_messages_sent</span>:<span class="number">8625814</span></span><br><span class="line"><span class="attr">cluster_stats_messages_received</span>:<span class="number">8601220</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>使用<code>cluster nodes</code> 命令检查集群节点的状态</p>
+<p>cluster nodes返回信息如下:</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">634f54bcec482a1a048f2604793c06acd47c93c6 10.113.1.231:7001 slave c1eecd493eee0644a76bb9e691b6d13a31b25628 0 1510321448626 6 connected</span><br><span class="line">1ed54647073d60118a35df253e9b04459cc30e49 10.113.2.82:7001 slave c464639a33800da984875866391a549647af4a5a 0 1510321447623 3 connected</span><br><span class="line">01334b7a5802032461966cc382b2f97f004ab027 10.113.2.82:7000 myself,master - 0 0 1 connected 0-5460</span><br><span class="line">c1eecd493eee0644a76bb9e691b6d13a31b25628 10.113.1.231:7000 master - 0 1510321446623 5 connected 10923-16383</span><br><span class="line">c464639a33800da984875866391a549647af4a5a 10.113.1.42:7000 master - 0 1510321445622 3 connected 5461-10922</span><br><span class="line">98b58ef327f872dec466761cabae23bad74622db 10.113.1.42:7001 slave 01334b7a5802032461966cc382b2f97f004ab027 0 1510321450631 4 connected</span><br></pre></td></tr></table></figure>
+
+<p>其他问题:</p>
+<pre><code>1. 多主节点的槽分配导致的无法对复杂数据结构(例如hash)进行重命名操作
+2. pipeline的使用受节点限制
+</code></pre>
+<h1 id="数据对象和底层数据结构"><a href="#数据对象和底层数据结构" class="headerlink" title="数据对象和底层数据结构"></a>数据对象和底层数据结构</h1><p><strong>redis基本数据对象在我们自己项目中的使用</strong></p>
+<p>redis提供了多种基本的数据对象,已经能满足我们的大部分业务需求</p>
+<p>以下是各种数据结构在我们业务中的使用示例</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">str</span>:  适用于简单存储(临时标记,计数器等)          </span><br><span class="line"><span class="attr">list</span>: 适用于线性存储和类似场景(简单线性容器,vector,简单的消息队列)</span><br><span class="line"><span class="attr">hash</span>: 适用于对象存储(产品池,产品信息)</span><br><span class="line"><span class="attr">set</span>:  适用于需要进行集合运算的场景(行政区服务,A和B都喜欢的产品,倒排索引等)</span><br><span class="line"><span class="attr">zset</span>: 适用于有排序需求的场景(<span class="number">360</span>凤舞系统,消息系统中的优先级实现)</span><br><span class="line"><span class="attr">stream</span>:  流式对象, 类似于kafka中的topic  (<span class="number">5.0</span>新增)</span><br></pre></td></tr></table></figure>
+
+<p>其他一些不建议的数据对象使用方法:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> 使用str存储json对象</span><br><span class="line">	如: <span class="attr">a</span>:&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;xiaohua&quot;</span>,<span class="string">&quot;age&quot;</span>:<span class="number">8</span>&#125;,像这种可以使用hash来存储</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span> 过度使用有序集合</span><br><span class="line">	集合和有序集合和list在部分特性上面比较类似,很多人时候问题都可以使用list替代而不必要使用集合,因为有序集合底层使用的跳跃表,性能方面比简单的列表稍微差点,但是集合和有序集合都可以方便的使用集合操作,交/并/差集等</span><br></pre></td></tr></table></figure>
+<p><strong>redis中的数据库键空间</strong></p>
+<p><img src="https://i.loli.net/2020/05/09/deSBNkvgwpaE2tK.jpg" alt="IMG_0255.jpeg"></p>
+<p><strong>数据对象和底层实现的数据结构对应关系</strong></p>
+<p>Redis数据对象的内部复杂实现，其实是针对2个不同场景， 省内存和常规使用</p>
+<table>
+<thead>
+<tr>
+<th align="left">对象</th>
+<th align="left">省内存</th>
+<th align="left">常规</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">str</td>
+<td align="left">int&#x2F;embstr</td>
+<td align="left">row</td>
+</tr>
+<tr>
+<td align="left">list</td>
+<td align="left">ziplist(quicklist)</td>
+<td align="left">linkedlist(quicklist)</td>
+</tr>
+<tr>
+<td align="left">hash</td>
+<td align="left">ziplist</td>
+<td align="left">hashtable</td>
+</tr>
+<tr>
+<td align="left">set</td>
+<td align="left">intset</td>
+<td align="left">hashtable</td>
+</tr>
+<tr>
+<td align="left">zset</td>
+<td align="left">ziplist</td>
+<td align="left">skiplist</td>
+</tr>
+</tbody></table>
+<p>redis在3.2之后使用quicklist替代了linkedlist作为列表对象的底层实现</p>
+<blockquote>
+<p>ps: 我还另外写过两篇稍微详细点的关于redis数据结构(<a href="https://leriou.github.io/post-redis-data-structure/">https://leriou.github.io/post-redis-data-structure/</a>)和数据对象的文章(<a href="https://leriou.github.io/post-redis-object/">https://leriou.github.io/post-redis-object/</a>)</p>
+</blockquote>
+<h1 id="生产问题实例"><a href="#生产问题实例" class="headerlink" title="生产问题实例"></a>生产问题实例</h1><ol>
+<li>使用redis注册器起到类似分布式锁的作用</li>
+</ol>
+<p>一个曾经的小问题,一段伪代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">flag = get(redis_key)?redis_key:<span class="number">0</span></span><br><span class="line">res = DB.op(select * from table where id &gt; flag)</span><br><span class="line"><span class="keyword">while</span>(res) &#123;</span><br><span class="line">	foreach(a in res) &#123;</span><br><span class="line">		<span class="keyword">do</span>(a)</span><br><span class="line">	&#125;</span><br><span class="line">	write(redis_key,flag)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>潜在的问题: 不支持多线程并发, 任务不能多线程同时进行</p>
+<p>解决方案:   借用redis作为注册器,实现类似乐观锁的机制</p>
+<p>具体方案:  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">redis中存储正在进行的处理进程:</span><br><span class="line">[<span class="number">2000</span>:<span class="number">1505290677</span>,<span class="number">3000</span>:<span class="number">1505287997</span>,<span class="number">5000</span>:<span class="number">1505287993</span>,<span class="number">6000</span>:<span class="number">1505287892</span>,<span class="number">8000</span>:<span class="number">1505287844</span>]</span><br><span class="line">流程:</span><br><span class="line"><span class="number">1.</span> 从注册器根据过期时间和处理范围获取当前应该处理的flag的值</span><br><span class="line"><span class="number">2.</span> 将自己的当前处理进度存入注册器列表,处理数据</span><br><span class="line"><span class="number">3.</span> 处理结束移除注册器中自己注册的进度和范围</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>以上这个程序的核心思想可以用以下流程来描述:</p>
+<ol>
+<li><p>第一步: 正常的数据处理流程   </p>
+<p>第一个进程来到向注册器索要自己处理的数据起始值,注册器发现当前没有进程在进行,<br>并且没有flag标记(程序处理到哪里了),给出起始值0,<br>并在注册器记录里面记录0:1505287993,意思是有程序正在执行从0开始的数据,<br>进程取1000条数据,将待处理的最大的数据的id设为flag &#x3D; 1006,<br>处理完毕将删除注册器中的0:1505287993记录;</p>
+</li>
+<li><p>第二步: 有其他进程在执行时候的情况   </p>
+<p>然后第二个程序来执行的时候向注册器索要可以执行的起始值,<br>注册器查看记录发现0:1505287997并且时间没有过期,<br>说明0其实的数据已经有人在处理,并且没有过期的注册信息,<br>于是发放当前的flag给第二个程序,并想注册期记录1006:1505287997,<br>第二个程序取数据1000条,假设ID范围为1006-2390,将处理标记标记为flag &#x3D; 2390,<br>处理完毕删除注册其中的自己的处理进度记录1006:1505287997;</p>
+</li>
+<li><p>第三步: 针对有部分进程断掉的情况   </p>
+<p> 如果第一个程序中间断掉,<br> 则不能删除自己的处理进度记录0:1505287993,<br> 此时新的程序向注册器索要起始值时,<br> 注册器会发送当前过期的(过期表示处理该记录的程序处理中断了)的程序起始值0,<br> 并标记当前处理的程序是二次处理,<br> 二次处理的程序不会更新flag,<br> 处理完毕删除自己的处理记录</p>
+</li>
+</ol>
+<blockquote>
+<p>ps: 整个流程有点类似于常见的”锁”的概念</p>
+</blockquote>
+<p><strong>缺点</strong></p>
+<p>这个处理方案有个缺点, 要求数据的处理操作是<code>幂等</code>的,也就是无论操作多少次,操作结果都是一样的,或者不具有累加效应</p>
+<p>查询操作就是最常见的<code>幂等操作</code></p>
+<p><strong>流程图</strong></p>
+<p>具体流程图:</p>
+<p><img src="https://i.loli.net/2020/05/09/xpNhU9XPYFn4OcA.png" alt="flow1.png"></p>
+<ol start="2">
+<li>使用redis解决超高并发</li>
+</ol>
+<p><strong>使用redis的bitmap，hyperloglog等数据结构</strong></p>
+<p>redis的Bitmap非常适合用来做一些数据量大，id分布紧凑，且值类型为bool型的数据的存储， 比如用户标签</p>
+<p>hyperloglog也适合用来进行用户访问量统计，视频播放统计等大数据量的统计工作</p>
+<p><strong>其他应用</strong></p>
+<p>我们也可以使用redis的集合来构建倒排索引以实现搜索功能</p>
+<p>也能使用redis的发布订阅来实现简单的消息通知系统(不过redis的发布订阅缺点很明显，不建议使用)</p>
+<p>或者使用redis的有序集合统计同时在线用户数</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%88%86%E4%BA%AB"><span class="toc-number">1.</span> <span class="toc-text">redis分享</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis%E5%9F%BA%E7%A1%80"><span class="toc-number">2.</span> <span class="toc-text">redis基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E7%9A%84%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">Redis的读写流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E7%9A%84%E7%89%B9%E8%89%B2%E5%8A%9F%E8%83%BD"><span class="toc-number">4.</span> <span class="toc-text">Redis的特色功能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis-Representation"><span class="toc-number">5.</span> <span class="toc-text">redis Representation</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4"><span class="toc-number">6.</span> <span class="toc-text">Redis集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AF%B9%E8%B1%A1%E5%92%8C%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">7.</span> <span class="toc-text">数据对象和底层数据结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E9%97%AE%E9%A2%98%E5%AE%9E%E4%BE%8B"><span class="toc-number">8.</span> <span class="toc-text">生产问题实例</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-10-29-redis-share-in-group/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&text=给团队成员的Redis分享总结"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&is_video=false&description=给团队成员的Redis分享总结"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=给团队成员的Redis分享总结&body=Check out this article: https://leriou.github.io/2017-10-29-redis-share-in-group/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&title=给团队成员的Redis分享总结"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-10-29-redis-share-in-group/&name=给团队成员的Redis分享总结&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-10-29-redis-share-in-group/&t=给团队成员的Redis分享总结"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

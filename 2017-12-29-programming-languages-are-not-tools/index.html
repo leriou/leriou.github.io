@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="原作者： 王垠原文： http:&#x2F;&#x2F;www.yinwang.org&#x2F;blog-cn&#x2F;2013&#x2F;04&#x2F;21&#x2F;programming-languages-are-not-tools 程序语言不是工具在谈论到程序语言的好坏的时候，总是有人说：程序语言只是一种工具。只要你的算法好，不管用什么语言都能写出一样好的程序。在本科第一堂编程课上，我的教授就这么对我们说。可是现在我却发现，这是一个根本错误的说法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序语言不是工具">
+<meta property="og:url" content="https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="原作者： 王垠原文： http:&#x2F;&#x2F;www.yinwang.org&#x2F;blog-cn&#x2F;2013&#x2F;04&#x2F;21&#x2F;programming-languages-are-not-tools 程序语言不是工具在谈论到程序语言的好坏的时候，总是有人说：程序语言只是一种工具。只要你的算法好，不管用什么语言都能写出一样好的程序。在本科第一堂编程课上，我的教授就这么对我们说。可是现在我却发现，这是一个根本错误的说法。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-12-19T02:44:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.896Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="编程语言">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>程序语言不是工具</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2017-12-29-user-tag-sys-on-bitmap/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2017-11-02-distribute-database-share-in-group/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&text=程序语言不是工具"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&is_video=false&description=程序语言不是工具"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=程序语言不是工具&body=Check out this article: https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&name=程序语言不是工具&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&t=程序语言不是工具"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80%E4%B8%8D%E6%98%AF%E5%B7%A5%E5%85%B7"><span class="toc-number">1.</span> <span class="toc-text">程序语言不是工具</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF"><span class="toc-number">1.1.</span> <span class="toc-text">一些基本的错误</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E8%A8%80%E4%B8%8D%E6%98%AF%E5%B7%A5%E5%85%B7%EF%BC%8C%E8%80%8C%E6%98%AF%E6%9D%90%E6%96%99"><span class="toc-number">1.2.</span> <span class="toc-text">语言不是工具，而是材料</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        程序语言不是工具
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-12-19T02:44:00.000Z" itemprop="datePublished">2017-12-19</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag">编程语言</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>原作者： 王垠<br>原文： <a target="_blank" rel="noopener" href="http://www.yinwang.org/blog-cn/2013/04/21/programming-languages-are-not-tools">http://www.yinwang.org/blog-cn/2013/04/21/programming-languages-are-not-tools</a></p>
+<h1 id="程序语言不是工具"><a href="#程序语言不是工具" class="headerlink" title="程序语言不是工具"></a>程序语言不是工具</h1><p>在谈论到程序语言的好坏的时候，总是有人说：程序语言只是一种工具。只要你的算法好，不管用什么语言都能写出一样好的程序。在本科第一堂编程课上，我的教授就这么对我们说。可是现在我却发现，这是一个根本错误的说法。</p>
+<p>我不知道这种说法确切的来源，然而昨天在浏览网页的时候，偶然发现了 C++ 的设计者 Bjarne Stroustrup 的一些类似的说法。这些说法来自于 2007 年 MIT Technology Review 对 Stroustrup 的采访。</p>
+<blockquote>
+<p>问：一个好的语言是什么样的？<br>Stroustrup：所有能帮助人们表达他们的想法的东西都会让语言更好。一个语言在一个好的工匠手里应该能胜任每天的任务。语言是否优美是次要的问题。被认为是丑陋的语言开发出来的有用的系统，比优美的语言开发出来的系统要多得多。</p>
+</blockquote>
+<blockquote>
+<p>问：优雅难道不重要吗？<br>Stroustrup：优雅很重要，可是你如何衡量”优雅”？可以表达问题答案的最少字数？我觉得我们应该看构造出来的应用程序的优雅程度，而不是语言自身的优雅程度。就像你不能把木工的一套复杂的工具（很多是危险的工具）叫做”优雅”一样。但是我的餐桌和椅子却真的很优雅，很美。当然，如果一个语言本身也很美，那当然最好。</p>
+</blockquote>
+<h2 id="一些基本的错误"><a href="#一些基本的错误" class="headerlink" title="一些基本的错误"></a>一些基本的错误</h2><p>对这两个回答，我都不满意，我觉得这只是他对于 C++ 的恶劣设计的借口而已。下面我对其中几个说法进行质疑：</p>
+<p>所有能帮助人们表达他们的想法的东西都会让语言更好。</p>
+<p>作为一个程序语言，并不是好心想”帮助人”就可以说是好的。如果是这样的话，那么我就可以把所有国家的脏话都加到你的语言里面，因为它们可以帮助我们骂人。</p>
+<p>被认为是丑陋的语言开发出来的有用的系统，比优美的语言开发出来的系统要多得多。</p>
+<p>系统的数量再多也不能说明这个语言好。正好相反，众多的系统由于语言的一些设计失误，把人们的生命置于危险之中，这说明了这个语言的危害性之大。一种像炸药一样的语言，用的人越多越是危险。</p>
+<h2 id="语言不是工具，而是材料"><a href="#语言不是工具，而是材料" class="headerlink" title="语言不是工具，而是材料"></a>语言不是工具，而是材料</h2><p>我这篇文章想说的最关键的部分，其实是他所支持的”语言工具论”的错误。</p>
+<p>Stroustrup 说：</p>
+<p>我觉得我们应该看构造出来的应用程序的优雅程度，而不是语言自身的优雅程度。就像你不能把木工的一套复杂的工具（很多是危险的工具）叫做”优雅”一样。但是我的餐桌和椅子却很优雅，很美。</p>
+<p>他的言下之意就是把程序语言比作木工的工具，而餐桌也椅子就是这些工具做出来的产品。比方的威力是很大的，很多人一见到大牛给出这么形象的比方，想都不用想就接受了。如果你不仔细分析的话，这貌似一个恰当的比方，然而经过仔细推敲，这却是错误的比方。这是因为程序语言其实不是一种”工具”，而是一种”材料”。</p>
+<p>木工不会把自己的锯子，墨线等东西放进餐桌和椅子里面，而程序员却需要把语言的代码放到应用程序里面。虽然这些程序经过了编译器的转化，但是程序本身却仍然带有语言的特征。这就像一种木材经过墨线和锯子的加工，仍然是同样的木材。一个 C++ 的程序在编译之后有可能产生内存泄漏和下标越界等低级错误，而更加安全的语言却不会出现这个问题。</p>
+<p>所以在这个比方里面，程序语言所对应的应该是木工所用的木料，钉子和粘胶等”材料”，而不是锯子和墨线等”工具”。这些材料其实随着应用程序一起，到了用户的手里。那么对应木工工具的是什么呢？是 Emacs, vi, Eclipse, Visual Studio 等编程环境，以及各种编译器，调试器，make，界面设计工具，等等。这些真正的”工具”丑一点，真的暂时无所谓。</p>
+<p>现在你还觉得程序语言的优雅程度是次要的问题吗？一个复杂而不安全的语言就像劣质的木料和粘胶。它不但会让餐桌和椅子的美观程度大打折扣，而且会造成它们结构的不牢靠，以至于威胁到用户的生命安全。同时它还可能会造成木工的工作效率低下以及工伤的产生。</p>
+<p>这也许就是为什么我的一个同事说，他看 C++ 代码的时候都会带上 OSHA（美国职业安全与健康管理局）批准的护目镜。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80%E4%B8%8D%E6%98%AF%E5%B7%A5%E5%85%B7"><span class="toc-number">1.</span> <span class="toc-text">程序语言不是工具</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF"><span class="toc-number">1.1.</span> <span class="toc-text">一些基本的错误</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E8%A8%80%E4%B8%8D%E6%98%AF%E5%B7%A5%E5%85%B7%EF%BC%8C%E8%80%8C%E6%98%AF%E6%9D%90%E6%96%99"><span class="toc-number">1.2.</span> <span class="toc-text">语言不是工具，而是材料</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&text=程序语言不是工具"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&is_video=false&description=程序语言不是工具"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=程序语言不是工具&body=Check out this article: https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&title=程序语言不是工具"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&name=程序语言不是工具&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2017-12-29-programming-languages-are-not-tools/&t=程序语言不是工具"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

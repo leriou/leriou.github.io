@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Start这篇文章是写给编程初学者和完全不懂编程的小白的，目的是希望能通过这篇文章, 让大家知道一下游戏大概是怎么工作的，游戏中的画面是怎么显示出来的和游戏程序的大概结构。 下面会找一个github上的h5塔防游戏举例子。这个游戏是我在准备毕业设计时候遇到的，当时好奇就花了点时间研究了一下 游戏的工作流程几乎市面上所有常见游戏都是通过如下循环进行的 123456789-&gt; 游戏启动-&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习游戏程序设计">
+<meta property="og:url" content="https://leriou.github.io/2015-05-05-game-design/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="Start这篇文章是写给编程初学者和完全不懂编程的小白的，目的是希望能通过这篇文章, 让大家知道一下游戏大概是怎么工作的，游戏中的画面是怎么显示出来的和游戏程序的大概结构。 下面会找一个github上的h5塔防游戏举例子。这个游戏是我在准备毕业设计时候遇到的，当时好奇就花了点时间研究了一下 游戏的工作流程几乎市面上所有常见游戏都是通过如下循环进行的 123456789-&gt; 游戏启动-&gt;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-05-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.896Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="游戏">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>学习游戏程序设计</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2015-06-01-simple-git-operation/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2015-01-23-pili-words/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-05-05-game-design/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-05-05-game-design/&text=学习游戏程序设计"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-05-05-game-design/&is_video=false&description=学习游戏程序设计"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习游戏程序设计&body=Check out this article: https://leriou.github.io/2015-05-05-game-design/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-05-05-game-design/&name=学习游戏程序设计&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-05-05-game-design/&t=学习游戏程序设计"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.</span> <span class="toc-text">Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">游戏的工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%94%BB%E9%9D%A2%E7%9A%84%E6%98%BE%E7%A4%BA"><span class="toc-number">1.2.</span> <span class="toc-text">游戏画面的显示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%9A%84%E9%80%9A%E7%94%A8%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">游戏的通用结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TF%E6%B8%B8%E6%88%8F"><span class="toc-number">1.4.</span> <span class="toc-text">TF游戏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E5%9C%B0%E5%9D%80"><span class="toc-number">2.</span> <span class="toc-text">游戏地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TF%E4%B8%AD%E7%9A%84%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">3.</span> <span class="toc-text">TF中的主循环做的事情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TF%E6%B8%B8%E6%88%8F%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">TF游戏中的各种子系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%AF%B9%E8%B1%A1%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.1.</span> <span class="toc-text">基本对象系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.2.</span> <span class="toc-text">事件系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E5%BC%95%E6%93%8E"><span class="toc-number">4.3.</span> <span class="toc-text">渲染引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%BC%95%E6%93%8E"><span class="toc-number">4.4.</span> <span class="toc-text">物理引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9F%B3%E9%A2%91-x2F-%E8%A7%86%E9%A2%91%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.5.</span> <span class="toc-text">音频&#x2F;视频系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.6.</span> <span class="toc-text">资源系统</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        学习游戏程序设计
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2015-05-04T16:00:00.000Z" itemprop="datePublished">2015-05-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BC%96%E7%A8%8B/">计算机编程</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%B8%B8%E6%88%8F/" rel="tag">游戏</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="Start"><a href="#Start" class="headerlink" title="Start"></a>Start</h2><p>这篇文章是写给编程初学者和完全不懂编程的小白的，目的是希望能通过这篇文章, 让大家知道一下游戏大概是怎么工作的，游戏中的画面是怎么显示出来的和游戏程序的大概结构。</p>
+<p>下面会找一个github上的h5塔防游戏举例子。这个游戏是我在准备毕业设计时候遇到的，当时好奇就花了点时间研究了一下</p>
+<h3 id="游戏的工作流程"><a href="#游戏的工作流程" class="headerlink" title="游戏的工作流程"></a>游戏的工作流程</h3><p>几乎市面上所有常见游戏都是通过如下循环进行的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">游戏启动</span></span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">根据开始参数，给玩家展示一些画面，包括游戏界面，控制界面等</span></span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">然后持续获取玩家的反馈动作</span> </span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">根据玩家的操作，对游戏画面进行更新, 显示游戏画面</span> </span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">获取玩家反馈动作</span> </span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">继续显示新画面</span></span><br><span class="line">....</span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">玩家退出游戏</span></span><br><span class="line"><span class="meta prompt_">-&gt; </span><span class="language-bash">结束</span></span><br></pre></td></tr></table></figure>
+
+<p>所谓的玩游戏的过程也就是游戏通过设备(键盘, 鼠标, 屏幕触控, 话筒)等形式获取到玩家反馈数据对游戏进行更新, 不断重复该过程, 直到达到游戏结束条件为止</p>
+<h3 id="游戏画面的显示"><a href="#游戏画面的显示" class="headerlink" title="游戏画面的显示"></a>游戏画面的显示</h3><p>我们看到的游戏的画面, 不管多酷炫, 归根到底可以看做一系列的连续播放的图片, 而每张图片我们又可以看做是一个固定分辨率的色彩数组。</p>
+<p>拿 1080*1920 分辨率, 60fps 的某一款游戏来说, 就是1s中给你播放60张1080p的图片给你看，那游戏怎么知道该给你看什么图片呢 ?</p>
+<p>图片的内容可以看成是一个 <code>1080(宽) * 1920(长) * 4(RGBA) </code>的数组, 只要把这个数组发送给显卡, 显卡就知道应该怎么显示, (为什么要用一维数组是因为基于性能考虑，一位数组的处理效率比高维数组要高)。</p>
+<p>游戏渲染的过程, 可以看做是根据用户反馈计算这一些列需要显示的数组的过程</p>
+<h3 id="游戏的通用结构"><a href="#游戏的通用结构" class="headerlink" title="游戏的通用结构"></a>游戏的通用结构</h3><p>从结构上说, 任何游戏, 实质上都是一个不断循环的程序, 当画面的处理和输出速度达到人眼视觉暂留的极限时(一般在30fps以上)，人就分不出来是不是真的实时了, 以此来模拟实时的效果, 早期的胶片电影使用的也是类似的原理</p>
+<p>任何游戏理论上都可以套用以下过程, 使用伪代码描述:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">load( config );              <span class="comment">// 加载游戏配置</span></span><br><span class="line"><span class="keyword">while</span>( game_is_running() ) &#123; <span class="comment">// 游戏是否继续进行</span></span><br><span class="line">    get_user_input(); 	     <span class="comment">// 接受用户的输入</span></span><br><span class="line">    do_something();  	     <span class="comment">// 根据用户输入处理数据处理</span></span><br><span class="line">    check_stop();		     <span class="comment">// 查看是否满足结束条件</span></span><br><span class="line">    render();			     <span class="comment">// 渲染页面,渲染一次就是fps</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>游戏的实质就是根据与用户交互, 不断的修改参数对页面进行渲染, 再接受用户输入, 这整个循环称为游戏的主循环。下面我将对一个简单的小塔防游戏进行分析, 来说明一下一个简单游戏的内部组成和功能实现</p>
+<h3 id="TF游戏"><a href="#TF游戏" class="headerlink" title="TF游戏"></a>TF游戏</h3><blockquote>
+<p>ps: TF只是一个游戏名字 </p>
+</blockquote>
+<h2 id="游戏地址"><a href="#游戏地址" class="headerlink" title="游戏地址"></a>游戏地址</h2><p>游戏地址: <a target="_blank" rel="noopener" href="https://github.com/oldj/html5-tower-defense">https://github.com/oldj/html5-tower-defense</a></p>
+<h2 id="TF中的主循环做的事情"><a href="#TF中的主循环做的事情" class="headerlink" title="TF中的主循环做的事情"></a>TF中的主循环做的事情</h2><p>tf既然也是一个游戏自然就遵循上面所说的基本规则,</p>
+<p>tf游戏中的主要过程如下</p>
+<ol>
+<li>响应用户的点击事件</li>
+<li>根据用户的输入和触发的事件,更新游戏对象数据</li>
+<li>然后根据对象进行渲染</li>
+<li>判断游戏输赢(是否达到结束条件)</li>
+</ol>
+<h2 id="TF游戏中的各种子系统"><a href="#TF游戏中的各种子系统" class="headerlink" title="TF游戏中的各种子系统"></a>TF游戏中的各种子系统</h2><p>tf游戏虽小,但是却也是一个比较完善的游戏, 内部也是有许多的子系统构成</p>
+<h3 id="基本对象系统"><a href="#基本对象系统" class="headerlink" title="基本对象系统"></a>基本对象系统</h3><p>对象系统是tf的基础, 游戏中的所有会运动的怪物, 炮塔, 甚至包括文字, 按钮 都是对象系统的成员。但是,这些对象又具有一定的层级关系，游戏中的所有对象可以根据继承关系形成一个树状结构，之所以要建立对象系统是为了更好地以面向对象的形式来构建游戏，这种开发方式有助于降低开发难度。</p>
+<p>基本的对象系统是承载游戏数据的主要对象，各种游戏参数基本都表现为各种对象的各种属性，对象系统对上层的渲染系统提供渲染参数, 可以通过渲染系统把当前游戏运行状态可视化的显示出来。</p>
+<h3 id="事件系统"><a href="#事件系统" class="headerlink" title="事件系统"></a>事件系统</h3><p>事件系统是用户和游戏系统进行交互的窗口, 用户的所有操作都作为事件的形式被游戏所捕获。事件系统的功能主要是:收集用户的输入,提供事件来触发对数据的处理,实时的更新对象的数据。</p>
+<p>事件系统是控制游戏进程和与用户交互的重要通道，事件系统在游戏中起到触发器的作用, 告诉游戏中的对象,什么时候用户做了什么事情,你们需要做些什么。一般来说事件系统会用一个具有优先级的队列来实现</p>
+<h3 id="渲染引擎"><a href="#渲染引擎" class="headerlink" title="渲染引擎"></a>渲染引擎</h3><p>tf中的渲染系统主要负责根据对象参数渲染对象的UI效果</p>
+<p>画面中看到的小怪物,子弹, 文字, 建筑都是渲染系统来负责</p>
+<p>因为tf中没有用到图片,所有怪物和防御设施都是使用canvas绘制出来的, tf中的渲染系统承担的工作要更重一些</p>
+<p>渲染系统是游戏的核心功能之一</p>
+<p>渲染程序的运行依赖于当前游戏中的各种对象和参数状态</p>
+<p>用户的某种动作触发了事件之后,对应的对象的参数和状态会进行重新计算</p>
+<p>新的对象需要有渲染引擎来进行绘图和显示</p>
+<p>渲染系统是游戏内部状态的展示窗口, 核心功能是讲当前游戏内部状态以友好的方式呈现给用户</p>
+<h3 id="物理引擎"><a href="#物理引擎" class="headerlink" title="物理引擎"></a>物理引擎</h3><p>物理引擎在游戏中主要充当工具箱的作用, 属于渲染系统中的基础组件</p>
+<p>主要的功能像<code>寻路算法</code>, <code>碰撞检测</code>等都属于物理引擎的范畴</p>
+<p>物理引擎可以赋予对象真实世界物体的各种效果</p>
+<p>负责计算渲染系统需要的各种描述状态的参数数据</p>
+<p>物理引擎是我们衡量一个游戏等级的重要依据</p>
+<p>目前还没有游戏能实现完整的模拟现实世界的物理引擎</p>
+<p>更加复杂的化学引擎也目前没人能实现</p>
+<p>理想的游戏引擎是能按照现实世界的各种粒子特性</p>
+<p>原子级的模拟整个现实世界,但是这在未来数百年显然是不可能的</p>
+<h3 id="音频-x2F-视频系统"><a href="#音频-x2F-视频系统" class="headerlink" title="音频&#x2F;视频系统"></a>音频&#x2F;视频系统</h3><p>其他大型游戏一般还有会有音频和视频系统来增强用户的游戏体验</p>
+<p>不过这个游戏并没有包含这一部分</p>
+<h3 id="资源系统"><a href="#资源系统" class="headerlink" title="资源系统"></a>资源系统</h3><p>大型游戏中的<code>音频</code>,<code>视频</code>,<code>文件</code>,<code>内存</code>,<code>I/0设备</code>等资源都需要进行管理</p>
+<p>一般会自己实现一套资源管理机制</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Start"><span class="toc-number">1.</span> <span class="toc-text">Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">游戏的工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%94%BB%E9%9D%A2%E7%9A%84%E6%98%BE%E7%A4%BA"><span class="toc-number">1.2.</span> <span class="toc-text">游戏画面的显示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%9A%84%E9%80%9A%E7%94%A8%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">游戏的通用结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TF%E6%B8%B8%E6%88%8F"><span class="toc-number">1.4.</span> <span class="toc-text">TF游戏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E5%9C%B0%E5%9D%80"><span class="toc-number">2.</span> <span class="toc-text">游戏地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TF%E4%B8%AD%E7%9A%84%E4%B8%BB%E5%BE%AA%E7%8E%AF%E5%81%9A%E7%9A%84%E4%BA%8B%E6%83%85"><span class="toc-number">3.</span> <span class="toc-text">TF中的主循环做的事情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TF%E6%B8%B8%E6%88%8F%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">TF游戏中的各种子系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%AF%B9%E8%B1%A1%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.1.</span> <span class="toc-text">基本对象系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.2.</span> <span class="toc-text">事件系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E5%BC%95%E6%93%8E"><span class="toc-number">4.3.</span> <span class="toc-text">渲染引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%BC%95%E6%93%8E"><span class="toc-number">4.4.</span> <span class="toc-text">物理引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9F%B3%E9%A2%91-x2F-%E8%A7%86%E9%A2%91%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.5.</span> <span class="toc-text">音频&#x2F;视频系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.6.</span> <span class="toc-text">资源系统</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2015-05-05-game-design/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2015-05-05-game-design/&text=学习游戏程序设计"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2015-05-05-game-design/&is_video=false&description=学习游戏程序设计"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=学习游戏程序设计&body=Check out this article: https://leriou.github.io/2015-05-05-game-design/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2015-05-05-game-design/&title=学习游戏程序设计"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2015-05-05-game-design/&name=学习游戏程序设计&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2015-05-05-game-design/&t=学习游戏程序设计"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

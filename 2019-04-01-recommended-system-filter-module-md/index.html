@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="背景所有的推荐系统都有一个基本的要求：不给用户推荐重复的信息 这里的重复的信息有两层含义    这个信息是id完全相同的一条信息 这个很好理解，就是一模一样的两条信息，从数据库的角度将就是信息记录的主键id都相同 如果用户已经接受过一次id为10086的信息的推荐，那这个10086就不能出现在后续的同类推荐中  这两个个信息相似度很高，但是id不同 这种情况出现于两条信息内容相似，比如有两篇文章1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何设计一个海量数据过滤模块">
+<meta property="og:url" content="https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="背景所有的推荐系统都有一个基本的要求：不给用户推荐重复的信息 这里的重复的信息有两层含义    这个信息是id完全相同的一条信息 这个很好理解，就是一模一样的两条信息，从数据库的角度将就是信息记录的主键id都相同 如果用户已经接受过一次id为10086的信息的推荐，那这个10086就不能出现在后续的同类推荐中  这两个个信息相似度很高，但是id不同 这种情况出现于两条信息内容相似，比如有两篇文章1">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-03-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.891Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="推荐系统">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>如何设计一个海量数据过滤模块</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019-06-01-recommended-system-ranking-system-md/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019-01-09-mongodb-compareto-elasticsearch/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&text=如何设计一个海量数据过滤模块"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&is_video=false&description=如何设计一个海量数据过滤模块"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何设计一个海量数据过滤模块&body=Check out this article: https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&name=如何设计一个海量数据过滤模块&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&t=如何设计一个海量数据过滤模块"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E5%90%8Cid%E7%9A%84%E8%BF%87%E6%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">处理相同id的过滤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E7%9A%84%E6%96%B9%E6%A1%88"><span class="toc-number">2.1.</span> <span class="toc-text">HashMap的方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">2.1.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">2.1.2.</span> <span class="toc-text">缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bitmap"><span class="toc-number">2.2.</span> <span class="toc-text">Bitmap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="toc-number">2.2.2.</span> <span class="toc-text">缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BloomFilter"><span class="toc-number">2.3.</span> <span class="toc-text">BloomFilter</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E5%88%A4%E7%8E%87%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">2.3.1.</span> <span class="toc-text">误判率的计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%B3%E4%BA%8Ehash-function%E7%9A%84%E6%95%B0%E7%9B%AEk"><span class="toc-number">2.3.2.</span> <span class="toc-text">至于hash function的数目k</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9-2"><span class="toc-number">2.3.3.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="toc-number">2.3.4.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E4%BC%BC%E6%96%87%E6%9C%AC%E7%9A%84%E9%87%8D%E5%A4%8D"><span class="toc-number">3.</span> <span class="toc-text">处理相似文本的重复</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#simhash"><span class="toc-number">3.1.</span> <span class="toc-text">simhash</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        如何设计一个海量数据过滤模块
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-31T16:00:00.000Z" itemprop="datePublished">2019-04-01</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" rel="tag">推荐系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>所有的推荐系统都有一个基本的要求：<code>不给用户推荐重复的信息</code></p>
+<p>这里的重复的信息有两层含义  </p>
+<ol>
+<li><p>这个信息是id完全相同的一条信息<br> 这个很好理解，就是一模一样的两条信息，从数据库的角度将就是信息记录的主键id都相同<br> 如果用户已经接受过一次id为10086的信息的推荐，那这个10086就不能出现在后续的同类推荐中</p>
+</li>
+<li><p>这两个个信息相似度很高，但是id不同<br> 这种情况出现于两条信息内容相似，比如有两篇文章10001，10002都在说特朗普要在美国边境造墙的事情<br> 那如果用户观看过10001，此时再给用户推荐10002，就可能会让用户觉得推荐的东西已经看到过了，毫无意义</p>
+</li>
+</ol>
+<h1 id="处理相同id的过滤"><a href="#处理相同id的过滤" class="headerlink" title="处理相同id的过滤"></a>处理相同id的过滤</h1><p>我们的目的是给定一个id, 和一个已推荐集合，判断id是否在给定的集合以内</p>
+<h2 id="HashMap的方案"><a href="#HashMap的方案" class="headerlink" title="HashMap的方案"></a>HashMap的方案</h2><p>如果集合数据量比较少的情况下，我们可以使用Java中的<code>HashSet</code>存储集合， 使用contains来直接判断id是否在给定集合中，其他编程语言中也都有类似<code>HashSet</code>的数据结构</p>
+<p>由于<code>HashSet</code>的底层原理是使用的<code>HashMap</code>， 所以我直接使用 <code>HashMap</code>来进行原理的说明</p>
+<p>这种做法的原理其实是先将我们要查找的数据进行hash散列，映射到一个固定长度的地址空间<br>然后使用数组存储，如果有多个id经过hash映射到相同的地址空间那就做一个链表，存储相同hashcode对应的值   </p>
+<p>具体结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">|0|1009|0|1008|1998|          // hash数组槽</span><br><span class="line">    ↓           ↓     </span><br><span class="line">   107          87            // 槽内的指针对应的数据</span><br><span class="line">    ↓            </span><br><span class="line">   16</span><br></pre></td></tr></table></figure>
+
+<p>当我们查找id时， 也是先将要查找的id进行hash, 然后去对应的hashcode位置沿着链表&#x2F;红黑树寻找是否有要查找的数字</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>使用简单，性能好，比较通用</li>
+<li>容易理解，无误判</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>空间利用率太低</li>
+</ol>
+<h2 id="Bitmap"><a href="#Bitmap" class="headerlink" title="Bitmap"></a>Bitmap</h2><p>考虑到<code>HashMap</code>的空间利用率太低，不适合海量数据的存储，我们可以利用计算机存储的一些特性，用另外一种方式来。</p>
+<p>我们都知道计算机底层是用bit来存储信息的，每个bit能存储一个0或者1的信息，如果我们使用二进制bit的位置信息来表示数字，对应位的bit值是1来代表这个数字存在，我们就可以在极小的空间存储大量的信息，使用时只需使用位运算，查看对应位置的bit值即可。</p>
+<p>Java中的bitset，redis中的bit操作都提供了这种bitmap的实现，bitmap的详情可以查看 <a href="https://leriou.github.io/2017-12-29-user-tag-sys-on-bitmap/">使用bitmap构建用户标签</a></p>
+<p>如下表示 【6，4，3】的集合，第6，4，3位为1，其他位为0</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bit值     0 1 0 1 1 0 0 0        // 0x01011000</span><br><span class="line">bit位     7 6 5 4 3 2 1 0        </span><br></pre></td></tr></table></figure>
+
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>空间利用率高，性能好，无误判</li>
+</ol>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>不够通用，要求数据的类型必须是数字且元素范围跨度不能太大</li>
+</ol>
+<h2 id="BloomFilter"><a href="#BloomFilter" class="headerlink" title="BloomFilter"></a>BloomFilter</h2><p>bloomfilter跟bitmap具有相似的原理， 都是使用位来存储信息，区别在于</p>
+<p>bitmap使用元素自身数字对应的位置信息来存储数据，如果要存储的元素是个字符串或者其他类型的数据就无法使用这种方式了，或者你要存储的数字范围特别的大，比如你要存储一个100亿的数字， 那样即使只有一个数字你也需要一个前面的位置都是0的100亿bit来表示，对空间的利用率还是不高 (现在有一些空间压缩的bitmap实现能一定程度解决数据范围分布过大和分布稀疏的问题)</p>
+<p>BloomFilter就是针对这些做了优化，如果我们把要处理的数字进行hash, 映射到一个固定长度的地址空间，这样就同时解决了以上两个问题， 即缩减了映射的空间范围，又可以存储更通用的对象。但是由于hash函数本身会有冲突，就会出现两个不同元素因为同样的hashcode而产生误判的情况。</p>
+<p><strong>既如果判定结果是不存在(False)，则一定不存在；但是如果判定结果是存在(True)，则实际情况其实是可能存在，而不是一定存在，即假阳性。</strong></p>
+<h3 id="误判率的计算"><a href="#误判率的计算" class="headerlink" title="误判率的计算"></a>误判率的计算</h3><p>我们假设</p>
+<ul>
+<li>欲插入Bloom Filter中的元素数目: n</li>
+<li>Bloom Filter误判率: P(true)</li>
+<li>BitArray数组的大小: m</li>
+<li>Hash Function的数目: k</li>
+</ul>
+<p>则有误判率：<br>$$P(true) &#x3D; (P^n_1)^k&#x3D;[1-(1-\frac{1}{m})^kn]^k \tag{1}$$<br>即：<br>$$P(true)\approx(1-e^{-\frac{nk}{m}})^k \tag{2}$$<br>也就是说当BitArray数组的大小m增大 或 欲插入Bloom Filter中的元素数目n 减小时，均可以使得误判率P(true)下降</p>
+<h3 id="至于hash-function的数目k"><a href="#至于hash-function的数目k" class="headerlink" title="至于hash function的数目k"></a>至于hash function的数目k</h3><p>$$f(k)&#x3D;(1-e^{-\frac{nk}{m}})^k \tag{3}$$<br>令  $a&#x3D;e^{\frac{nk}{m}}$ ，则有：<br>$$f(k)&#x3D;(1-e^{-1})^k$$<br>分别对上式两边，先取对数，再对k求一次导，可有：<br>$$\frac{1}{f(k)}f(k’)&#x3D;\ln(1-a^{-k})+\frac{ka^{-k} \ln a}{1-a^{-k}}$$<br>易知，当k取极值点时，有 $f(k)’&#x3D;0$ ，故将其带入上式即可求出k<br>$$\ln(1-a^{-k})+\frac{ka^{-k} \ln a}{1-a^{-k}}&#x3D;0$$<br>$$&#x3D;&gt;  (1-a^{-k}) \ln(1-a^{-k})&#x3D;-ka^{-k} \ln a$$<br>$$&#x3D;&gt;  e^{-\frac{kn}{m}}&#x3D;\frac{1}{2}$$<br>$$&#x3D;&gt;  k&#x3D;\frac{m}{n}\ln2\approx0.7\frac{m}{n}$$<br>所以我们通过调整k的值也能一定程度上降低误判率， 但是基于概率的问题，误判率依然存在。所以这种方法适合于允许一定误判率，并拥有海量数据要过滤的场景</p>
+<h3 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>通用，空间效率高，灵活，可以在性能和误判率之间做取舍</li>
+</ol>
+<h3 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>有误判，性能不如bitmap</li>
+</ol>
+<h1 id="处理相似文本的重复"><a href="#处理相似文本的重复" class="headerlink" title="处理相似文本的重复"></a>处理相似文本的重复</h1><p>能处理相同的id造成的重复之后，如果我们可以找出一个文章的相似内容， 只要把相似的内容id也添加到需要过滤的集合， 就可以完成对相似内容的过滤</p>
+<h2 id="simhash"><a href="#simhash" class="headerlink" title="simhash"></a>simhash</h2><p>如果只是检测一模一样的两个字符串，那我们完全可以采用md5之类的摘要算法， 但是这种方法对文章内容又哪怕一个字的差别，就不再适用</p>
+<p>所以我们使用<code>simhash</code>来处理内容相似度的问题</p>
+<p>simhash的核心思想是先提取文章的最重要核心特征， 如果两篇文章的核心特征重复度较高，那就有可能是相似文章，具体步骤如下</p>
+<ol>
+<li>我们先对文本进行分词，并计算每个词的权重</li>
+<li>对每个词进行hash，并把hash结果的对应二进制位的 0 变为 -1</li>
+<li>把每个文章的每个词的处理过的 hash值 x 权重，得到加权向量，并把每个加权向量相加得到最终向量</li>
+<li>把这个最终向量中的负数变为0，正数变为1</li>
+</ol>
+<p>然后通过汉明距离比较二进制位不同的个数，其实就是计算两个指纹的异或结果，结果中如果包含较少的1， 比如小于3个， 那就说明内容相同</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E5%90%8Cid%E7%9A%84%E8%BF%87%E6%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">处理相同id的过滤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E7%9A%84%E6%96%B9%E6%A1%88"><span class="toc-number">2.1.</span> <span class="toc-text">HashMap的方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">2.1.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">2.1.2.</span> <span class="toc-text">缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bitmap"><span class="toc-number">2.2.</span> <span class="toc-text">Bitmap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9-1"><span class="toc-number">2.2.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="toc-number">2.2.2.</span> <span class="toc-text">缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BloomFilter"><span class="toc-number">2.3.</span> <span class="toc-text">BloomFilter</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E5%88%A4%E7%8E%87%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">2.3.1.</span> <span class="toc-text">误判率的计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%B3%E4%BA%8Ehash-function%E7%9A%84%E6%95%B0%E7%9B%AEk"><span class="toc-number">2.3.2.</span> <span class="toc-text">至于hash function的数目k</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9-2"><span class="toc-number">2.3.3.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="toc-number">2.3.4.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E7%9B%B8%E4%BC%BC%E6%96%87%E6%9C%AC%E7%9A%84%E9%87%8D%E5%A4%8D"><span class="toc-number">3.</span> <span class="toc-text">处理相似文本的重复</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#simhash"><span class="toc-number">3.1.</span> <span class="toc-text">simhash</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&text=如何设计一个海量数据过滤模块"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&is_video=false&description=如何设计一个海量数据过滤模块"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何设计一个海量数据过滤模块&body=Check out this article: https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&title=如何设计一个海量数据过滤模块"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&name=如何设计一个海量数据过滤模块&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2019-04-01-recommended-system-filter-module-md/&t=如何设计一个海量数据过滤模块"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

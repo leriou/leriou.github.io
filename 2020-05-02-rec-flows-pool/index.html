@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="这篇文章的目的是希望构建一套可行的，灵活的，能支持我们常见业务需求的流量池系统架构设计 内容流量池的目的我们希望通过流量池达到以下目标  解决内容推荐的马太效应  限制点击率比较低的内容的投放次数  帮助运营提升内容分发的效率，提供一个可以对播主赋能的手段   流量池的整体架构设计 流量池系统在整个推荐系统中主要起一个资源吃的作用，可推荐的内容资源以流量池中的内容流量的形式存在。同时为其他各种召回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="推荐系统流量池的构建">
+<meta property="og:url" content="https://leriou.github.io/2020-05-02-rec-flows-pool/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="这篇文章的目的是希望构建一套可行的，灵活的，能支持我们常见业务需求的流量池系统架构设计 内容流量池的目的我们希望通过流量池达到以下目标  解决内容推荐的马太效应  限制点击率比较低的内容的投放次数  帮助运营提升内容分发的效率，提供一个可以对播主赋能的手段   流量池的整体架构设计 流量池系统在整个推荐系统中主要起一个资源吃的作用，可推荐的内容资源以流量池中的内容流量的形式存在。同时为其他各种召回">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2020/05/09/sGhXxjwLYngEePB.jpg">
+<meta property="article:published_time" content="2020-05-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T11:33:59.890Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="推荐系统">
+<meta property="article:tag" content="流量池">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/09/sGhXxjwLYngEePB.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>推荐系统流量池的构建</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2020-05-26-live-red-packet/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2020-04-19-rec-abtest/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-05-02-rec-flows-pool/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&text=推荐系统流量池的构建"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&is_video=false&description=推荐系统流量池的构建"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=推荐系统流量池的构建&body=Check out this article: https://leriou.github.io/2020-05-02-rec-flows-pool/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&name=推荐系统流量池的构建&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-05-02-rec-flows-pool/&t=推荐系统流量池的构建"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">内容流量池的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">流量池的整体架构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">3.</span> <span class="toc-text">内容流量池的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">4.</span> <span class="toc-text">流量的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E7%94%9F%E6%88%90%E5%92%8C%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">流量池的生成和使用规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6%E7%82%B9%E5%87%BB%E7%8E%87%E6%AF%94%E8%BE%83%E4%BD%8E%E7%9A%84%E5%86%85%E5%AE%B9%E7%9A%84%E6%8A%95%E6%94%BE%E6%AC%A1%E6%95%B0"><span class="toc-number">5.1.</span> <span class="toc-text">如何限制点击率比较低的内容的投放次数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E9%A9%AC%E5%A4%AA%E6%95%88%E5%BA%94"><span class="toc-number">5.2.</span> <span class="toc-text">如何解决马太效应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B8%AE%E5%8A%A9%E8%BF%90%E8%90%A5%E4%BA%BA%E5%91%98%E6%8F%90%E9%AB%98%E5%86%85%E5%AE%B9%E5%88%86%E5%8F%91%E6%95%88%E7%8E%87"><span class="toc-number">5.3.</span> <span class="toc-text">如何帮助运营人员提高内容分发效率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E5%90%91%E6%8E%A8%E8%8D%90-%E6%8C%87%E5%AE%9A%E7%94%A8%E6%88%B7%E8%8C%83%E5%9B%B4%E7%9A%84%E6%8E%A8%E8%8D%90"><span class="toc-number">6.</span> <span class="toc-text">定向推荐: 指定用户范围的推荐</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">6.1.</span> <span class="toc-text">实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">7.</span> <span class="toc-text">流量池的效果评估指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        推荐系统流量池的构建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-05-01T16:00:00.000Z" itemprop="datePublished">2020-05-02</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" rel="tag">推荐系统</a>, <a class="tag-link-link" href="/tags/%E6%B5%81%E9%87%8F%E6%B1%A0/" rel="tag">流量池</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这篇文章的目的是希望构建一套可行的，灵活的，能支持我们常见业务需求的流量池系统架构设计</p>
+<h2 id="内容流量池的目的"><a href="#内容流量池的目的" class="headerlink" title="内容流量池的目的"></a>内容流量池的目的</h2><p>我们希望通过流量池达到以下目标</p>
+<ul>
+<li><p>解决内容推荐的马太效应</p>
+</li>
+<li><p>限制点击率比较低的内容的投放次数</p>
+</li>
+<li><p>帮助运营提升内容分发的效率，提供一个可以对播主赋能的手段</p>
+</li>
+</ul>
+<h2 id="流量池的整体架构设计"><a href="#流量池的整体架构设计" class="headerlink" title="流量池的整体架构设计"></a>流量池的整体架构设计</h2><p><img src="https://i.loli.net/2020/05/09/sGhXxjwLYngEePB.jpg" alt="推荐系统流量池.jpg"></p>
+<p>流量池系统在整个推荐系统中主要起一个资源吃的作用，可推荐的内容资源以流量池中的内容流量的形式存在。同时为其他各种召回策略提供原始数据集。</p>
+<p>流量池中的流量有多种类型，主要有以下四种</p>
+<ol>
+<li>测试流量：所有合法内容发布以后获得此类流量，用于保证内容的最少推荐次数，通过测试流量来评估内容的质量表现，过滤掉质量比较低的内容</li>
+<li>叠加流量：通过测试流量筛选以后的质量相对较高的内容可以获得此类流量，用于优质内容的自动流量续费</li>
+<li>运营流量：运营人员或者博主自己为内容添加的可用流量 <h2 id="内容流量池的概念"><a href="#内容流量池的概念" class="headerlink" title="内容流量池的概念"></a>内容流量池的概念</h2></li>
+</ol>
+<p>一个承载内容和内容可推荐次数的数据集合，流量池的核心数据是一个类似于<code>&lt;c10086, 1000&gt;</code>的<code>&lt;k，v&gt;</code>结构。表示的含义也很简单，就是c10086这个编号的内容拥有1000次的推荐次数。</p>
+<p>流量池内容的推荐符合如下基本规则</p>
+<ol>
+<li>拥有流量的内容才允许被推荐，内容每推荐一次消耗一个推荐流量</li>
+<li>内容流量拥有不同的类型，同一个内容可以同时拥有多种流量</li>
+</ol>
+<h2 id="流量的定义"><a href="#流量的定义" class="headerlink" title="流量的定义"></a>流量的定义</h2><p>一个流量代表一个内容对某用户的一次推荐行为，如果一个用户一次请求中请求了10条的数据， 那么这一次推荐就消耗了10个流量， 本次结果中的每个被推荐的内容推荐流量 -1。</p>
+<p>用户对某一个内容的推荐不会重复， 所以一个用户对某个内容至多拥有一个流量。同时推荐流量也限制了内容的被推荐次数，假设一个内容的总流量是1000，意味着至多被推荐给1000个人。</p>
+<h2 id="流量池的生成和使用规则"><a href="#流量池的生成和使用规则" class="headerlink" title="流量池的生成和使用规则"></a>流量池的生成和使用规则</h2><ol>
+<li>流量分批次，一个批次500个流量。所有内容默认拥有500次的测试流量， 也就是说所有内容至少应被推荐500次</li>
+<li>每个批次的流量消耗完毕进行点击率&#x2F;互动率的计算，达标的继续分发流量。除第一次外的流量批次统一为叠加流量。叠加流量消耗完毕也进行点击率的计算，达标的继续进行新的流量分发。</li>
+<li>运营可以为内容投放运营流量，流量消耗的优先级：运营流量&gt;叠加流量&gt;测试流量。运营流量也分批次投放，也需要计算点击率，运营流量消耗完毕以后不再进行叠加流量的追加。</li>
+</ol>
+<h3 id="如何限制点击率比较低的内容的投放次数"><a href="#如何限制点击率比较低的内容的投放次数" class="headerlink" title="如何限制点击率比较低的内容的投放次数"></a>如何限制点击率比较低的内容的投放次数</h3><p>每个批次的内容流量消耗完毕立即进行点击率的计算， 达标的才能继续获得流量。点击率低的不达标内容不再进行推荐。<br>每个内容至少拥有500次的测试流量，用于充分测试其质量表现。</p>
+<h3 id="如何解决马太效应"><a href="#如何解决马太效应" class="headerlink" title="如何解决马太效应"></a>如何解决马太效应</h3><p>内容流量的生成门槛随着流量分发的次数逐步提高。 例如，a内容前1000次流量点击率12%， 阈值为 6% ，将继续获得1000次流量的额度，等这1000个流量消耗完毕，对应的门槛提高到 12%， 假如这第二批次的流量点击率为10%， 将被终止流量的继续投放。已消耗流量越多，获得新流量的点击率阈值越高，用以打击热点内容的权重。</p>
+<h3 id="如何帮助运营人员提高内容分发效率"><a href="#如何帮助运营人员提高内容分发效率" class="headerlink" title="如何帮助运营人员提高内容分发效率"></a>如何帮助运营人员提高内容分发效率</h3><p>运营人员可以为内容赋予额外的流量，拥有充足流量的内容将在推荐策略中获得加权， 可用流量越多的内容，相对来说越容易被推荐出去。</p>
+<h2 id="定向推荐-指定用户范围的推荐"><a href="#定向推荐-指定用户范围的推荐" class="headerlink" title="定向推荐: 指定用户范围的推荐"></a>定向推荐: 指定用户范围的推荐</h2><p>上面的流量池只能实现对某内容的一定次数的推荐， 其实还可以在此基础上实现对特征用户的定向流量投放。即我们可以指定某内容向某一类用户进行推荐的次数。</p>
+<p>这个功能可以用来进行运营赋能， 帮助运营更精准的进行流量投放， 也可以帮助创作者进行早期的用户积累和帮创作者提高内容的曝光度。</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>我们可以为用户设置一系列的特征列表例如</p>
+<table>
+<thead>
+<tr>
+<th>用户&#x2F;特征</th>
+<th>&gt;30岁</th>
+<th>男性</th>
+<th>郭德纲粉丝</th>
+<th>杨幂粉丝</th>
+<th>喜欢综艺</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>我们如果要对用户进行精准投放，只需要选中一部分特征用户，并为此特征生成对应的召回集。 例如，我们要把内容A对杨幂的粉丝进行投放， 内容B对30岁以下的男性用进行投放<br>那我们可以生成如下两个数据序列</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> 杨幂粉丝 = <span class="type">Set</span>(<span class="type">A</span>)</span><br><span class="line"><span class="keyword">val</span> <span class="number">30</span>岁以下男性用户 = <span class="type">Set</span>(<span class="type">B</span>)</span><br></pre></td></tr></table></figure>
+
+<p>用户1 在获取推荐结果的时候，根据自己的用户特征列表和列表中特征对应的待推荐内容（召回集）进行融合排序推荐</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getRecommendations</span></span>(user:<span class="type">String</span>): <span class="type">Seq</span> = &#123;</span><br><span class="line">	<span class="keyword">val</span> fetureList:<span class="type">Seq</span> = getFeture(user)</span><br><span class="line">	fetureList.flatMap(f =&gt; getRecallByFeture())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="流量池的效果评估指标"><a href="#流量池的效果评估指标" class="headerlink" title="流量池的效果评估指标"></a>流量池的效果评估指标</h2><p>我们为了评估流量池的运行效果，我们需要制定一部分指标来对流量池进行监控并及时的调整参数</p>
+<p>主要用到的指标有</p>
+<ul>
+<li><p>每日的新订单创建数量和不同类型的订单的创建数量</p>
+</li>
+<li><p>当前流量池的可用流量分布和不同类型的订单的分布</p>
+</li>
+<li><p>已消耗订单的点击率分布和不同类型的订单的点击率分布</p>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>流量池系统其实是通过一种机制来控制内容的可曝光次数， 来对推荐结果的分布进行干预。<br>为了保证新内容的充分曝光，新内容会被给予一定次数的固定流量。表现好的内容将持续不断的获得推荐流量，表现不好的内容将在一定的推荐次数后不再推荐，空出来的推荐机会留给其他表现更好的内容。</p>
+<p>同时为运营和个人播主提供了额外的手段用于满足部分推广需求。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">内容流量池的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">流量池的整体架构设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">3.</span> <span class="toc-text">内容流量池的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">4.</span> <span class="toc-text">流量的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E7%94%9F%E6%88%90%E5%92%8C%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">流量池的生成和使用规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6%E7%82%B9%E5%87%BB%E7%8E%87%E6%AF%94%E8%BE%83%E4%BD%8E%E7%9A%84%E5%86%85%E5%AE%B9%E7%9A%84%E6%8A%95%E6%94%BE%E6%AC%A1%E6%95%B0"><span class="toc-number">5.1.</span> <span class="toc-text">如何限制点击率比较低的内容的投放次数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E9%A9%AC%E5%A4%AA%E6%95%88%E5%BA%94"><span class="toc-number">5.2.</span> <span class="toc-text">如何解决马太效应</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B8%AE%E5%8A%A9%E8%BF%90%E8%90%A5%E4%BA%BA%E5%91%98%E6%8F%90%E9%AB%98%E5%86%85%E5%AE%B9%E5%88%86%E5%8F%91%E6%95%88%E7%8E%87"><span class="toc-number">5.3.</span> <span class="toc-text">如何帮助运营人员提高内容分发效率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E5%90%91%E6%8E%A8%E8%8D%90-%E6%8C%87%E5%AE%9A%E7%94%A8%E6%88%B7%E8%8C%83%E5%9B%B4%E7%9A%84%E6%8E%A8%E8%8D%90"><span class="toc-number">6.</span> <span class="toc-text">定向推荐: 指定用户范围的推荐</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">6.1.</span> <span class="toc-text">实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%B1%A0%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">7.</span> <span class="toc-text">流量池的效果评估指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2020-05-02-rec-flows-pool/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&text=推荐系统流量池的构建"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&is_video=false&description=推荐系统流量池的构建"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=推荐系统流量池的构建&body=Check out this article: https://leriou.github.io/2020-05-02-rec-flows-pool/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&title=推荐系统流量池的构建"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2020-05-02-rec-flows-pool/&name=推荐系统流量池的构建&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2020-05-02-rec-flows-pool/&t=推荐系统流量池的构建"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
