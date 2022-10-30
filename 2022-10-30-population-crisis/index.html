@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本文主要基于第七次人口普查数据作为基础，站在2022年的时间节点上对人口问题进行一些分析和未来预测 我将根据六普数据，七普数据，官方给出的人口数据，倒推到每一年的出生人口数量，计算出当前时间节点每一个年龄的人口数量，分析问题和预测都将基于某一个年龄段的人口数量来进行 年龄计算采用简单的 (当前年份-出生年份 &#x3D; 年龄)，不考虑虚岁周岁 详细数据近年人口的详细图表 老龄化问题中国的老龄化问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中国近些年的人口情况分析">
+<meta property="og:url" content="https://leriou.github.io/2022-10-30-population-crisis/index.html">
+<meta property="og:site_name" content="Leriou&#39;s Tavern">
+<meta property="og:description" content="本文主要基于第七次人口普查数据作为基础，站在2022年的时间节点上对人口问题进行一些分析和未来预测 我将根据六普数据，七普数据，官方给出的人口数据，倒推到每一年的出生人口数量，计算出当前时间节点每一个年龄的人口数量，分析问题和预测都将基于某一个年龄段的人口数量来进行 年龄计算采用简单的 (当前年份-出生年份 &#x3D; 年龄)，不考虑虚岁周岁 详细数据近年人口的详细图表 老龄化问题中国的老龄化问">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.plumeta.com/i/2022/10/30/udfr6d.jpg">
+<meta property="article:published_time" content="2022-10-30T09:47:00.000Z">
+<meta property="article:modified_time" content="2022-10-30T09:47:00.000Z">
+<meta property="article:author" content="哎呀是太阳嘛">
+<meta property="article:tag" content="思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.plumeta.com/i/2022/10/30/udfr6d.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>中国近些年的人口情况分析</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2022-02-03-review-2022/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2022-10-30-population-crisis/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2022-10-30-population-crisis/&text=中国近些年的人口情况分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2022-10-30-population-crisis/&is_video=false&description=中国近些年的人口情况分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=中国近些年的人口情况分析&body=Check out this article: https://leriou.github.io/2022-10-30-population-crisis/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2022-10-30-population-crisis/&name=中国近些年的人口情况分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2022-10-30-population-crisis/&t=中国近些年的人口情况分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%95%B0%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">详细数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%81%E9%BE%84%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">老龄化问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%BF%E4%BB%B7%E5%92%8C%E8%B4%AD%E6%88%BF%E4%BA%BA%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">房价和购房人口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E8%AF%AF%E5%B7%AE%E5%92%8C%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">统计误差和其他</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        中国近些年的人口情况分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">哎呀是太阳嘛</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-10-30T09:47:00.000Z" itemprop="datePublished">2022-10-30</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/">生活记录</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E6%80%9D%E8%80%83/" rel="tag">思考</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>本文主要基于第七次人口普查数据作为基础，站在2022年的时间节点上对人口问题进行一些分析和未来预测</p>
+<p>我将根据六普数据，七普数据，官方给出的人口数据，倒推到每一年的出生人口数量，计算出当前时间节点每一个年龄的人口数量，分析问题和预测都将基于某一个年龄段的人口数量来进行</p>
+<p>年龄计算采用简单的 (当前年份-出生年份 &#x3D; 年龄)，不考虑虚岁周岁</p>
+<h2 id="详细数据"><a href="#详细数据" class="headerlink" title="详细数据"></a>详细数据</h2><p>近年人口的详细图表<br><img src="https://s2.plumeta.com/i/2022/10/30/udfr6d.jpg"></p>
+<h2 id="老龄化问题"><a href="#老龄化问题" class="headerlink" title="老龄化问题"></a>老龄化问题</h2><p>中国的老龄化问题很严重，这个是人人都知道的事情，但是到底严重到了什么程度，未来会有多大的压力，我认为很多人对此认识不足</p>
+<p>我们来看一组数据</p>
+<p>我们定义<br>60岁以上算是老年人<br>平均年龄78岁</p>
+<ol>
+<li>过去老年人增长的趋势和未来5年的老年人增长趋势</li>
+</ol>
+<p>增长人口 &#x3D; 新增人口-死亡人口</p>
+<p>从七普人口与六普人口问题来推测未来的人口死亡情况</p>
+<p>从七普人口结婚人口来推测未来几年的人口出生情况</p>
+<p>未来老年人新增情况预测</p>
+<p>未来5年的独生子女家庭的消费开支变化预测</p>
+<h2 id="房价和购房人口"><a href="#房价和购房人口" class="headerlink" title="房价和购房人口"></a>房价和购房人口</h2><p>房子是一种商品，在市场化机制下商品的价格由供需关系决定，所以要研究房子价格我们就要研究一下供需关系</p>
+<p>房子的提供方是土地+房产建设公司+服务公司，</p>
+<p>房子的主要的需求方是 1. 进入城市的大学生 2. 因为结婚需要购买婚房的人口  3. 养老放人口  4. 投资客</p>
+<p>过去10年的购房人口变化情况</p>
+<p>未来几年的购房人口变化情况</p>
+<p>结婚人口近几年变化情况</p>
+<p>结婚人口和出生人口的关系</p>
+<h2 id="统计误差和其他"><a href="#统计误差和其他" class="headerlink" title="统计误差和其他"></a>统计误差和其他</h2><p>七普数据与官方的出生人口数据误差情况</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/tags/">tags</a></li>
+         
+          <li><a href="/categories/">categories</a></li>
+         
+          <li><a href="/archives/">archives</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%95%B0%E6%8D%AE"><span class="toc-number">1.</span> <span class="toc-text">详细数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%81%E9%BE%84%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">老龄化问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%BF%E4%BB%B7%E5%92%8C%E8%B4%AD%E6%88%BF%E4%BA%BA%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">房价和购房人口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E8%AF%AF%E5%B7%AE%E5%92%8C%E5%85%B6%E4%BB%96"><span class="toc-number">4.</span> <span class="toc-text">统计误差和其他</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leriou.github.io/2022-10-30-population-crisis/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leriou.github.io/2022-10-30-population-crisis/&text=中国近些年的人口情况分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leriou.github.io/2022-10-30-population-crisis/&is_video=false&description=中国近些年的人口情况分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=中国近些年的人口情况分析&body=Check out this article: https://leriou.github.io/2022-10-30-population-crisis/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leriou.github.io/2022-10-30-population-crisis/&title=中国近些年的人口情况分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leriou.github.io/2022-10-30-population-crisis/&name=中国近些年的人口情况分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leriou.github.io/2022-10-30-population-crisis/&t=中国近些年的人口情况分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    哎呀是太阳嘛
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/archives/">archives</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
