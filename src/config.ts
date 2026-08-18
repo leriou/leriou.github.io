@@ -84,5 +84,5 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
  */
 export const commentConfig = {
 	enable: true,
-	serverURL: "", // TODO: 例如 "https://leriou-waline.vercel.app"
+	serverURL: "https://waline-comment-xi-two.vercel.app",
 };
