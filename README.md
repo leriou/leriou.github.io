@@ -28,23 +28,31 @@ push 到 `main` 分支 → GitHub Actions 自动构建并发布到 GitHub Pages(
 
 > 仓库首次使用前,需在 GitHub 仓库 **Settings → Pages → Source** 选择 **GitHub Actions**(一次性设置)。
 
-## 启用评论(Waline)
+## 启用评论(Waline + Neon)
 
-Waline 需要一个免费的后端(评论数据存在你自己的数据库里),部署一次约 5 分钟:
+> ⚠️ Waline 原默认数据库 LeanCloud 已宣布停止服务,**不要再用**。现在用 Neon(免费 PostgreSQL)。
 
-1. 打开 [Waline 官方部署文档](https://waline.js.org/guide/get-started/),选 **Vercel 部署**(免费,一键 Fork)
-2. 按引导注册 [LeanCloud 国际版](https://console.leancloud.app/)(免费版配额足够个人博客),把 `AppID`/`AppKey`/`MasterKey` 填入 Vercel 环境变量
-3. 部署完成后拿到后端地址(形如 `https://xxx.vercel.app`)
-4. 填入 `src/config.ts`:
+后端模板已放在私有仓库 [leriou/waline-comment](https://github.com/leriou/waline-comment)(官方 Vercel 模板),三步开通:
+
+1. **建数据库**:GitHub 账号登录 [Neon](https://console.neon.tech/) → Create Project(区域选 Singapore)→ Dashboard 复制连接信息(host/用户名/密码/库名,端口 5432)
+2. **部署后端**:[Vercel](https://vercel.com/new) → Import `leriou/waline-comment` 仓库 → 展开 Environment Variables,添加:
+   - `PG_HOST` = Neon 的 host(`ep-xxx...neon.tech`)
+   - `PG_PORT` = `5432`
+   - `PG_USER` = Neon 用户名(默认 `neondb`)
+   - `PG_PASSWORD` = Neon 密码
+   - `PG_DB` = Neon 库名(默认 `neondb`)
+   - `PG_SSL` = `true`
+   - Deploy → 得到地址 `https://xxx.vercel.app`
+3. **接到博客**:访问 `https://xxx.vercel.app/ui/register` 注册第一个账号(即管理员);然后填入 `src/config.ts`:
 
 ```ts
 export const commentConfig = {
   enable: true,
-  serverURL: "https://你的-waline.vercel.app", // 填这里
+  serverURL: "https://xxx.vercel.app", // 填这里
 };
 ```
 
-5. 访问 `https://你的-waline.vercel.app/ui/register` 注册第一个账号(即管理员)
+评论数据存在你自己的 Neon 数据库里(免费 0.5GB,个人博客用不完),随时可导出迁移。Neon 免费项目闲置会休眠,第一条评论可能有几秒冷启动,属正常现象。
 
 评论组件已内置:自动跟随暗色模式、支持匿名昵称留言、与主题的页面切换动画兼容。
 
